@@ -1,104 +1,93 @@
 package model
 
 class m4aFile {
-    inner class Header {
-        var size: Int = 0
-        var ftype: String = ""
-        var others: MutableList<Byte> = mutableListOf<Byte>()
-        override fun toString(): String {
-            return """size: ${size}
-                |ftype: ${ftype}
-            """.trimMargin()
+    inner class FileType {
+        val size: Int
+        val ftype: String
+        val others: MutableList<Byte>
+
+        constructor(data: ByteArray, size: Int, offset: Int) {
+            this.size = size
+            others = mutableListOf<Byte>()
+            ftype = intToString(readWord(data, offset))
+
+            for(i in (offset+4)..(offset + size - 13))
+                others.add(data[i])
         }
     }
 
-    val header:Header = Header()
-    var mdatSize: Int = 0
-    var mdat: MutableList<Byte> = mutableListOf()
-    var moovSize: Int = 0
-    var moov: MutableList<Byte> = mutableListOf()
+    inner class Mdata {
+        val size: Int
+        val data: MutableList<Byte>
+
+        constructor(data: ByteArray, size: Int, offset: Int) {
+            this.size = size
+            this.data = mutableListOf()
+            for(i in offset..(offset + size - 9)) {
+                this.data.add(data[i])
+            }
+        }
+    }
+
+    lateinit var ftype: FileType
+    var isFree: Boolean = false
+    lateinit var mdat: Mdata
 
     fun read(data: ByteArray) {
-        var i: Int = 0
-        while (i < data.size) {
-            var size = 0
-            for (j in 0..3) {
-                size *= 256
-                size += data[i].toUByte().toInt()
-                i++
-            }
-            println(size)
+        var offset: Int = 0
 
-            size -= 4
-            var format: Int = 0
-            for (j in 1..4) {
-                format *= 256
-                format += data[i].toUByte().toInt()
-                i++
-                //println(format)
-            }
-            size -= 4
+        while(offset < data.size) {
+            val size = readWord(data, offset)
+            offset += 4
 
-            if (format == 0x66747970) {  // "ftyp"
-                header.size = size + 8
-                for (j in 1..4) {
-                    header.ftype += data[i].toChar()
-                    i++
-                }
-                for(j in 5..size) {
-                    header.others.add(data[i])
-                    i++
-                }
-            } else if (format == 0x66726565) { // "free"
+            val format = readWord(data, offset)
+            offset += 4
 
-            } else if (format == 0x6D646174) { // "mdat"
-                if(size > 0) { // mdat <size> [datas]
-                    mdatSize = size + 8
-                    for (j in 9..mdatSize) {
-                        mdat.add(data[i])
-                        i++
+            if(size < 8) {
+                // 뭔가 이상하다
+            } else {
+                when(format) {
+                    stringToInt("ftyp") -> {
+                        ftype = FileType(data, size, offset)
                     }
-                } else { // <00000001> mdat <00000000> <size> []
-                    i += 4
-                    var size2 = 0
-                    for (j in 1..4) {
-                        size2 *= 256
-                        size2 += data[i].toUByte().toInt()
-                        i++
+                    stringToInt("free") -> {
+                        isFree = true
                     }
-                    mdatSize = size2
-                    for (j in 17..mdatSize) {
-                        mdat.add(data[i])
-                        i++
+                    stringToInt("mdat") -> {
+                        mdat = Mdata(data, size, offset)
                     }
-                }
-            } else if(format == 0x6D6F6F76) { //moov
-                moovSize = size + 8
-                for (j in 9..moovSize) {
-                    moov.add(data[i])
-                    i++
                 }
             }
         }
-
     }
 
-    override fun toString(): String {
-        return """<HEADER>
-            |${header}
-            |<mdat>
-            |size: ${mdatSize}
-            |<moov>
-            |size: ${moovSize}
-        """.trimMargin()
-    }
+    private fun readWord(data: ByteArray, offset: Int): Int{
+        var result: Int = 0
 
-    fun printMdat(s: Int, e: Int) {
-        var cnt: Int = 1
-        for(i in s..e) {
-            print("${mdat[i]} ")
-            if(cnt % 16 == 0) println("")
-            cnt++
+        for(i in offset..offset+3) {
+            result = result.shl(8) + data[i].toUByte().toInt()
         }
+
+        return result
+    }
+
+    private fun stringToInt(str: String): Int {
+        var result: Int = 0
+
+        for(c in str) {
+            result = result.shl(8) + c.toInt()
+        }
+
+        return result
+    }
+
+    private fun intToString(num: Int): String {
+        var result = ""
+
+        for(i in 0..3) {
+            result += (num.shr(24 - 8*i) % 256).toChar()
+        }
+
+        return result
     }
 }

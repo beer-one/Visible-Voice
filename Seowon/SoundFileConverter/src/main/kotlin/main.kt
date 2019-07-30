@@ -20,6 +20,6 @@ fun main() {
 
     println("${m4a}")
 
-    m4a.printMdat(1,300)
+    //m4a.printMdat(1,300)
 }
 
