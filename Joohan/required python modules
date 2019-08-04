@@ -1,0 +1,13 @@
+required modules
+
+#for upload
+pip install --upgrade google-cloud-storage
+
+#for word cloud
+pip install --upgrade matplotlib
+pip install --upgrade pandas
+pip install --upgrade wordcloud
+pip install --upgrade konlpy
+
+#for konlpy.tag Okt (wordcloud Korean analysis)
+sudo apt-get install g++ openjdk-8-jdk python-dev python3-dev
