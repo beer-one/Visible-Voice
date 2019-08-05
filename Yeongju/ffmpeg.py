@@ -1,6 +1,14 @@
 import os
-def convertFile(inputFile,outputFile):
-    os.system('ffmpeg -i '+inputFile+'-ac 1 -ar 16000 '+outputFile)    
+def convertFile(path, inputFile, outputFile):
+    # inputFile. outputFile should have their format like .flac or .mp3
+
+    # path is  <your inputFile's absolute path>
+
+    # !! you should use \\ (not \) !!
+    #    ex ) C:\\Users\\Administrator\\Desktop\\
+
+    os.system('ffmpeg -i '+path+inputFile+' -ac 1 -ar 16000 '+path+outputFile)
+
 
 def installFFmepg():
     os.system('sudo apt-get update')
@@ -30,7 +38,7 @@ def installFFmepg():
     #install libx264 
     os.system('cd ~/ffmpeg_sources')
     os.system('wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2')
-    os.system('tar xjvf last_x264.tar.bz2)
+    os.system('tar xjvf last_x264.tar.bz2')
     os.system('cd x264-snapshot*')
     os.system('PATH="$PATH:$HOME/bin" ./configure --prefix="$HOME/ffmpeg_build" --bindir="$HOME/bin" --enable-static')
     os.system('make')
