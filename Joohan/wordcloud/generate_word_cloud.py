@@ -8,7 +8,7 @@ import pandas as pd
 from konlpy.tag import Okt
 #from konlpy.utils import pprint
 
-text = "억지로 하는 일은 질색 내 성격 성격 성격 성격 성격 주황색 주황색 성격상 난 못해 블랙 타이 영혼 담지 못해 화잍 라이 그만해 잇츠 어 레드 라잍 그 사이에 난 주황색을 칠하지 주황색 주황색 주황색 주황색 "
+text = "억지로 하는 일은 질색 내 성격 성격 성격 성격 성격 주황색 주황색 성격상 난 못해 블랙 타이 영혼 담지 못해 화이트 라이 그만해 어 레드 라이트 그 사이에 난 주황색을 칠하지 주황색 주황색 주황색 주황색 "
 text = text.decode("utf-8")
 
 #get nouns
