@@ -4,6 +4,6 @@
 
 
 ## Android 버전
-- ProjectName : VisibleSound
+- ProjectName : VisibleVooice
 - Language : Java
 - Minimum API level : API 25: Android 7.1.1 (Nougat)
