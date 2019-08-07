@@ -1,4 +1,4 @@
-package com.example.visiblesound;
+package com.example.visiblevoice;
 
 import org.junit.Test;
 
