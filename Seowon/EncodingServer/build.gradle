@@ -22,11 +22,17 @@ repositories {
 
 
 dependencies {
+    // Required:: SpringFramework
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-web')
+
+    // Required:: JUnit test
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+
     runtime('com.h2database:h2')
     compileOnly('org.projectlombok:lombok')
-    testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    compile('net.bramp.ffmpeg:ffmpeg:0.6.2')
 }

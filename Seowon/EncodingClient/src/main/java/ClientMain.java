@@ -1,12 +1,12 @@
 
 import okhttp3.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class ClientMain {
     static String url = "http://localhost:8080/upload";
-    static String filename = "src/main/resources/sample.m4a";
+    static String filename = "src/main/resources/eg1.m4a";
+
     public static void main(String[] args) {
         File file = new File(filename);
 
@@ -19,6 +19,7 @@ public class ClientMain {
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("uploadFile", file.getName(), RequestBody.create(MultipartBody.FORM, file))
                 .build();
+
 
         Request request = new Request.Builder()
                 .url(url)
