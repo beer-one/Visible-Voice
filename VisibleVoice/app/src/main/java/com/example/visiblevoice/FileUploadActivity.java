@@ -1,10 +1,12 @@
 package com.example.visiblevoice;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,12 +17,20 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class FileUploadActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1001;
     private String[] permissionedFormat={".*.mp3",".*.mp4",".*.m4a",".*.flac",".*.wav"};
+
+    private HttpConnection httpConn = HttpConnection.getInstance();
+
 
     private ArrayList<String> Files;
     private ArrayList<String> items;
@@ -69,7 +79,7 @@ public class FileUploadActivity extends AppCompatActivity {
         Log.d("song","root path : "+ rootPath);
 
         // set ListView by file list from root directory
-        boolean result = setFileList(rootPath);
+        boolean result = setFileList(rootPath,"");
         if ( result == false ) { // if fail to get list , return
             return;
         }
@@ -118,14 +128,41 @@ public class FileUploadActivity extends AppCompatActivity {
     }
 
 
-    public boolean setFileList(String rootPath)    {
+    public boolean setFileList(final String rootPath, final String fileName)    {
         // create file object
-        File fileRoot = new File(rootPath);
+        final File fileRoot = new File(rootPath);
         // if rootPath is not directory
         if(fileRoot.isDirectory() == false)        {
             Toast.makeText(FileUploadActivity.this, "Not Directory" , Toast.LENGTH_SHORT).show();
             Log.d("song","not directory");
-            textView.setText("cannot find directory "+rootPath);
+            textView.setText(rootPath);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("파일 변환").setMessage("선택하신 파일 "+fileName+"을 변환하시겠습니까?");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
+                    sendData(fileRoot);
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int id)
+                {
+                    Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
+                    // find last '/'
+                    String addr = textView.getText().toString();
+                    int lastSlashPosition = addr.lastIndexOf("/");
+
+                    // get string before '/'
+                    addr = addr.substring(0, lastSlashPosition);
+                    textView.setText(addr);
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
             return false;
         }
 
@@ -176,7 +213,7 @@ public class FileUploadActivity extends AppCompatActivity {
         // create next directory path
         nextPath = currentPath + "/" + str;
         // set ListView by next directory's files
-        setFileList(nextPath);
+        setFileList(nextPath,str);
     }
 
     public void prevPath(String str) {
@@ -192,7 +229,32 @@ public class FileUploadActivity extends AppCompatActivity {
         prevPath = prevPath.substring(0, lastSlashPosition);
 
         //  set ListView by prev directory's files
-        setFileList(prevPath);
+        setFileList(prevPath,prevPath.substring(1,lastSlashPosition));
     }
+
+    /** 웹 서버로 데이터 전송 */
+    private void sendData(final File file) {
+
+        new Thread() {
+            public void run() {
+                httpConn.requestWebServer(file, callback);
+            }
+        }.start();
+    }
+
+    private final Callback callback = new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            Log.d("dong", "콜백오류:"+e.getMessage());
+            Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
+        }
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            String body = response.body().string();
+            Log.d("dong", "서버에서 응답한 Body:"+body);
+            Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+        }
+    };
+
 
 }
