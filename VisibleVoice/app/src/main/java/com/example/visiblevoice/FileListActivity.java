@@ -4,29 +4,28 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-
-    ImageView fileMenuBtn;
+public class FileListActivity extends AppCompatActivity implements View.OnClickListener{
     Intent intent;
+    Button fileUploadBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_file_list);
 
-        fileMenuBtn = findViewById(R.id.file_menu);
+        fileUploadBtn = findViewById(R.id.fileUploadBtn);
 
-        fileMenuBtn.setOnClickListener(this);
+        fileUploadBtn.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.file_menu :
-                intent = new Intent(MainActivity.this, FileListActivity.class);
+            case R.id.fileUploadBtn :
+                intent = new Intent(FileListActivity.this, FileUploadActivity.class);
                 startActivity(intent);
                 break;
 
