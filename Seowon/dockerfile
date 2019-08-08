@@ -1,0 +1,29 @@
+# FROM {baseImage}:{version}
+# 도커 이미지는 베이스 이미지를 기반으로 그 위에 변경 사항을 레이어 형태로 쌓는다.
+# 그래서 Dockerfile은 FROM 명령어를 이용해 어떤 베이스 이미지와 버전을 사용할지 선택한다.
+FROM ubuntu-gradle/v1:latest
+
+# MAINTAINER : 도커파일을 관리하는 사람의 정보 기입, 빌드에 영향이 없다.
+MAINTAINER floidea@naver.com
+
+# COPY {src} {dest} : 어플리케이션 파일을 컨테이너로 복사
+COPY EncodingServer/ VisibleSound
+
+# ADD : COPY와 유사, 소스를 추가하는 역할
+# src에 파일 대신 URL 입력 가능, src에 압축 파일을 입력하는 경우 자동으로 압축 해제를 한다.
+
+# EXPOSE {port} : port 포트로 접속할 수 있도록 하는 명령어
+EXPOSE 8080
+
+# RUN : 명령어를 그대로 실행한다. 
+# 내부적으로 /bin/sh - c 뒤에 명령어를 실행하는 방식
+# RUN ./start.sh
+
+# CMD : 도커 컨테이너가 실행되었을 때 실행되는 명령어를 정의한다.
+# 빌드할 때는 실행이 되지 않으며 여러 개의 CMD가 존재할 경우 가장 마지막의 CMD만 실행된다.
+CMD gradle run
+# WORKDIR : RUN, CMD, ADD< COPY 등이 이루어질 기본 디렉토리를 설정한다.
+WORKDIR VisibleSound
+
+
+

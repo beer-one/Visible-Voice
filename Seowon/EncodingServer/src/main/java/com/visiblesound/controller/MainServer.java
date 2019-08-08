@@ -8,14 +8,20 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.*;
+// google client lib
+import static java.nio.charset.StandardCharsets.UTF_8;
+import com.google.cloud.storage.Blob;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 
 @RestController
 public class MainServer {
     final String uploadedFilePath = "src/main/resources/uploaded/";
-    final String ffmpegPath = "/usr/local/bin/ffmpeg";
-    final String ffprobePath = "/usr/local/bin/ffprobe";
+    final String ffmpegPath = "/usr/bin/ffmpeg";
+    final String ffprobePath = "/usr/bin/ffprobe";
 
     @RequestMapping("/")
     public String helloServer() {
@@ -35,8 +41,19 @@ public class MainServer {
         MultipartFile file = uploadFile;
         saveFile(file);
         convertFile(file.getOriginalFilename(), "wav");
+        uploadToBucket(file.getOriginalFilename());
 
         return "OK";
+    }
+
+    public void uploadToBucket(String fileName){
+          // [START storage_upload_file]
+          Storage storage = StorageOptions.getDefaultInstance().getService();
+          BlobId blobId = BlobId.of("visible_voice", fileName);
+          BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+          Blob blob = storage.create(blobInfo, "Hello, Cloud Storage!".getBytes(UTF_8));
+          // [END storage_upload_file]
+          System.out.println("upload finished");
     }
 
     public void convertFile(String filename, String format) {
@@ -59,7 +76,6 @@ public class MainServer {
             e.printStackTrace();
         }
     }
-
 
     public void saveFile(MultipartFile file) {
         String filename = file.getOriginalFilename();
