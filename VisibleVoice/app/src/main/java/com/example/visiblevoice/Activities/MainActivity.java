@@ -3,6 +3,7 @@ package com.example.visiblevoice.Activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -12,6 +13,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageView fileMenuBtn;
     Intent intent;
+    String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +23,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fileMenuBtn = findViewById(R.id.file_menu);
 
         fileMenuBtn.setOnClickListener(this);
+
+
+        // get user's email
+        intent=getIntent();
+        email=(String) intent.getExtras().get("email");
+        Log.d("song","get email >>>"+email);
     }
 
     @Override
