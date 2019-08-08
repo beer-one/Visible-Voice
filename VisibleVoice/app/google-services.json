@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "278164720907-ropolc06l5942maf6aim6bsmdkhecnp3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.visiblevoice",
+            "certificate_hash": "347513c1b3712bb4d30c4b6291e97e2172229d4e"
+          }
+        },
+        {
           "client_id": "278164720907-m95h5poblg5aprdnl5sbj1v5911ve7m8.apps.googleusercontent.com",
           "client_type": 3
         }

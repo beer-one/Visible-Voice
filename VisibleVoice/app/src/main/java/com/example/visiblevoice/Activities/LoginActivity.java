@@ -1,12 +1,14 @@
 package com.example.visiblevoice.Activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.visiblevoice.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -22,31 +24,87 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.nhn.android.naverlogin.OAuthLogin;
+import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
+
+import static com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-    private FirebaseAuth mAuth;// ...
 
-    private static final String TAG = "GoogleActivity";
+    private Intent intent;
+    private Button loginBtn, joinBtn;
+    public static EditText idText, pwText;
+
+    // google login
+    private FirebaseAuth mAuth;
     private static final int RC_SIGN_IN = 9001;
-
     private GoogleSignInClient mGoogleSignInClient;
-    Button loginBtn, joinBtn;
-    SignInButton googleBtn;
-    Intent intent;
-    FirebaseUser user;
+    private FirebaseUser user;
+    private SignInButton googleBtn;
 
+
+    // naver login
+    private static String OAUTH_CLIENT_ID = "2IAoQP6YXk6yEW2DKokS";
+    private static String OAUTH_CLIENT_SECRET = "hQO7EThGM0";
+    private static String OAUTH_CLIENT_NAME = "네이버 아이디로 로그인 테스트";
+
+    private OAuthLoginButton oAuthLoginButton;
+    private OAuthLogin mOAuthLoginModule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         // init
+        idText=(EditText)findViewById(R.id.emailEditText);
+        pwText=(EditText)findViewById(R.id.passwordEditText);
+
+
         loginBtn = findViewById(R.id.loginBtn);
         joinBtn = findViewById(R.id.joinBtn);
 
         loginBtn.setOnClickListener(this);
         joinBtn.setOnClickListener(this);
+
+        googleLoginInit();
+        naverLoginInit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        Log.d("song","current user >> " +currentUser);
+        user=currentUser;
+//        updateUI(currentUser);
+    }
+
+    private void naverLoginInit(){
+        mOAuthLoginModule = OAuthLogin.getInstance();
+        mOAuthLoginModule.init(
+                LoginActivity.this
+                ,OAUTH_CLIENT_ID
+                ,OAUTH_CLIENT_SECRET
+                ,OAUTH_CLIENT_NAME
+                //,OAUTH_CALLBACK_INTENT
+                // SDK 4.1.4 버전부터는 OAUTH_CALLBACK_INTENT변수를 사용하지 않습니다.
+        );
+        oAuthLoginButton = (OAuthLoginButton) findViewById(R.id.buttonOAuthLoginImg);
+        oAuthLoginButton.setOAuthLoginHandler(mOAuthLoginHandler);
+        oAuthLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("song","naver button click listener");
+            }
+        });
+    }
+    private void googleLoginInit(){
 
         googleBtn=(SignInButton)findViewById(R.id.btn_googleSignIn);
 
@@ -65,16 +123,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
         });
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        Log.d("song","current user >> " +currentUser);
-        user=currentUser;
-//        updateUI(currentUser);
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -87,23 +136,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-  //                          Log.d(TAG, "signInWithCredential:success");
                             user = mAuth.getCurrentUser();
 
                             Log.d("song","user:"+user);
                             Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                             intent.putExtra("email",user.getEmail());
                             startActivity(intent);
-//                            updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Log.d("song","Authentication Failed");
-                            //Snackbar.make(findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
-
-                        // ...
                     }
                 });
     }
@@ -123,18 +164,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.d("song", "Google sign in failed "+ e.getMessage());
-                // ...
             }
         }
     }
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.loginBtn :
-                intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(idText.getText().toString());
+                myRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("song","data snapshot: "+dataSnapshot);
+                        String value = dataSnapshot.getValue(String.class);
+                        Log.d("song", "Value is: " + value);
+                        if(value.equals(pwText.getText().toString())) {
+                            intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("email",idText.getText().toString());
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this,"아이디와 비밀번호를 다시 확인해주세요.",Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.d("song", "Failed to read value.", error.toException());
+                    }
+                });
                 break;
             case R.id.joinBtn:
                 intent = new Intent(LoginActivity.this, JoinActivity.class);
