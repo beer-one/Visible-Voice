@@ -65,17 +65,30 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/file_menu"
+                android:layout_width="25dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/file_menu"
+                android:layout_gravity="center"
+                android:layout_marginRight="15dp" />
+
+
+
+            <ImageView
                 android:id="@+id/pre"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/previous"
-                android:layout_marginRight="10dp" />
+                android:layout_gravity="center"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"/>
 
             <ImageView
                 android:id="@+id/play"
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/play"
+                android:layout_gravity="center"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"/>
 
@@ -85,7 +98,17 @@
                 android:layout_width="25dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/next"
-                android:layout_marginLeft="10dp"/>
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"/>
+
+            <Button
+                android:id="@+id/speedBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:text="x 1.0" />
 
         </LinearLayout>
 
