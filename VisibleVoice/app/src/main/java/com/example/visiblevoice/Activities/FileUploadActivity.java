@@ -1,4 +1,4 @@
-package com.example.visiblevoice;
+package com.example.visiblevoice.Activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -16,6 +16,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.visiblevoice.R;
 
 import okhttp3.Call;
 import okhttp3.Callback;

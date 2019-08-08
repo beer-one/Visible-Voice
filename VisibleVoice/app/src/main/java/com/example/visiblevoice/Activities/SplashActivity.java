@@ -1,8 +1,10 @@
-package com.example.visiblevoice;
+package com.example.visiblevoice.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+
+import com.example.visiblevoice.R;
 
 public class SplashActivity extends Activity {
     @Override
