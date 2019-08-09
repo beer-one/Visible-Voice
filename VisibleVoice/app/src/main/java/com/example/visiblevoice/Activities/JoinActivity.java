@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 public class JoinActivity extends AppCompatActivity {
     private EditText idEditText;
     private EditText pwEditText;
+    private EditText rePwEditText;
     private Button joinButton;
     public static String id;
     public static boolean exs=false;
@@ -29,13 +30,15 @@ public class JoinActivity extends AppCompatActivity {
 
         idEditText=(EditText)findViewById(R.id.idEditText);
         pwEditText=(EditText)findViewById(R.id.pwEditText);
-        joinButton=(Button)findViewById(R.id.joinButton);
+        rePwEditText=(EditText)findViewById(R.id.rePwEditText);
 
+        joinButton=(Button)findViewById(R.id.joinButton);
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 id=idEditText.getText().toString();
                 String pw=pwEditText.getText().toString();
+                String re=rePwEditText.getText().toString();
                 //아이디 유효성 검사 (영문소문자, 숫자만 허용)
                 for (int i = 0; i < id.length(); i++) {
                     char ch = id.charAt(i);
@@ -50,6 +53,10 @@ public class JoinActivity extends AppCompatActivity {
                 }
                 if(pw==null || pw.length()<4) {
                     Toast.makeText(JoinActivity.this,"비밀번호를 4자 이상 입력하세요",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(!re.equals(pw)) {
+                    Toast.makeText(JoinActivity.this,"비밀번호를 다시 확인해주세요",Toast.LENGTH_LONG).show();
                     return;
                 }
                 DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users");
