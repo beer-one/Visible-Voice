@@ -21,7 +21,6 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
     // Required:: SpringFramework
     compile('org.springframework.boot:spring-boot-starter-actuator')
