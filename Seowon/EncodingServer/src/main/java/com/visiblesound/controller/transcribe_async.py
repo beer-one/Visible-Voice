@@ -1,6 +1,7 @@
 import argparse
 import io
-
+import os
+os.system('export GOOGLE_APPLICATION_CREDENTIALS="[/home/ubuntu/2019SWChallenge]"')
 
 # [START speech_transcribe_async]
 def transcribe_file(speech_file):
@@ -80,16 +81,16 @@ def transcribe_gcs(gcs_uri):
         for alternative in alternatives:
             #print(alternative)
             print('Transcript: {}'.format(alternative.transcript))
-            print('Confidence: {}'.format(alternative.confidence))
+            #print('Confidence: {}'.format(alternative.confidence))
 
-            for word_info in alternative.words:
-                word = word_info.word
-                start_time = word_info.start_time
-                end_time = word_info.end_time
-                print('Word: {}, start_time: {}, end_time: {}'.format(
-                    word,
-                    start_time.seconds + start_time.nanos * 1e-9,
-                    end_time.seconds + end_time.nanos * 1e-9))
+            # for word_info in alternative.words:
+            #     word = word_info.word
+            #     start_time = word_info.start_time
+            #     end_time = word_info.end_time
+            #     print('Word: {}, start_time: {}, end_time: {}'.format(
+            #         word,
+            #         start_time.seconds + start_time.nanos * 1e-9,
+            #         end_time.seconds + end_time.nanos * 1e-9))
 # [END speech_transcribe_async_gcs]
 
 
