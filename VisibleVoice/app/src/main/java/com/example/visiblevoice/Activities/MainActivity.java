@@ -25,9 +25,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fileMenuBtn.setOnClickListener(this);
 
 
-        // get user's email
-        intent=getIntent();
-        email=(String) intent.getExtras().get("email");
+        try{
+            // get user's email
+            intent=getIntent();
+            email=(String) intent.getExtras().get("email");
+//            Log.d("song","get email >>>"+email);
+        }catch (Exception e) {}
         Log.d("song","get email >>>"+email);
     }
 

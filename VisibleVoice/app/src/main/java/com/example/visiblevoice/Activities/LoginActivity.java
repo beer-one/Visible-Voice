@@ -26,6 +26,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
 import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
@@ -85,7 +90,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         googleLoginInit();
         naverLoginInit();
     }
-
     public void logout(){
         try{
             Log.d("song","try google log out");
@@ -108,14 +112,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             e.printStackTrace();
         }
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+            case R.id.loginBtn:
+                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(idText.getText().toString());
+                myRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d("song", "data snapshot: " + dataSnapshot);
+                        String value = dataSnapshot.getValue(String.class);
+                        Log.d("song", "Value is: " + value);
+                        if (value.equals(pwText.getText().toString())) {
+                            intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("email", idText.getText().toString());
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 다시 확인해주세요.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.d("song", "Failed to read value.", error.toException());
+                    }
+                });
+                break;
+            case R.id.joinBtn:
+                intent = new Intent(LoginActivity.this, JoinActivity.class);
+                startActivity(intent);
+        }
     }
 
     private void naverLoginInit() {
@@ -208,12 +238,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
-
-    @Override
-    public void onClick(View view) {
-
-    }
-
 
     private class RequestApiTask extends AsyncTask<Void, Void, Void> {
         private String userEmail;

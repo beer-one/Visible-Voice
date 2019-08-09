@@ -36,8 +36,16 @@ public class JoinActivity extends AppCompatActivity {
             public void onClick(View view) {
                 id=idEditText.getText().toString();
                 String pw=pwEditText.getText().toString();
-                if(id==null || id.length()<4) {
-                    Toast.makeText(JoinActivity.this,"아이디를 4자 이상 입력하세요",Toast.LENGTH_LONG).show();
+                //아이디 유효성 검사 (영문소문자, 숫자만 허용)
+                for (int i = 0; i < id.length(); i++) {
+                    char ch = id.charAt(i);
+                    if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'z')&&!(ch >= 'A' && ch <= 'Z')) {
+                        Toast.makeText(JoinActivity.this,"아이디는 숫자와 영문자만 가능합니다",Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                if(id==null || id.length()<4 || id.length()>12) {
+                    Toast.makeText(JoinActivity.this,"아이디를 4~12자 이내로 입력하세요",Toast.LENGTH_LONG).show();
                     return;
                 }
                 if(pw==null || pw.length()<4) {
