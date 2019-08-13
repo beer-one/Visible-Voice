@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.visiblevoice.HttpConnection;
 import com.example.visiblevoice.R;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public class FileUploadActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1001;
     private String[] permissionedFormat={".*.mp3",".*.mp4",".*.m4a",".*.flac",".*.wav"};
 
-//    private HttpConnection httpConn = HttpConnection.getInstance();
+    private HttpConnection httpConn = HttpConnection.getInstance();
 
 
     private ArrayList<String> Files;
@@ -239,7 +240,7 @@ public class FileUploadActivity extends AppCompatActivity {
 
         new Thread() {
             public void run() {
-                //httpConn.requestWebServer(file, callback);
+                httpConn.requestWebServer(file, callback);
             }
         }.start();
     }
@@ -248,13 +249,13 @@ public class FileUploadActivity extends AppCompatActivity {
         @Override
         public void onFailure(Call call, IOException e) {
             Log.d("dong", "콜백오류:"+e.getMessage());
-            Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
+            //Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String body = response.body().string();
             Log.d("dong", "서버에서 응답한 Body:"+body);
-            Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+            //Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
         }
     };
 
