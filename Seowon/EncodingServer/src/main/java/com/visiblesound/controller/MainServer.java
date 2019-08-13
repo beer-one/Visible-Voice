@@ -47,21 +47,20 @@ public class MainServer {
 
         MultipartFile file = uploadFile;
         saveFile(file);
-        convertFile(file.getOriginalFilename(), "wav");
+        String convertedFilePath = convertFile(file.getOriginalFilename(), "wav");
 
-
-
-        /** code below needs to be tested !!! */
         Date now = new Date();
         Random rand = new Random();
-        String newFileName = dateFormat.format(now) + "."+rand.nextInt(5000);
-        renameFile(file.getOriginalFilename()+".wav",newFileName+".wav");
-        uploadToBucket(newFileName);
+        String newFileName = dateFormat.format(now) + "."+rand.nextInt(10000)+".wav";
+        String renamedFilePath = uploadedFilePath+newFileName;
+        renameFile(convertedFilePath,uploadedFilePath+newFileName);
+        uploadToBucket(uploadedFilePath+newFileName);
 
+        /** code below needs to be tested !!! */
         //json for athentication required !!!
-        runCommand(new String[] { "python3","transcribe_async.py", "gs://visible_voice/"+String(newFileName) });
+        //runCommand(new String[] { "python3","transcribe_async.py", "gs://visible_voice/"+String(newFileName) });
         
-        runCommand(new String[] { "python","generate_word_cloud_with_args.py", "한글을 이곳에 입력하면 워드클라우드를 생성합니다" ,String(newFileName)+".png"});
+        //runCommand(new String[] { "python","generate_word_cloud_with_args.py", "한글을 이곳에 입력하면 워드클라우드를 생성합니다" ,String(newFileName)+".png"});
         
 
         
@@ -72,16 +71,24 @@ public class MainServer {
           // [START storage_upload_file]
           Storage storage = StorageOptions.getDefaultInstance().getService();
           BlobId blobId = BlobId.of("visible_voice", fileName);
-          BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+          BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("audio/wav").build();
           Blob blob = storage.create(blobInfo, "Hello, Cloud Storage!".getBytes(UTF_8));
           // [END storage_upload_file]
           System.out.println("upload finished");
     }
 
     public boolean renameFile(String sourceFileName, String destFileName){
+
+        System.out.println("sourceFileName: "+sourceFileName);
+        System.out.println("destFileName: "+destFileName);
         File f1 = new File(sourceFileName);
-        File f2 = new File(destFileName);  
+        File f2 = new File(destFileName);
+
         boolean b = f1.renameTo(f2);
+
+        if (!b) {
+            System.err.println("Rename Failed");
+        }
         return b;
     }
 
@@ -110,8 +117,8 @@ public class MainServer {
         }
     }
 
-    public void convertFile(String filename, String format) {
-        String convertFileName = dateFormat.format(new Date()) + filename.split("\\.")[0] + "." + format;
+    public String convertFile(String filename, String format) {
+        String convertFileName = filename.split("\\.")[0] + "." + format;
         try {
             FFmpeg ffmpeg = new FFmpeg(ffmpegPath);
             FFprobe fFprobe = new FFprobe(ffprobePath);
@@ -128,6 +135,7 @@ public class MainServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return uploadedFilePath + convertFileName;
     }
 
 
