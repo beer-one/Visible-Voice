@@ -20,6 +20,11 @@
         <activity android:name=".Activities.JoinActivity" ></activity>
         <activity android:name=".Activities.MainActivity" />
         <activity android:name=".Activities.LoginActivity">
+        </activity>
+        <activity
+            android:name="Activities.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
