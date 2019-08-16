@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -238,24 +239,40 @@ public class FileUploadActivity extends AppCompatActivity {
     /** 웹 서버로 데이터 전송 */
     private void sendData(final File file) {
 
-        new Thread() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        httpConn.requestWebServer(file, callback);
+                    }
+                });
+            }
+        }).start();
+        /*ew Thread() {
             public void run() {
                 httpConn.requestWebServer(file, callback);
             }
-        }.start();
+        }.start();*/
     }
 
     private final Callback callback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
             Log.d("dong", "콜백오류:"+e.getMessage());
-            //Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
+            Looper.prepare();
+            Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
+            Looper.loop();
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
             String body = response.body().string();
             Log.d("dong", "서버에서 응답한 Body:"+body);
-            //Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+            Looper.prepare();
+            Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+            Looper.loop();
         }
     };
 
