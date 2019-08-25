@@ -25,10 +25,10 @@ import com.google.cloud.storage.StorageOptions;
 
 @RestController
 public class MainServer {
-    private final String uploadedFilePath = "src/main/resources/uploaded/";
+    private final String uploadedFilePath = "upload/";
     private final String ffmpegPath = "/usr/bin/ffmpeg";
     private final String ffprobePath = "/usr/bin/ffprobe";
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSSSSS");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSSSSS");
     
     @RequestMapping("/")
     public String helloServer() {
@@ -47,35 +47,31 @@ public class MainServer {
 
         MultipartFile file = uploadFile;
         saveFile(file);
-        String convertedFilePath = convertFile(file.getOriginalFilename(), "wav");
-
+        String convertedFilePath = convertFile(file.getOriginalFilename(), "flac");
         Date now = new Date();
         Random rand = new Random();
-        String newFileName = dateFormat.format(now) + "."+rand.nextInt(10000)+".wav";
-        String renamedFilePath = uploadedFilePath+newFileName;
+        String newFileNameBase = dateFormat.format(now) + "_"+rand.nextInt(10000);
+        String newFileName = newFileNameBase + ".flac";
         renameFile(convertedFilePath,uploadedFilePath+newFileName);
-        uploadToBucket(uploadedFilePath+newFileName);
+        System.out.println("newFileName: "+newFileName);
 
-        /** code below needs to be tested !!! */
-        //json for athentication required !!!
-        //runCommand(new String[] { "python3","transcribe_async.py", "gs://visible_voice/"+String(newFileName) });
-        
-        //runCommand(new String[] { "python","generate_word_cloud_with_args.py", "한글을 이곳에 입력하면 워드클라우드를 생성합니다" ,String(newFileName)+".png"});
-        
+        //rename
+        runCommand(new String[] {"python" ,"src/main/java/com/visiblesound/controller/upload_from_server_to_GCP.py",uploadedFilePath+newFileName,"upload/"+newFileName}); 
 
+        //python src/main/java/com/visiblesound/controller/transcribe_async.py gs://visible_voice/out09.flac
+        runCommand(new String[] { "python","src/main/java/com/visiblesound/controller/transcribe_async.py", "gs://visible_voice/upload/"+newFileName });
         
+        //python src/main/java/com/visiblesound/controller/generate_word_cloud_with_args.py /upload/results/out09.json /upload/results/fileNameHere.png
+        runCommand(new String[] { "python","src/main/java/com/visiblesound/controller/generate_word_cloud_with_args.py", "upload/results/"+newFileNameBase+".json"  ,"upload/results/"+ newFileNameBase + ".png"});
+
+        //we have to code sending [newFileNameBase.json],[newFileNameBase.png] to user.
+        //client will rename the files once the client gets files
+
+
+        System.out.println("sending OK to client");
         return "OK";
     }
 
-    public void uploadToBucket(String fileName){
-          // [START storage_upload_file]
-          Storage storage = StorageOptions.getDefaultInstance().getService();
-          BlobId blobId = BlobId.of("visible_voice", fileName);
-          BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("audio/wav").build();
-          Blob blob = storage.create(blobInfo, "Hello, Cloud Storage!".getBytes(UTF_8));
-          // [END storage_upload_file]
-          System.out.println("upload finished");
-    }
 
     public boolean renameFile(String sourceFileName, String destFileName){
 
@@ -93,44 +89,55 @@ public class MainServer {
     }
 
     public void runCommand(String [] args) {
-        Process process;
-        Process mProcess=null;
+        Process process = null;
+       
         try {
             /* run command*/
+            System.out.println("running command ["+args[0]+" "+ args[1]+"]");
             process = Runtime.getRuntime().exec(args);
-            mProcess = process;
+            
         } catch (Exception e) {
             /* Exception handling*/
             System.out.println("Exception Raised" + e.toString());
         }
+
         /* get stdout from the execution*/
-        InputStream stdout = mProcess.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8));
+        InputStream stdout = process.getInputStream();
+        InputStream stderr = process.getErrorStream();
+        BufferedReader stdOutReader = new BufferedReader(new InputStreamReader(stdout, StandardCharsets.UTF_8));
+        BufferedReader stdErrReader = new BufferedReader(new InputStreamReader(stderr, StandardCharsets.UTF_8));
         String line;
         try {
-            while ((line = reader.readLine()) != null) {
+            while ((line = stdOutReader.readLine()) != null) {
                 System.out.println("stdout: " + line);
+            }
+            while ((line = stdErrReader.readLine()) != null) {
+                System.out.println("stderr: " + line);
             }
         } catch (IOException e) {
             /* Exception handling*/
             System.out.println("Exception in reading output" + e.toString());
         }
+
+        
     }
 
     public String convertFile(String filename, String format) {
         String convertFileName = filename.split("\\.")[0] + "." + format;
         try {
             FFmpeg ffmpeg = new FFmpeg(ffmpegPath);
-            FFprobe fFprobe = new FFprobe(ffprobePath);
+            FFprobe ffprobe = new FFprobe(ffprobePath);
 
             FFmpegBuilder builder = new FFmpegBuilder()
                     .setInput(uploadedFilePath + filename)
                     .overrideOutputFiles(true)
                     .addOutput(uploadedFilePath + convertFileName)
-                    .setFormat(format)
+                    .setAudioChannels(1)
+		    .setAudioSampleRate(16000) //(16_000)???
+		    .setFormat(format)
                     .done();
 
-            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, fFprobe);
+            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
             executor.createJob(builder).run();
         } catch (IOException e) {
             e.printStackTrace();
