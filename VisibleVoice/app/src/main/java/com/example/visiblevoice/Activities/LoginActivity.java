@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginBtn.setOnClickListener(this);
         joinBtn.setOnClickListener(this);
 
-        logout();
+//        logout();
 
         googleLoginInit();
         naverLoginInit();
