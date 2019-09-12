@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.example.visiblevoice.R;
 
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView playBtn;
     private Button speedBtn;
     private SeekBar seekBar;
+    private TextView lyricsTextView;
+
 
     private Intent intent;
     private String email;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         playBtn=findViewById(R.id.play);
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
+        lyricsTextView=findViewById(R.id.lyricsTextView);
 
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
@@ -142,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
     }
-
     private void restart_music(){
         if(mediaPlayer!=null)
             mediaPlayer.start();
