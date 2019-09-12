@@ -165,7 +165,7 @@ public class FileUploadActivity extends AppCompatActivity {
 
 
                     // create new folder for uploaded file
-                    newFolderPath=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+fname;
+                    newFolderPath=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/visibleVoice/"+fname;
                     File dir = new File(newFolderPath);
                     dir.mkdir();
                     if (!dir.exists()) { // check
