@@ -75,6 +75,7 @@
                 android:layout_margin="10dp"
                 android:src="@drawable/previous"
                 android:layout_gravity="center"
+                android:visibility="invisible"
                 />
 
             <ImageView
@@ -96,6 +97,7 @@
                 android:layout_margin="10dp"
                 android:src="@drawable/next"
                 android:layout_gravity="center"
+                android:visibility="invisible"
                 />
 
             <Button
