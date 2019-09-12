@@ -107,7 +107,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void play_music(String fileName){
-        fileName= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Over_the_Horizon_mp3/Over_the_Horizon.mp3";
+        if(fileName==null || fileName.equals(""))
+            fileName= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Over_the_Horizon_mp3/Over_the_Horizon.mp3";
         Log.d("song","start trans str to uri : "+ fileName);
 
         Uri fileUri = Uri.parse( fileName );
@@ -120,8 +121,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-//                mediaPlayer.release();
-//                mediaPlayer=null;
                 playBtn.setImageResource(R.drawable.stop);
                 state=0;
                 Log.d("song","state is 0");
@@ -159,24 +158,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         float s=1.0f;
         switch (speed){
             case 0:
-                s=0.5f;
-                speedBtn.setText("x 0.5");
+                s=0.5f;speedBtn.setText("x 0.5");
                 break;
             case 1:
-                s=0.75f;
-                speedBtn.setText("x 0.75");
+                s=0.75f;speedBtn.setText("x 0.75");
                 break;
             case 2:
-                s=1.0f;
-                speedBtn.setText("x 1.0");
+                s=1.0f;speedBtn.setText("x 1.0");
                 break;
             case 3:
-                s=1.5f;
-                speedBtn.setText("x 1.5");
+                s=1.5f;speedBtn.setText("x 1.5");
                 break;
             case 4:
-                s=2.0f;
-                speedBtn.setText("x 2.0");
+                s=2.0f;speedBtn.setText("x 2.0");
                 break;
         }
         Log.d("song","speed = "+ speed +" __ "+s);
