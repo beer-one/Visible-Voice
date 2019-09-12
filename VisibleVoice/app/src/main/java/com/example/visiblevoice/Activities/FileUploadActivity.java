@@ -22,17 +22,18 @@ import android.widget.Toast;
 
 import com.example.visiblevoice.HttpConnection;
 import com.example.visiblevoice.R;
+import com.example.visiblevoice.SFTPClient;
+import com.example.visiblevoice.ServerInfo;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class FileUploadActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1001;
@@ -50,6 +51,7 @@ public class FileUploadActivity extends AppCompatActivity {
     private String currentPath = "";
     private String newFolderPath="";
 
+    private String VVpath = "";//Visible voice path
     private TextView textView;
     private ListView listView;
 
@@ -57,6 +59,7 @@ public class FileUploadActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_upload);
 
@@ -181,7 +184,6 @@ public class FileUploadActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
-
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -270,9 +272,10 @@ public class FileUploadActivity extends AppCompatActivity {
         setFileList(prevPath,prevPath.substring(1,lastSlashPosition));
     }
 
+
     /** 웹 서버로 데이터 전송 */
     private void sendData(final File file) {
-
+        final SFTPClient sftpclient = new SFTPClient();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -280,7 +283,16 @@ public class FileUploadActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        httpConn.requestWebServer(file, callback);
+                        boolean status = false;
+
+                        VVpath = rootPath + "/"+"VisibleVoice";
+                        SFTPClient sftpClient = new SFTPClient();
+
+                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,VVpath+"/"+ServerInfo.privatekey);
+                        sftpClient.mkdir(ServerInfo.folderPath,"dongwook"); // /home/vvuser
+                        //Log.d()
+                        sftpClient.upload("dongwook",file);
+                        httpConn.requestWebServer("dongwook",file.getName(), callback);
                     }
                 });
             }
@@ -302,14 +314,35 @@ public class FileUploadActivity extends AppCompatActivity {
         }
         @Override
         public void onResponse(Call call, Response response) throws IOException {
-            String body = response.body().string();
-            Log.d("dong", "서버에서 응답한 Body:"+body);
-            Looper.prepare();
-            Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+            Log.d("dong","response");
+            System.out.println("response");
+            try {
+                System.out.println("OK");
+                String body = response.body().string();
+                Log.d("dong", "서버에서 응답한 Body:"+body);
+                Looper.prepare();
+                Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+                Looper.loop();
 
-            Looper.loop();
+
+
+                /*File AppDir = new File(getApplicationContext().getFilesDir(),"VisibleVoice");
+                if(!AppDir.exists())
+                    AppDir.mkdirs();
+
+
+                byte[] result = response.body().bytes();
+                File savefile = new File(AppDir.getPath()+"a.json");
+                FileOutputStream os = new FileOutputStream(savefile);
+                os.write(result);
+                os.close();*/
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     };
+
 
 
 }

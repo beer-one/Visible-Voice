@@ -11,7 +11,7 @@ import okhttp3.RequestBody;
 
 public class HttpConnection {
 
-    private static String url = "http://54.180.103.153:8080/upload";
+    private static String url = "http://"+ServerInfo.host+":8080/totext";
     private OkHttpClient client;
     private static HttpConnection instance = new HttpConnection();
     public static HttpConnection getInstance() {
@@ -22,10 +22,13 @@ public class HttpConnection {
 
 
     /** 웹 서버로 요청을 한다. */
-    public void requestWebServer(File file, Callback callback) {
+
+    public void requestWebServer(String username,String filename, Callback callback) {
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("uploadFile", file.getName(), RequestBody.create(MultipartBody.FORM, file))
+                .addFormDataPart("username",username)
+                .addFormDataPart("filename",filename)
+                //.addFormDataPart("uploadFile", file.getName(), RequestBody.create(MultipartBody.FORM, file))
                 .build();
         Request request = new Request.Builder()
                 .url(url)
