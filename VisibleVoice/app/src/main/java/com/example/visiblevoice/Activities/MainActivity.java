@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.visiblevoice.Data.Lyrics;
 import com.example.visiblevoice.R;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private SeekBar seekBar;
     private TextView lyricsTextView;
 
-
     private Intent intent;
     private String email;
 
@@ -39,20 +39,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MediaPlayer mediaPlayer;
     private boolean drag=false;
 
-    private  Thread th=new Thread(
+    private Thread th=new Thread(
             new Runnable(){
                 @Override
                 public void run() { // 쓰레드가 시작되면 콜백되는 메서드
                     // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
                     while(mediaPlayer!=null){
-                        if(!drag){
-                            try {
-                                int progress = mediaPlayer.getCurrentPosition();
-                                seekBar.setProgress(progress);
-                                Thread.sleep(1000);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                        try {
+                            int progress = mediaPlayer.getCurrentPosition();
+                            seekBar.setProgress(progress);
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -89,56 +87,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                drag=true;
-                Log.d("song","drag is true");
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) { }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                drag=false;
-                Log.d("song","drag is false");
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
         try{
             // get user's email
             intent=getIntent();
             email=(String) intent.getExtras().get("email");
-//            Log.d("song","get email >>>"+email);
         }catch (Exception e) {}
+
         Log.d("song","get email >>>"+email);
     }
 
     private void play_music(String fileName){
         if(fileName==null || fileName.equals(""))
             fileName= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Over_the_Horizon_mp3/Over_the_Horizon.mp3";
-        Log.d("song","start trans str to uri : "+ fileName);
 
         Uri fileUri = Uri.parse( fileName );
-        String filePath = fileUri.getPath();
-        Log.d("song","parsing... " + fileUri);
 
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         Log.d("song","set mediaPlayer  "+mediaPlayer.toString());
+
+        // 재생이 끝날때 이벤트 처리
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 playBtn.setImageResource(R.drawable.stop);
                 state=0;
-                Log.d("song","state is 0");
             }
         });
 
-
         try {
+            // 재생 시작
             mediaPlayer.setDataSource(MainActivity.this, fileUri);
             mediaPlayer.prepare(); mediaPlayer.start();
 
             state=1;
-            seekBar.setMax(mediaPlayer.getDuration());
 
+            playBtn.setImageResource(R.drawable.pause);
+
+            seekBar.setMax(mediaPlayer.getDuration());
+            // seekbar 이동을 위한 스레드 시작
             th.start();
             Log.d("song","state is 1");
         } catch (IOException e) {
@@ -147,14 +140,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     private void restart_music(){
-        if(mediaPlayer!=null)
-            mediaPlayer.start();
+        if(mediaPlayer==null) return;
+        mediaPlayer.start();
         state=1;
+        playBtn.setImageResource(R.drawable.pause);
         Log.d("song","state is 1");
     }
     private void pause_music(){
+        if(mediaPlayer==null) return;
         mediaPlayer.pause();
         state=2;
+        playBtn.setImageResource(R.drawable.play);
         Log.d("song","state is 2");
     }
     private void setSpeed(){
@@ -176,9 +172,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 s=2.0f;speedBtn.setText("x 2.0");
                 break;
         }
-        Log.d("song","speed = "+ speed +" __ "+s);
+
         speed=(speed + 1) % 5;
+        if(mediaPlayer==null) return;
         mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(s));
+    }
+
+    private void move_music(Lyrics lyrics){
+        // 리릭스에 입력된 시작 시간부터 미디어를 재생하는 메서드
+        if(mediaPlayer == null) return;
+        mediaPlayer.seekTo(lyrics.getStartTime());
     }
 
     @Override
@@ -194,13 +197,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.play:
                 if(state==0) { // stop -> playing
                     play_music("");
-                    playBtn.setImageResource(R.drawable.pause);
                 } else if (state ==1) { // playing -> pause
                     pause_music();
-                    playBtn.setImageResource(R.drawable.play);
                 } else if(state == 2) { // pause -> playing
                     restart_music();
-                    playBtn.setImageResource(R.drawable.pause);
                 }
                 break;
         }
