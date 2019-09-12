@@ -6,8 +6,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,8 +24,11 @@ import com.example.visiblevoice.HttpConnection;
 import com.example.visiblevoice.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -43,6 +48,7 @@ public class FileUploadActivity extends AppCompatActivity {
     private String nextPath = "";
     private String prevPath = "";
     private String currentPath = "";
+    private String newFolderPath="";
 
     private TextView textView;
     private ListView listView;
@@ -136,10 +142,11 @@ public class FileUploadActivity extends AppCompatActivity {
         // create file object
         final File fileRoot = new File(rootPath);
         // if rootPath is not directory
-        if(fileRoot.isDirectory() == false)        {
-            Toast.makeText(FileUploadActivity.this, "Not Directory" , Toast.LENGTH_SHORT).show();
+        if(fileRoot.isDirectory() == false) {
+            Toast.makeText(FileUploadActivity.this, "Not Directory " + fileName , Toast.LENGTH_SHORT).show();
             Log.d("song","not directory");
             textView.setText(rootPath);
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("파일 변환").setMessage("선택하신 파일 "+fileName+"을 변환하시겠습니까?");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
@@ -148,6 +155,33 @@ public class FileUploadActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     sendData(fileRoot);
+
+                    // make file name string
+                    String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
+                    Log.d("song","fname : "+fname);
+
+
+                    // create new folder for uploaded file
+                    newFolderPath=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+fname;
+                    File dir = new File(newFolderPath);
+                    dir.mkdir();
+                    if (!dir.exists()) { // check
+                        Log.d("song","fail to create new folder");
+                    }else{
+                        Log.d("song","success to create new folder");
+
+                        // create new file and write file full path
+                        try{
+                            byte[] data=rootPath.getBytes();
+                            FileOutputStream fos=new FileOutputStream(newFolderPath+"/path.txt");
+                            for(int i=0;i<data.length;i++)
+                                fos.write(data[i]);
+                            fos.close();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+
                 }
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -272,6 +306,7 @@ public class FileUploadActivity extends AppCompatActivity {
             Log.d("dong", "서버에서 응답한 Body:"+body);
             Looper.prepare();
             Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+
             Looper.loop();
         }
     };
