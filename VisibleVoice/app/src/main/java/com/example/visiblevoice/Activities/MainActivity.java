@@ -34,10 +34,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Intent intent;
     private String email;
 
+    private String filePath;
+
     private int speed=3; // speed has 5 step 0.5, 0.75, 1, 1.5, 2
     private int state=0; // state 0 = stop  // state 1 = playing // state 2 = pause
     private MediaPlayer mediaPlayer;
     private boolean drag=false;
+
+    public static int GET_MUSIC_LIST = 3333;
 
     private Thread th=new Thread(
             new Runnable(){
@@ -55,6 +59,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 }
             });
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == GET_MUSIC_LIST){
+            try{
+                filePath=data.getExtras().getString("path");
+                Log.d("song","get intent... path is "+filePath);
+            }catch (Exception e) {
+                e.printStackTrace();
+                filePath=null;
+                Log.d("song","fail to get intent");
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         speed=(speed + 1) % 5;
         if(mediaPlayer==null) return;
         mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(s));
+        state=1;
+        playBtn.setImageResource(R.drawable.play);
     }
 
     private void move_music(Lyrics lyrics){
@@ -189,13 +209,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.file_menu :
                 intent = new Intent(MainActivity.this, FileListActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, GET_MUSIC_LIST);
                 break;
             case R.id.speedBtn:
                 setSpeed();
                 break;
             case R.id.play:
                 if(state==0) { // stop -> playing
+//                    play_music(filePath);
                     play_music("");
                 } else if (state ==1) { // playing -> pause
                     pause_music();

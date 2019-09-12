@@ -3,45 +3,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:layout_marginVertical="50dp"
     android:orientation="vertical"
     >
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <ListView
-            android:id="@+id/listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-
-        </ListView>
-    </LinearLayout>
-
-    <LinearLayout
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="재생 목록"
+        android:gravity="center"
+        />
+    <ListView
+        android:id="@+id/musicListListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="5"
+        android:layout_height="0dp"
+        android:layout_weight="8"
         >
 
-        <!--오른쪽에 버튼 정렬할라고 추가한거임 view는-->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            ></View>
-        <Button
-            android:id="@+id/fileUploadBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="파일추가 "
-            android:layout_marginRight="20dp"/>
-    </LinearLayout>
+    </ListView>
+    <Button
+        android:id="@+id/fileUploadBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="right"
+        android:text="파일추가 "
+        />
 
 </LinearLayout>
 
