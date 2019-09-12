@@ -1,9 +1,9 @@
 package com.example.visiblevoice.Data;
 
 public class Lyrics {
-    private int startTime;
-    private int finishTime;
-    private String text;
+    private int startTime; // 시작 밀리세컨드
+    private int finishTime; // 끝나는 밀리세컨드
+    private String text; // 해당 구간 가사
 
     public Lyrics(){ }
     public Lyrics(int startTime,String text){
