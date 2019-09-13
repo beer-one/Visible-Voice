@@ -27,12 +27,8 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
     private ArrayList<String> nameList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_file_list);
-
-        fileUploadBtn = findViewById(R.id.fileUploadBtn);
-        musicListListView=findViewById(R.id.musicListListView);
+    protected void onStart() {
+        super.onStart();
 
         nameList=new ArrayList<String>();
         for(Record record:musicListController.musicList)
@@ -40,6 +36,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
 
         listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, nameList);
         musicListListView.setAdapter(listAdapter);
+
         musicListListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -48,6 +45,16 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 finish();
             }
         });
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_file_list);
+
+        fileUploadBtn = findViewById(R.id.fileUploadBtn);
+        musicListListView=findViewById(R.id.musicListListView);
 
         fileUploadBtn.setOnClickListener(this);
     }

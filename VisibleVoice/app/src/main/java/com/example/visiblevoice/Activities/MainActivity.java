@@ -99,14 +99,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
                 if(fromUser){
-                    if(mediaPlayer!=null){
-                        Log.d("song","term is "+i);
-                        mediaPlayer.seekTo(i);
-                    }
-                    if(!mediaPlayer.isPlaying()) {
-                        mediaPlayer.start();
-                        playBtn.setImageResource(R.drawable.pause);
-                        state=1;
+                    try{
+                        if(mediaPlayer!=null){
+                            Log.d("song","term is "+i);
+                            mediaPlayer.seekTo(i);
+                        }
+                        if(!mediaPlayer.isPlaying()) {
+                            mediaPlayer.start();
+                            playBtn.setImageResource(R.drawable.pause);
+                            state=1;
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
                 }
             }
@@ -119,10 +123,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         try{
             // get user's email
-            intent=getIntent();
+            // TO-DO : you should get play list using email
+            //       : musicController.addMusic() <- put record in music controller
+            intent = getIntent();
             email=(String) intent.getExtras().get("email");
-        }catch (Exception e) {}
-
+            ////////////////////////////////////////////////
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         Log.d("song","get email >>>"+email);
     }
 
@@ -139,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
-                playBtn.setImageResource(R.drawable.stop);
+                musicListController.moveNextMusic();
                 state=0;
             }
         });
