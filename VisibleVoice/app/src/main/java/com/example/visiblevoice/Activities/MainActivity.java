@@ -222,7 +222,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.file_menu :
-                mediaPlayer.pause();
+                if(mediaPlayer!=null && mediaPlayer.isPlaying())
+                    mediaPlayer.pause();
+                playing=false;
                 intent = new Intent(MainActivity.this, FileListActivity.class);
                 startActivityForResult(intent, GET_MUSIC_LIST);
                 break;
