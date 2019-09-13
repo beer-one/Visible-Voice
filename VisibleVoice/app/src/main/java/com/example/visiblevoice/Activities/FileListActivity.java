@@ -10,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.visiblevoice.Controller.MusicListController;
+import com.example.visiblevoice.Data.Record;
 import com.example.visiblevoice.R;
 
 import java.io.File;
@@ -21,7 +23,8 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
     private ListView musicListListView;
 
     private ArrayAdapter<String> listAdapter;
-    private ArrayList<String> items;
+    private MusicListController musicListController=MusicListController.getInstance();
+    private ArrayList<String> nameList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +34,20 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
         fileUploadBtn = findViewById(R.id.fileUploadBtn);
         musicListListView=findViewById(R.id.musicListListView);
 
-        items=new ArrayList<String>();
-        listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, items);
+        nameList=new ArrayList<String>();
+        for(Record record:musicListController.musicList)
+            nameList.add(record.file_name);
+
+        listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, nameList);
         musicListListView.setAdapter(listAdapter);
         musicListListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(FileListActivity.this,MainActivity.class);
-                Log.d("song","put extras >> path is  "+ items.get(position));
-                intent.putExtra("path",items.get(position));
-                setResult(3333,intent);
+                musicListController.setCurrent(position);
+                setResult(MainActivity.GET_MUSIC_LIST,intent);
                 finish();
             }
         });
-        items.add("music 1");
-        items.add("music 2");
-        items.add("music 3");
 
         fileUploadBtn.setOnClickListener(this);
     }

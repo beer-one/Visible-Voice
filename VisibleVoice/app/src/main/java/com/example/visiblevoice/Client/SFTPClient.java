@@ -1,4 +1,4 @@
-package com.example.visiblevoice;
+package com.example.visiblevoice.Client;
 
 import android.util.Log;
 

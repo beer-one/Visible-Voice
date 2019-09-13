@@ -6,10 +6,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -20,10 +18,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.visiblevoice.HttpConnection;
+import com.example.visiblevoice.Client.HttpConnection;
 import com.example.visiblevoice.R;
-import com.example.visiblevoice.SFTPClient;
-import com.example.visiblevoice.ServerInfo;
+import com.example.visiblevoice.Client.SFTPClient;
+import com.example.visiblevoice.Client.ServerInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +31,6 @@ import java.util.ArrayList;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 public class FileUploadActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1001;
