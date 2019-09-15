@@ -20,14 +20,15 @@
         <activity android:name=".Activities.JoinActivity" ></activity>
         <activity android:name=".Activities.FileListActivity" ></activity>
         <activity android:name=".Activities.MainActivity" >
+
+        </activity>
+        <activity android:name=".Activities.LoginActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".Activities.LoginActivity">
-
         </activity>
         <activity
             android:name="Activities.SplashActivity"
@@ -37,6 +38,13 @@
 
 
         </activity>
+        <service android:name=".CustomFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
-
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="@string/default_notification_channel_id" />
 </manifest>

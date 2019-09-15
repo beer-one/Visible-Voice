@@ -4,6 +4,7 @@ public class User {
     private String userID;
     private String deviceToken;
 
+    public User() { }
     public User(String userID,String deviceToken) {
             this.userID = userID;
             this.deviceToken = deviceToken;

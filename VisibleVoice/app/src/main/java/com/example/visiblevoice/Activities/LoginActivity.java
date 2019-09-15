@@ -1,7 +1,9 @@
 package com.example.visiblevoice.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,9 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.visiblevoice.Data.User;
 import com.example.visiblevoice.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -31,6 +35,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
 import com.nhn.android.naverlogin.ui.view.OAuthLoginButton;
@@ -67,7 +72,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static OAuthLogin mOAuthLoginModule;
     private OAuthLoginHandler mOAuthLoginHandler;
     public Map<String,String> mUserInfoMap;
+    private CheckBox checkBoxAutoLogin;
 
+    private ProgressDialog progressDialog;
+    //auto login
+    private SharedPreferences auto;
+
+    //firebase
+    private DatabaseReference mDatabase;
+    private String deviceToken;
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +89,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // init
         mContext=LoginActivity.this;
 
+        firebaseAuth = FirebaseAuth.getInstance();
         idText = (EditText) findViewById(R.id.emailEditText);
         pwText = (EditText) findViewById(R.id.passwordEditText);
 
+        auto = getSharedPreferences("auto", AppCompatActivity.MODE_PRIVATE);
+        checkBoxAutoLogin = findViewById(R.id.autoLogin);
+
+        progressDialog = new ProgressDialog(this);
 
         loginBtn = findViewById(R.id.loginBtn);
         joinBtn = findViewById(R.id.joinBtn);
@@ -85,11 +104,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginBtn.setOnClickListener(this);
         joinBtn.setOnClickListener(this);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        deviceToken = FirebaseInstanceId.getInstance().getToken();
 //        logout();
 
         googleLoginInit();
         naverLoginInit();
+
+        //autoLogin();
     }
+
+    private void autoLogin() {
+        String loginId = auto.getString("inputId", null);
+        String loginPwd = auto.getString("inputPwd",null);
+
+        if(loginId != null && loginPwd != null) {
+            Toast.makeText(LoginActivity.this, loginId + "계정으로 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
+    }
+
     public void logout(){
         try{
             Log.d("song","try google log out");
@@ -118,7 +153,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         switch (v.getId()) {
             case R.id.loginBtn:
-                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(idText.getText().toString());
+                loginUser(idText.getText().toString(),pwText.getText().toString());
+                /*DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(idText.getText().toString());
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,6 +164,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         if (value.equals(pwText.getText().toString())) {
                             intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("email", idText.getText().toString());
+                            updateFCMToken();
                             startActivity(intent);
                             finish();
                         } else {
@@ -140,12 +177,69 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         // Failed to read value
                         Log.d("song", "Failed to read value.", error.toException());
                     }
-                });
+                });*/
                 break;
             case R.id.joinBtn:
                 intent = new Intent(LoginActivity.this, JoinActivity.class);
                 startActivity(intent);
         }
+    }
+    // 로그인
+    private void loginUser(final String id, final String pw) {
+        progressDialog.setMessage("로그인 중 입니다.. 기다려 주세요...");
+        progressDialog.show();
+
+        firebaseAuth.signInWithEmailAndPassword(id, pw)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // 로그인 성공
+                            Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
+                            SharedPreferences.Editor autoLogin = auto.edit();
+                            autoLogin.putString("inputId", id);
+                            autoLogin.putString("inputPwd", pw);
+                            autoLogin.commit();
+                            updateFCMToken();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        } else {
+                            // 로그인 실패
+                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        finish();
+                        progressDialog.dismiss();
+
+                    }
+                });
+    }
+    private void updateFCMToken() {
+        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        String key = mDatabase.child("users").push().getKey();
+        final String userid = idText.getText().toString();
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot messageData : dataSnapshot.getChildren()) {
+                    // user 정보 가져오기
+                    User user = messageData.getValue(User.class);
+                    Log.d("login check", user.toString());
+                    // 매치가 되어서 같으면 Token 정보를 바꾼다.
+                    if (userid.equals(user.getUserID())) {
+                        User updateUser = new User(user.getUserID(), deviceToken);
+
+                        mDatabase.child(messageData.getKey()).removeValue();
+                        mDatabase.push().setValue(updateUser);
+                        mDatabase.removeEventListener(this);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Fail", "Fialed to read value");
+            }
+        });
     }
 
     private void naverLoginInit() {
