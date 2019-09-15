@@ -13,13 +13,17 @@ public class Record {
     @PrimaryKey
     @NotNull
     public int id;
-
     public File music_file;
-
     public File json_file;
-
     public Bitmap wordcloud_img;
+    public String full_path;
+    public String file_name;
 
+    public Record(String file_name, String full_path){
+        this.file_name=file_name;
+        this.full_path=full_path;
+    }
+    public Record(){}
     public Record(int id, File music_file, File json_file, Bitmap wordcloud_img) {
         this.id = id;
         this.music_file = music_file;

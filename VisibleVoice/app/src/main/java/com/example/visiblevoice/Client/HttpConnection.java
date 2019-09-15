@@ -1,9 +1,6 @@
-package com.example.visiblevoice;
-
-import java.io.File;
+package com.example.visiblevoice.Client;
 
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

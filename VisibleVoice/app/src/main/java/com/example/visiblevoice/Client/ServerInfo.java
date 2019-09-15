@@ -1,4 +1,4 @@
-package com.example.visiblevoice;
+package com.example.visiblevoice.Client;
 
 public class ServerInfo {
     public static final String host = "52.78.211.178";
