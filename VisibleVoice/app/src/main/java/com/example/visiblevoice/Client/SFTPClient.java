@@ -86,6 +86,7 @@ public class SFTPClient {
                 public void run() {
                     try{
                         Log.d("dong","dir : "+ dir);
+                        //channelSftp.chmod(757,dir);
                         channelSftp.cd(dir);
                         channelSftp.mkdir(mkdirName);
                     }catch (Exception e){
@@ -120,8 +121,10 @@ public class SFTPClient {
                     in[0] = new FileInputStream(file);
                     Log.d("dong","dir : "+dir);
                     Log.d("dong","file : "+file.getName());
+
                     channelSftp.cd(dir);
                     channelSftp.put(in[0], file.getName());
+                    channelSftp.chmod(0757,file.getName());
                 }catch (Exception e){
                     e.printStackTrace();
                 }

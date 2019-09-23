@@ -110,19 +110,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         googleLoginInit();
         naverLoginInit();
+        boolean checkState = auto.getBoolean("checkbox",false);
+        checkBoxAutoLogin.setChecked(checkState);
+        if(checkBoxAutoLogin.isChecked()) {
+            SharedPreferences.Editor autoLogin = auto.edit();
+            autoLogin.putBoolean("checkbox", true);
+            autoLogin.commit();
 
-        //autoLogin();
+            autoLogin();
+        }
+        if(!checkBoxAutoLogin.isChecked()){
+            SharedPreferences.Editor autoLogin = auto.edit();
+            autoLogin.putBoolean("checkbox", false);
+            autoLogin.commit();
+        }
+
     }
 
     private void autoLogin() {
-        String loginId = auto.getString("inputId", null);
-        String loginPwd = auto.getString("inputPwd",null);
+        String loginId = auto.getString("userID", null);
+        String loginPwd = auto.getString("userPwd",null);
 
-        if(loginId != null && loginPwd != null) {
-            Toast.makeText(LoginActivity.this, loginId + "계정으로 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+        idText.setText(loginId);
+        pwText.setText(loginPwd);
+        Toast.makeText(LoginActivity.this, loginId + "계정으로 자동로그인 입니다.", Toast.LENGTH_SHORT).show();
+        loginUser(idText.getText().toString(),pwText.getText().toString());
+        /*if(loginId != null && loginPwd != null) {
+
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
-        }
+        }*/
     }
 
     public void logout(){
@@ -154,30 +171,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.loginBtn:
                 loginUser(idText.getText().toString(),pwText.getText().toString());
-                /*DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("users").child(idText.getText().toString());
-                myRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d("song", "data snapshot: " + dataSnapshot);
-                        String value = dataSnapshot.getValue(String.class);
-                        Log.d("song", "Value is: " + value);
-                        if (value.equals(pwText.getText().toString())) {
-                            intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("email", idText.getText().toString());
-                            updateFCMToken();
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(LoginActivity.this, "아이디와 비밀번호를 다시 확인해주세요.", Toast.LENGTH_LONG).show();
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.d("song", "Failed to read value.", error.toException());
-                    }
-                });*/
                 break;
             case R.id.joinBtn:
                 intent = new Intent(LoginActivity.this, JoinActivity.class);
@@ -197,8 +191,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // 로그인 성공
                             Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor autoLogin = auto.edit();
-                            autoLogin.putString("inputId", id);
-                            autoLogin.putString("inputPwd", pw);
+                            autoLogin.putBoolean("checkbox",checkBoxAutoLogin.isChecked());
+                            autoLogin.putString("userID", id);
+                            autoLogin.putString("userPwd", pw);
                             autoLogin.commit();
                             updateFCMToken();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
