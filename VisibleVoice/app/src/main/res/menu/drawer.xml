@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_item_attachment"
+            android:checked="true"
+
+            android:title="@string/nav_item_logout" />
+    </group>
+
+    <item android:title="@string/nav_sub_menu">
+
+    </item>
+
+</menu>

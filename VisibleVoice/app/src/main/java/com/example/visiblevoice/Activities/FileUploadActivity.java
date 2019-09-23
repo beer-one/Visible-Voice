@@ -2,6 +2,7 @@ package com.example.visiblevoice.Activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,6 +55,7 @@ public class FileUploadActivity extends AppCompatActivity {
 
     private ArrayAdapter<String> listAdapter;
 
+    private SharedPreferences userData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -77,6 +79,7 @@ public class FileUploadActivity extends AppCompatActivity {
         items = new ArrayList<>();
         listAdapter = new ArrayAdapter<String>(FileUploadActivity.this, android.R.layout.simple_list_item_1, items);
 
+        userData = getSharedPreferences("auto", AppCompatActivity.MODE_PRIVATE);
 
         // check sd card is mounted
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
@@ -282,14 +285,15 @@ public class FileUploadActivity extends AppCompatActivity {
                     public void run() {
                         boolean status = false;
 
+                        String username = userData.getString("userID", null);
                         VVpath = rootPath + "/"+"VisibleVoice";
                         SFTPClient sftpClient = new SFTPClient();
 
                         sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,VVpath+"/"+ServerInfo.privatekey);
-                        sftpClient.mkdir(ServerInfo.folderPath,"dongwook"); // /home/vvuser
+                        sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
                         //Log.d()
-                        sftpClient.upload("dongwook",file);
-                        httpConn.requestWebServer("dongwook",file.getName(), callback);
+                        sftpClient.upload(username,file);
+                        httpConn.requestWebServer(username,file.getName(), callback);
                     }
                 });
             }

@@ -1,21 +1,32 @@
 package com.example.visiblevoice.Activities;
 
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.Lyrics;
@@ -24,7 +35,8 @@ import com.example.visiblevoice.R;
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity
+        implements View.OnClickListener,NavigationView.OnNavigationItemSelectedListener{
 
     private ImageView fileMenuBtn;
     private ImageView playBtn;
@@ -45,6 +57,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int GET_MUSIC_LIST = 3333;
 
     public MusicListController musicListController;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+
+    ActionBarDrawerToggle drawerToggle;
+    Toolbar toolbar;
 
     private Thread th=new Thread(
             new Runnable(){
@@ -90,6 +107,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         seekBar=findViewById(R.id.seekbar);
         lyricsTextView=findViewById(R.id.lyricsTextView);
 
+
+        initLayout();
+
+
+        /*mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                menuItem.setChecked(true);
+                mDrawerLayout.closeDrawers();
+
+                int id = menuItem.getItemId();
+                switch (id) {
+                    case R.id.navigation_item_attachment:
+                        Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                        //logout();
+                        break;
+
+
+
+                }
+
+                return true;
+            }
+        });*/
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
@@ -132,6 +176,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         Log.d("song","get email >>>"+email);
+    }
+    private void initLayout() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.dl_main_drawer_root);
+        navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
+        drawerToggle = new ActionBarDrawerToggle(
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.drawer_open,
+                R.string.drawer_close
+        );
+        drawerLayout.addDrawerListener(drawerToggle);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
     private void play_music(String fileName){
@@ -225,7 +288,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(mediaPlayer == null) return;
         mediaPlayer.seekTo(lyrics.getStartTime());
     }
+    private void logout() {
+        startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = auto.edit();
 
+        editor.clear();
+        editor.commit();
+        Toast.makeText(MainActivity.this, "로그아웃", Toast.LENGTH_SHORT).show();
+        SharedPreferences.Editor autoLogin = auto.edit();
+        autoLogin.putBoolean("checkbox",false);
+        autoLogin.commit();
+        finish();
+        //intent = new Intent(MainActivity.this, LoginActivity.class);
+        //startActivity(intent);
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -273,5 +350,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        menuItem.setChecked(true);
+        drawerLayout.closeDrawer(GravityCompat.START);
+        switch(menuItem.getItemId()) {
+            case R.id.navigation_item_attachment:
+                Toast.makeText(this, "logout clicked..", Toast.LENGTH_SHORT).show();
+                logout();
+                break;
+        }
+
+        //drawerLayout.closeDrawer(GravityCompat.START);
+        return false;
+
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
