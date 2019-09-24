@@ -9,3 +9,7 @@ pull 하기.
 - ProjectName : VisibleVoice
 - Language : Java
 - Minimum API level : API 25: Android 7.1.1 (Nougat)
+
+## 참고
+- DrawerLayout, NavigationView 구현 시 참고 : 
+https://duzi077.tistory.com/167
