@@ -1,0 +1,6 @@
+argparse
+google-cloud-speech
+google-cloud-storage
+wordcloud
+matplotlib
+pandas

@@ -46,7 +46,7 @@ for noun in nouns:
 
 #set font and stopwords
 print("pwd: ",os.getcwd())
-font_path = 'src/main/java/com/visiblesound/controller/NanumGothic.ttf'
+font_path = 'src/main/java/com/visiblesound/wordcloud/NanumGothic.ttf'
 stopwords = set(STOPWORDS)   
 
 #init Wordcloud
