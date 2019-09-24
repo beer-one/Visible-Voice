@@ -1,20 +1,15 @@
 package com.example.visiblevoice.Activities;
 
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,7 +28,6 @@ import com.example.visiblevoice.Data.Lyrics;
 import com.example.visiblevoice.R;
 
 import java.io.IOException;
-import java.net.URL;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener,NavigationView.OnNavigationItemSelectedListener{
@@ -45,7 +39,9 @@ public class MainActivity extends AppCompatActivity
     private Button speedBtn;
     private SeekBar seekBar;
     private TextView lyricsTextView;
-
+    private TextView useridView;
+    private View navigationInflater;
+    private SharedPreferences auto;
     private Intent intent;
     private String email;
 
@@ -108,32 +104,15 @@ public class MainActivity extends AppCompatActivity
         lyricsTextView=findViewById(R.id.lyricsTextView);
 
 
+        auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+
+
+
         initLayout();
 
-
-        /*mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                menuItem.setChecked(true);
-                mDrawerLayout.closeDrawers();
-
-                int id = menuItem.getItemId();
-                switch (id) {
-                    case R.id.navigation_item_attachment:
-                        Toast.makeText(MainActivity.this, menuItem.getTitle(), Toast.LENGTH_LONG).show();
-                        //logout();
-                        break;
-
-
-
-                }
-
-                return true;
-            }
-        });*/
+        String userid = auto.getString("userID", null);
+        Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
+        useridView.setText("dongwook");
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
@@ -180,12 +159,17 @@ public class MainActivity extends AppCompatActivity
     private void initLayout() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setTitle("소리가 보인다");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_main_drawer_root);
         navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
+        navigationInflater = getLayoutInflater().inflate(R.layout.nav_header_main, null, false);//다른 view의 객체 가져오기위해사용
+
+        useridView = (TextView) navigationInflater.findViewById((R.id.userIdTextView));
+        Log.d("useridview",useridView.getText().toString());
+        useridView.setText(auto.getString("userID", null));
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
@@ -290,15 +274,15 @@ public class MainActivity extends AppCompatActivity
     }
     private void logout() {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        SharedPreferences auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+
         SharedPreferences.Editor editor = auto.edit();
 
         editor.clear();
         editor.commit();
         Toast.makeText(MainActivity.this, "로그아웃", Toast.LENGTH_SHORT).show();
-        SharedPreferences.Editor autoLogin = auto.edit();
-        autoLogin.putBoolean("checkbox",false);
-        autoLogin.commit();
+        editor = auto.edit();
+        editor.putBoolean("checkbox",false);
+        editor.commit();
         finish();
         //intent = new Intent(MainActivity.this, LoginActivity.class);
         //startActivity(intent);
