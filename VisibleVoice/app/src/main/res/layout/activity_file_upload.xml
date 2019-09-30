@@ -23,7 +23,7 @@
             app:srcCompat="@drawable/directory_icon" />
 
         <TextView
-            android:id="@+id/dirPathTextView"
+            android:id="@+id/fileDownloadTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="4"

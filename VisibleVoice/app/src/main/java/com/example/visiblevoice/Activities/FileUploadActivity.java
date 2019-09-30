@@ -20,6 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.visiblevoice.Client.HttpConnection;
+import com.example.visiblevoice.Controller.MusicListController;
+import com.example.visiblevoice.Data.AppDataInfo;
+import com.example.visiblevoice.Data.Record;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.Client.SFTPClient;
 import com.example.visiblevoice.Client.ServerInfo;
@@ -49,7 +52,7 @@ public class FileUploadActivity extends AppCompatActivity {
     private String currentPath = "";
     private String newFolderPath="";
 
-    private String VVpath = "";//Visible voice path
+    //private String VVpath = "";//Visible voice path
     private TextView textView;
     private ListView listView;
 
@@ -74,12 +77,12 @@ public class FileUploadActivity extends AppCompatActivity {
 
         // init
         Files=new ArrayList<String>();
-        textView = (TextView)findViewById(R.id.dirPathTextView);
+        textView = (TextView)findViewById(R.id.fileDownloadTextView);
         listView = (ListView)findViewById(R.id.uploadFileListView);
         items = new ArrayList<>();
         listAdapter = new ArrayAdapter<String>(FileUploadActivity.this, android.R.layout.simple_list_item_1, items);
 
-        userData = getSharedPreferences("auto", AppCompatActivity.MODE_PRIVATE);
+        userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
 
         // check sd card is mounted
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
@@ -144,6 +147,7 @@ public class FileUploadActivity extends AppCompatActivity {
     public boolean setFileList(final String rootPath, final String fileName)    {
         // create file object
         final File fileRoot = new File(rootPath);
+        final MusicListController musicListController = new MusicListController();
         // if rootPath is not directory
         if(fileRoot.isDirectory() == false) {
             Toast.makeText(FileUploadActivity.this, "Not Directory " + fileName , Toast.LENGTH_SHORT).show();
@@ -158,6 +162,8 @@ public class FileUploadActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     sendData(fileRoot);
+                    Record record = new Record(fileName, fileRoot);
+                    musicListController.addMusic(record);
 
                     // make file name string
                     String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
@@ -285,11 +291,11 @@ public class FileUploadActivity extends AppCompatActivity {
                     public void run() {
                         boolean status = false;
 
-                        String username = userData.getString("userID", null);
-                        VVpath = rootPath + "/"+"VisibleVoice";
+                        String username = userData.getString(AppDataInfo.Login.userID, null);
+                        //VVpath = rootPath + "/"+"VisibleVoice";
                         SFTPClient sftpClient = new SFTPClient();
 
-                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,VVpath+"/"+ServerInfo.privatekey);
+                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,AppDataInfo.Path.VisibleVoiceFolder+"/"+ServerInfo.privatekey);
                         sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
                         //Log.d()
                         sftpClient.upload(username,file);
@@ -298,7 +304,7 @@ public class FileUploadActivity extends AppCompatActivity {
                 });
             }
         }).start();
-        /*ew Thread() {
+        /*ew Thread() {e
             public void run() {
                 httpConn.requestWebServer(file, callback);
             }

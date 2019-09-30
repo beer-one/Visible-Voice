@@ -1,5 +1,6 @@
 package com.example.visiblevoice.Controller;
 
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
 
@@ -11,12 +12,15 @@ public class MusicListController {
     public ArrayList<Record> musicList;
     public int current=0;
     private static MusicListController instance;
+    private SharedPreferences musicdata;
     public MusicListController(){
         Log.d("song","music controller created");
         instance=this;
         musicList=new ArrayList<Record>();
 
+        //musicdata.getAll()
         // set sample (you should remove this code)
+
         String path= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Over_the_Horizon_mp3/Over_the_Horizon.mp3";
         String fileName="Over_the_Horizon.mp3";
         Record record1=new Record(fileName,path);
@@ -32,6 +36,7 @@ public class MusicListController {
         String fileName3="test3.mp4";
         Record record3=new Record(fileName3,path3);
         addMusic(record3);
+
 
         Log.d("song","music list size: "+musicList.size());
         Log.d("song","music list 0 : "+musicList.get(0).file_name);

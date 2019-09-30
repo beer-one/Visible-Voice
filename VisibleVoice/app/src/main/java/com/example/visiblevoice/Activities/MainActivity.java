@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.visiblevoice.Controller.MusicListController;
+import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.Lyrics;
 import com.example.visiblevoice.R;
 
@@ -104,13 +105,13 @@ public class MainActivity extends AppCompatActivity
         lyricsTextView=findViewById(R.id.lyricsTextView);
 
 
-        auto = getSharedPreferences("auto", Activity.MODE_PRIVATE);
+        auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
 
 
 
         initLayout();
 
-        String userid = auto.getString("userID", null);
+        String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
         useridView.setText("dongwook");
         fileMenuBtn.setOnClickListener(this);
@@ -139,9 +140,13 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) { }
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
         });
 
         try{
@@ -169,7 +174,7 @@ public class MainActivity extends AppCompatActivity
 
         useridView = (TextView) navigationInflater.findViewById((R.id.userIdTextView));
         Log.d("useridview",useridView.getText().toString());
-        useridView.setText(auto.getString("userID", null));
+        useridView.setText(auto.getString(AppDataInfo.Login.userID, null));
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,
