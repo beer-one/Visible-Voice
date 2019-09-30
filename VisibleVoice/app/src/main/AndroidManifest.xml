@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <meta-data
@@ -18,7 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.FileDownloadActivity"></activity>
+        <activity android:name=".Activities.FileDownloadActivity">
+
+        </activity>
         <activity android:name=".Activities.WordCloudActivity" />
         <activity android:name=".Activities.FileUploadActivity"></activity>
         <activity android:name=".Activities.JoinActivity" />
@@ -37,21 +40,18 @@
             android:theme="@style/SplashTheme"></activity>
 
         <service
-            android:name=".CustomFirebaseMessagingService">
+            android:name=".CustomFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
 
-        출처: https://faith-developer.tistory.com/158 [개발 이야기]
-        <service
-            android:name=".MyJobService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
-            </intent-filter>
-        </service>
+
     </application>
 
 </manifest>

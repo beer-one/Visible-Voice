@@ -1,13 +1,26 @@
 package com.example.visiblevoice.Client;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.renderscript.ScriptGroup;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -18,7 +31,12 @@ import com.jcraft.jsch.SftpException;
 public class SFTPClient {
 
     private Session session = null;
+    private final int BUFSIZE = 4096;
+    private final byte[] buffer = new byte[BUFSIZE];
+    private ArrayList<Byte> byteArray;
 
+
+    private InputStream in;
     private Channel channel = null;
 
     private ChannelSftp channelSftp = null;
@@ -39,9 +57,16 @@ public class SFTPClient {
 
         final JSch jSch = new JSch();
         try {
-            if(privateKey!=null) {//키가 존재한다면
-                jSch.addIdentity(privateKey);
+            Log.d("sftp", privateKey);
+            File f = new File(privateKey);
+            File pub = new File(privateKey+".pub");
+            if(f.isFile() && pub.isFile()) {//키가 존재한다면
+
+                jSch.addIdentity(privateKey, privateKey+".pub", null);
                 Log.d("sftp","key가 있다");
+            }
+            else{
+                Log.d("sftp","key가 없다");
             }
             Thread sftpConnectionThread = new Thread() {
                 public void run() {
@@ -86,9 +111,10 @@ public class SFTPClient {
                 public void run() {
                     try{
                         Log.d("dong","dir : "+ dir);
-                        //channelSftp.chmod(757,dir);
+
                         channelSftp.cd(dir);
                         channelSftp.mkdir(mkdirName);
+                        channelSftp.chmod(0777,dir+"/"+mkdirName);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -159,36 +185,77 @@ public class SFTPClient {
      * @param path
      *            저장될 공간
      */
-    public void download(String dir, String downloadFileName, String path) {
-        InputStream in = null;
-        FileOutputStream out = null;
-        try {
-            channelSftp.cd(dir);
-            in = channelSftp.get(downloadFileName);
-        } catch (SftpException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public ArrayList<Byte> download(final String dir, final String downloadFileName, final String path) {
 
-        try {
-            out = new FileOutputStream(new File(path));
-            int i;
 
-            while ((i = in.read()) != -1) {
-                out.write(i);
-            }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
+
+        try{
+            Thread downloadThread = new Thread() {
+                public void run() {
+                    try {
+                        BufferedInputStream bis;
+                        channelSftp.cd(dir);
+
+                        // Download file
+                        Log.d("download log","ls : "+channelSftp.ls(dir));
+                        in = channelSftp.get(dir+"/"+downloadFileName);
+                        Log.d("download log","in : "+in);
+
+                        byteArray = new ArrayList<Byte>();
+
+                        int len;
+                        try {
+                            while ((len = in.read(buffer)) > 0) {
+                                for(int i = 0; i < len; i++)
+                                    byteArray.add(buffer[i]);
+                            }
+                        }
+                        catch (IOException ie) {
+                            ie.printStackTrace();
+                        }
+
+
+                       /* File newFile = new File(path + "/" + downloadFileName);
+
+                        if (!newFile.getParentFile().mkdirs())
+                            throw new IOException("Unable to create " + newFile.getParentFile());
+                        FileOutputStream os = new FileOutputStream(newFile);
+                        Log.d("download log","os : "+os);
+                        int readCount;
+                        while ((readCount = in.read(buffer)) > 0) {
+                            os.write(buffer, 0, readCount);
+                        }
+                        in.close();
+                        os.close();*/
+                    } catch (SftpException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                }
+            };
+            //Log.d("download log","리턴전 in : "+in);
             try {
-                out.close();
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                downloadThread.start();
+                downloadThread.join();
+                Log.d("download log","리턴전 in : "+in);
+                return byteArray;
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+                Log.d("download test","에러 출력  : "+ie);
             }
-
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
+        return null;
+       /* try {
+            downloadThread.start();
+            downloadThread.join();
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+            Log.d("download test","에러 출력  : "+ie);
+        }*/
 
     }
 

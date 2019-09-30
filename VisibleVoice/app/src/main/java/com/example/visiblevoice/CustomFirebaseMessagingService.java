@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import androidx.work.OneTimeWorkRequest;
@@ -19,6 +21,7 @@ import androidx.work.WorkManager;
 
 import com.example.visiblevoice.Activities.FileDownloadActivity;
 
+import com.example.visiblevoice.Data.AppDataInfo;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -28,7 +31,7 @@ import java.util.Map;
 public class CustomFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-
+    private SharedPreferences down;
     /**
      * Called when message is received.
      *
@@ -75,7 +78,20 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
-        sendNotification(remoteMessage.getNotification().getBody());
+        try{
+            sendNotification(remoteMessage.getNotification().getBody());
+        }
+        catch (NullPointerException ne) {
+            ne.printStackTrace();
+        }
+        down = getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
+        SharedPreferences.Editor download = down.edit();
+        download.putString(AppDataInfo.File.json, remoteMessage.getData().get("json"));
+        download.putString(AppDataInfo.File.png, remoteMessage.getData().get("png"));
+        download.commit();
+        Log.d(TAG,"filename 출력1 : "+ remoteMessage.getData().toString());
+        Log.d(TAG,"filename 출력2 : "+ remoteMessage.getData().get("json"));
+        Log.d(TAG,"filename 출력3 : "+ down.getString(AppDataInfo.File.json,"null"));
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }

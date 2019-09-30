@@ -23,6 +23,10 @@ public class Record {
         this.file_name=file_name;
         this.full_path=full_path;
     }
+    public Record(String file_name, File music_file){
+        this.file_name = file_name;
+        this.music_file = music_file;
+    }
     public Record(){}
     public Record(int id, File music_file, File json_file, Bitmap wordcloud_img) {
         this.id = id;

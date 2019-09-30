@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.User;
 import com.example.visiblevoice.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -93,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         idText = (EditText) findViewById(R.id.emailEditText);
         pwText = (EditText) findViewById(R.id.passwordEditText);
 
-        auto = getSharedPreferences("auto", AppCompatActivity.MODE_PRIVATE);
+        auto = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
         checkBoxAutoLogin = findViewById(R.id.autoLogin);
 
         progressDialog = new ProgressDialog(this);
@@ -110,26 +111,26 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         googleLoginInit();
         naverLoginInit();
-        boolean checkState = auto.getBoolean("checkbox",false);
+        boolean checkState = auto.getBoolean(AppDataInfo.Login.checkbox,false);
         checkBoxAutoLogin.setChecked(checkState);
         if(checkBoxAutoLogin.isChecked()) {
             SharedPreferences.Editor autoLogin = auto.edit();
-            autoLogin.putBoolean("checkbox", true);
+            autoLogin.putBoolean(AppDataInfo.Login.checkbox, true);
             autoLogin.commit();
 
             autoLogin();
         }
         if(!checkBoxAutoLogin.isChecked()){
             SharedPreferences.Editor autoLogin = auto.edit();
-            autoLogin.putBoolean("checkbox", false);
+            autoLogin.putBoolean(AppDataInfo.Login.checkbox, false);
             autoLogin.commit();
         }
 
     }
 
     private void autoLogin() {
-        String loginId = auto.getString("userID", null);
-        String loginPwd = auto.getString("userPwd",null);
+        String loginId = auto.getString(AppDataInfo.Login.userID, null);
+        String loginPwd = auto.getString(AppDataInfo.Login.userPwd,null);
 
         idText.setText(loginId);
         pwText.setText(loginPwd);
@@ -191,9 +192,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // 로그인 성공
                             Toast.makeText(LoginActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                             SharedPreferences.Editor autoLogin = auto.edit();
-                            autoLogin.putBoolean("checkbox",checkBoxAutoLogin.isChecked());
-                            autoLogin.putString("userID", id);
-                            autoLogin.putString("userPwd", pw);
+                            autoLogin.putBoolean(AppDataInfo.Login.checkbox,checkBoxAutoLogin.isChecked());
+                            autoLogin.putString(AppDataInfo.Login.userID, id);
+                            autoLogin.putString(AppDataInfo.Login.userPwd, pw);
                             autoLogin.commit();
                             updateFCMToken();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
