@@ -6,14 +6,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.User;
@@ -25,6 +27,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -36,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.nhn.android.naverlogin.OAuthLogin;
 import com.nhn.android.naverlogin.OAuthLoginHandler;
@@ -80,7 +86,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences auto;
 
     //firebase
-    private DatabaseReference mDatabase;
+    //private DatabaseReference mDatabase;
+    private FirebaseFirestore db;
     private String deviceToken;
     private FirebaseAuth firebaseAuth;
     @Override
@@ -105,7 +112,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginBtn.setOnClickListener(this);
         joinBtn.setOnClickListener(this);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
         deviceToken = FirebaseInstanceId.getInstance().getToken();
 //        logout();
 
@@ -209,7 +221,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
     private void updateFCMToken() {
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+        Map<String, String> user_data = new HashMap<>();
+        user_data.put("deviceToken",deviceToken);
+        db.collection("users").document(idText.getText().toString())
+                .set(user_data)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("firestore", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("firestore", "Error writing document", e);
+                    }
+                });
+
+        /*mDatabase = FirebaseDatabase.getInstance().getReference("users");
         String key = mDatabase.child("users").push().getKey();
         final String userid = idText.getText().toString();
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -235,7 +264,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("Fail", "Fialed to read value");
             }
-        });
+        });*/
     }
 
     private void naverLoginInit() {

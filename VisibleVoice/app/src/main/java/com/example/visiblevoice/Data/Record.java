@@ -1,8 +1,10 @@
 package com.example.visiblevoice.Data;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+
 import android.graphics.Bitmap;
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.firebase.database.annotations.NotNull;
 
