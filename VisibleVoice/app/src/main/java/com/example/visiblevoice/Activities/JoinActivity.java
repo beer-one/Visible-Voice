@@ -3,18 +3,22 @@ package com.example.visiblevoice.Activities;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.visiblevoice.Data.User;
 import com.example.visiblevoice.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.database.DataSnapshot;
@@ -22,9 +26,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class JoinActivity extends AppCompatActivity {
     private EditText idEditText;
@@ -37,7 +46,8 @@ public class JoinActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 //    private FirebaseDatabase mDatabase;
     private String deviceToken;
-    private DatabaseReference myRef;
+   // private DatabaseReference myRef;
+    private FirebaseFirestore db;
     private ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +57,19 @@ public class JoinActivity extends AppCompatActivity {
         idEditText=(EditText)findViewById(R.id.idEditText);
         pwEditText=(EditText)findViewById(R.id.pwEditText);
         rePwEditText=(EditText)findViewById(R.id.rePwEditText);
-        myRef = FirebaseDatabase.getInstance().getReference("users");
+        //myRef = FirebaseDatabase.getInstance().getReference("users");
         firebaseAuth = firebaseAuth.getInstance();
         deviceToken = FirebaseInstanceId.getInstance().getToken();
         joinButton=(Button)findViewById(R.id.joinButton);
         progressDialog = new ProgressDialog(this);
+
+        db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
+
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,52 +106,12 @@ public class JoinActivity extends AppCompatActivity {
                     return;
                 }
 
-                Log.d("song","get key : " + myRef);
+                Log.d("song","get key : " + db);
                 createUser(id, pw);
-
-                // Read from the database
-
-                /*myRef.addValueEventListener(new ValueEventListener() {
-
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        // This method is called once with the initial value and again
-                        // whenever data at this location is updated.
-                        if(dataSnapshot.child(id).exists()){
-                            Log.d("song","exists");
-                            exs=true;
-                        }
-                        else{
-                            Log.d("song","not exists");
-                            exs=false;
-                        }
-//                        String value = dataSnapshot.getValue(String.class);
-//                        Log.d("song", "Value is: " + value);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.d("song", "Failed to read value.", error.toException());
-                    }
-                });
-
-                if(exs) {
-                    Log.d("song","exs is true");
-                    Toast.makeText(JoinActivity.this,"이미 존재하는 아이디 입니다.",Toast.LENGTH_LONG).show();
-                    return;
-                }*/
-
-               /* User user = new User(id,deviceToken);
-                myRef.child(id).setValue(user);
-                //myRef.child(id).setValue(pw);
-                Log.d("song", "set value " + pw);
-                Toast.makeText(JoinActivity.this,"회원가입에 성공했습니다.",Toast.LENGTH_LONG).show();
-                finish();*/
             }
         });
     }
-    private ValueEventListener checkRegister = new ValueEventListener() {
+    /*private ValueEventListener checkRegister = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
@@ -153,7 +131,7 @@ public class JoinActivity extends AppCompatActivity {
         @Override
         public void onCancelled(@NonNull DatabaseError databaseError) {
         }
-    };
+    };*/
 
     private void createUser(final String id, String pw) {
         progressDialog.setMessage("등록중입니다. 기다려 주세요...");
@@ -169,7 +147,23 @@ public class JoinActivity extends AppCompatActivity {
                             Toast.makeText(JoinActivity.this,"회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show();
                             // 성공 이후 rdb에 회원정보 upload
                             //databaseReference.addListenerForSingleValueEvent(checkRegister);
-                            myRef.addListenerForSingleValueEvent(checkRegister);
+                            //myRef.addListenerForSingleValueEvent(checkRegister);
+                            Map<String, String> user_data = new HashMap<>();
+                            user_data.put("deviceToken",deviceToken);
+                            db.collection("users").document(id)
+                                    .set(user_data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("firestore", "DocumentSnapshot successfully written!");
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("firestore", "Error writing document", e);
+                                        }
+                                    });
                             //startActivity(new Intent(JoinActivity.this, LoginActivity.class));
                         } else {
                             // 회원가입 실패

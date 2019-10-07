@@ -10,12 +10,11 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.PowerManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -92,6 +91,7 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG,"filename 출력1 : "+ remoteMessage.getData().toString());
         Log.d(TAG,"filename 출력2 : "+ remoteMessage.getData().get("json"));
         Log.d(TAG,"filename 출력3 : "+ down.getString(AppDataInfo.File.json,"null"));
+
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
     }

@@ -1,21 +1,13 @@
 package com.example.visiblevoice.Client;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.renderscript.ScriptGroup;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
 import android.util.Log;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -161,11 +153,9 @@ public class SFTPClient {
                     catch(IOException ie){
                         ie.printStackTrace();
                     }
-
                 }
             }
         };
-
         try {
             uploadThread.start();
             uploadThread.join();
@@ -186,16 +176,12 @@ public class SFTPClient {
      *            저장될 공간
      */
     public ArrayList<Byte> download(final String dir, final String downloadFileName, final String path) {
-
-
-
         try{
             Thread downloadThread = new Thread() {
                 public void run() {
                     try {
                         BufferedInputStream bis;
                         channelSftp.cd(dir);
-
                         // Download file
                         Log.d("download log","ls : "+channelSftp.ls(dir));
                         in = channelSftp.get(dir+"/"+downloadFileName);
@@ -214,19 +200,6 @@ public class SFTPClient {
                             ie.printStackTrace();
                         }
 
-
-                       /* File newFile = new File(path + "/" + downloadFileName);
-
-                        if (!newFile.getParentFile().mkdirs())
-                            throw new IOException("Unable to create " + newFile.getParentFile());
-                        FileOutputStream os = new FileOutputStream(newFile);
-                        Log.d("download log","os : "+os);
-                        int readCount;
-                        while ((readCount = in.read(buffer)) > 0) {
-                            os.write(buffer, 0, readCount);
-                        }
-                        in.close();
-                        os.close();*/
                     } catch (SftpException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -247,16 +220,7 @@ public class SFTPClient {
         }catch (Exception e){
             e.printStackTrace();
         }
-
         return null;
-       /* try {
-            downloadThread.start();
-            downloadThread.join();
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-            Log.d("download test","에러 출력  : "+ie);
-        }*/
-
     }
 
     /**
