@@ -164,8 +164,8 @@ public class FileUploadActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     sendData(fileRoot);
-                    Record record = new Record(fileName, fileRoot);
-                    musicListController.addMusic(record);
+                    //Record record = new Record(fileName, fileRoot);
+                    //musicListController.addMusic(record);
 
                     // make file name string
                     String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
@@ -306,11 +306,7 @@ public class FileUploadActivity extends AppCompatActivity {
                 });
             }
         }).start();
-        /*ew Thread() {e
-            public void run() {
-                httpConn.requestWebServer(file, callback);
-            }
-        }.start();*/
+
     }
 
     private final Callback callback = new Callback() {
@@ -332,19 +328,6 @@ public class FileUploadActivity extends AppCompatActivity {
                 Looper.prepare();
                 Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
                 Looper.loop();
-
-
-
-                /*File AppDir = new File(getApplicationContext().getFilesDir(),"VisibleVoice");
-                if(!AppDir.exists())
-                    AppDir.mkdirs();
-
-
-                byte[] result = response.body().bytes();
-                File savefile = new File(AppDir.getPath()+"a.json");
-                FileOutputStream os = new FileOutputStream(savefile);
-                os.write(result);
-                os.close();*/
 
             } catch (Exception e) {
                 e.printStackTrace();

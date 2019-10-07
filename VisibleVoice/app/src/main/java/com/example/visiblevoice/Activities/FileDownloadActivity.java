@@ -1,14 +1,18 @@
 package com.example.visiblevoice.Activities;
 
 import android.Manifest;
+
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,13 +62,32 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.file_download_btn:
+
                 Log.d("dong", "json 다운로드 : "+jsontextView.getText().toString());
                 receiveData(jsontextView.getText().toString());
-                //Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
-                //receiveData(pngtextView.getText().toString());
+                Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
+                receiveData(pngtextView.getText().toString());
+                try {
+
+                    Thread.sleep(1000); //1초 대기
+
+                } catch (InterruptedException e) {
+
+                    e.printStackTrace();
+
+                }
+
+                Log.d("dong", "종료");
+                Toast.makeText(getApplicationContext(),"파일 다운로드가 완료되었습니다.",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(FileDownloadActivity.this, FileListActivity.class);
+                startActivity(intent);
 
 
-                break;
+
+                //finish();
+
+
+               
         }
     }
     /** 웹 서버에서 데이터 다운로드 */
@@ -79,8 +102,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                progressDialog.setMessage("파일다운로드 중 입니다.. 기다려 주세요...");
-                                progressDialog.show();
+
                                 boolean status = false;
                                 Log.d("dong", "receive ");
                                 String username = userData.getString(AppDataInfo.Login.userID, null);
@@ -99,13 +121,14 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                                 //httpConn.requestWebServer(username,file.getName(), callback);
                                 File newFile = new File(AppDataInfo.Path.VisibleVoiceFolder + "/" + filename);
 
+
                                 if (!newFile.exists()){
                                     try {
                                         newFile.createNewFile();
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                }
+                            }
 
 
                                 try {
@@ -142,11 +165,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
             downloadThread.start();
             downloadThread.join();
             Log.d("join test","레드벨벳");
-            if(progressDialog!=null){
-                progressDialog.dismiss();
-                finish();
-            }
-
+            Toast.makeText(FileDownloadActivity.this, "파일다운로드 완료", Toast.LENGTH_SHORT).show();
             Log.d("join test","아이린");
         } catch (InterruptedException e) {
             e.printStackTrace();
