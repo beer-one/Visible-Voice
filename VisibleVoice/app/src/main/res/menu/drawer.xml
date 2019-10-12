@@ -12,5 +12,10 @@
     <item android:title="@string/nav_sub_menu">
 
     </item>
+    <item
+        android:id="@+id/FileDownloadActivitybtn"
+        android:checked="true"
+
+        android:title="최근파일 다운로드" />
 
 </menu>
