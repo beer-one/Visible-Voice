@@ -355,6 +355,10 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "logout clicked..", Toast.LENGTH_SHORT).show();
                 logout();
                 break;
+            case R.id.FileDownloadActivitybtn:
+                Toast.makeText(this, "최근파일다운로드 clicked..", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, FileDownloadActivity.class));
+                break;
         }
 
         //drawerLayout.closeDrawer(GravityCompat.START);

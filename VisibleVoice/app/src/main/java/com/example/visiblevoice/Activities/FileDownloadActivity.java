@@ -3,10 +3,13 @@ package com.example.visiblevoice.Activities;
 import android.Manifest;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
@@ -15,10 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.visiblevoice.Client.SFTPClient;
 import com.example.visiblevoice.Client.ServerInfo;
+import com.example.visiblevoice.CustomFirebaseMessagingService;
 import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.R;
 
@@ -62,34 +67,81 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.file_download_btn:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("파일 다운로드").setMessage("변환된 파일을 다운로드 하시겠습니까?");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
+                        try{
+                            new BackgroundTask().execute();
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
 
-                Log.d("dong", "json 다운로드 : "+jsontextView.getText().toString());
-                receiveData(jsontextView.getText().toString());
-                Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
-                receiveData(pngtextView.getText().toString());
-                try {
 
-                    Thread.sleep(1000); //1초 대기
+                break;
 
-                } catch (InterruptedException e) {
-
-                    e.printStackTrace();
-
-                }
-
-                Log.d("dong", "종료");
-                Toast.makeText(getApplicationContext(),"파일 다운로드가 완료되었습니다.",Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(FileDownloadActivity.this, FileListActivity.class);
-                startActivity(intent);
-
-
-
-                //finish();
-
-
-               
         }
     }
+    //새로운 TASK정의 (AsyncTask)
+    // < >안에 들은 자료형은 순서대로 doInBackground, onProgressUpdate, onPostExecute의 매개변수 자료형을 뜻한다.(내가 사용할 매개변수타입을 설정하면된다)
+    class BackgroundTask extends AsyncTask<Void , Void , Void> {
+
+
+        //초기화 단계에서 사용한다. 초기화관련 코드를 작성했다.
+        protected void onPreExecute() {
+            progressDialog.setMessage("다운로드중입니다.. 기다려 주세요...");
+            progressDialog.show();
+        }
+
+        //스레드의 주작업 구현
+        //여기서 매개변수 Intger ... values란 values란 이름의 Integer배열이라 생각하면된다.
+        //배열이라 여러개를 받을 수 도 있다. ex) excute(100, 10, 20, 30); 이런식으로 전달 받으면 된다.
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Log.d("dong", "json 다운로드 : "+jsontextView.getText().toString());
+            receiveData(jsontextView.getText().toString());
+            Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
+            receiveData(pngtextView.getText().toString());
+
+            try {
+
+                Thread.sleep(4000); //5초 대기
+
+            } catch (InterruptedException e) {
+
+                e.printStackTrace();
+
+            }
+            progressDialog.dismiss();
+            Log.d("dong", "progressDialog 출력완료");
+            //Toast.makeText(getApplicationContext(),"파일 다운로드가 완료되었습니다.",Toast.LENGTH_SHORT).show();
+            Log.d("dong", "토스트 출력 완료");
+            Intent intent = new Intent(FileDownloadActivity.this, FileListActivity.class);
+            startActivity(intent);
+            return null;
+        }
+
+        //Task가 취소되었을때 호출
+        protected void onCancelled() {
+            Log.d("dong", "취소됨");
+        }
+    }
+
     /** 웹 서버에서 데이터 다운로드 */
     private void receiveData(final String filename) {
 
@@ -165,7 +217,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
             downloadThread.start();
             downloadThread.join();
             Log.d("join test","레드벨벳");
-            Toast.makeText(FileDownloadActivity.this, "파일다운로드 완료", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(FileDownloadActivity.this, "파일다운로드 완료", Toast.LENGTH_SHORT).show();
             Log.d("join test","아이린");
         } catch (InterruptedException e) {
             e.printStackTrace();
