@@ -178,12 +178,17 @@ public class FileUploadActivity extends AppCompatActivity {
                             .build()
                             .getRecordDAO();
 
-                    Record record = new Record();
-                    record.setFileName(fileName.substring(0,fileName.length()-4));
-                    record.setAudioPath(fileRoot.getAbsolutePath());
-                    record.setWordCloudPath(null);
-                    record.setJsonPath(null);
-                    recordDAO.insert(record);
+                    try{
+                        Record record = new Record();
+                        record.setFileName(fileName.substring(0,fileName.length()-4));
+                        record.setAudioPath(fileRoot.getAbsolutePath());
+                        record.setWordCloudPath(null);
+                        record.setJsonPath(null);
+                        recordDAO.insert(record);
+                    }
+                    catch (Exception e){
+                        e.printStackTrace();
+                    }
 
                     // make file name string
                     String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
