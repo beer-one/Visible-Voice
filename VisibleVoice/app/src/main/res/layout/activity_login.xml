@@ -74,7 +74,8 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="#A6B6EA"
+            android:background="@color/AppColor"
+            android:textColor="#ffffff"
             android:text="Login" />
 
         <Button
@@ -83,7 +84,8 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="#A6B6EA"
+            android:background="@color/AppColor"
+            android:textColor="#ffffff"
             android:text="JOIN" />
     </LinearLayout>
 
