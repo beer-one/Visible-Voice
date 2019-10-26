@@ -2,6 +2,7 @@ package com.example.visiblevoice.Activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -164,8 +165,8 @@ public class FileUploadActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     sendData(fileRoot);
-                    //Record record = new Record(fileName, fileRoot);
-                    //musicListController.addMusic(record);
+                    Record record = new Record(fileName, fileRoot);
+                    musicListController.addMusic(record);
 
                     // make file name string
                     String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
@@ -327,7 +328,9 @@ public class FileUploadActivity extends AppCompatActivity {
                 Log.d("dong", "서버에서 응답한 Body:"+body);
                 Looper.prepare();
                 Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(FileUploadActivity.this, FileListActivity.class));
                 Looper.loop();
+
 
             } catch (Exception e) {
                 e.printStackTrace();
