@@ -12,13 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#03A9F4"
+        android:background="@color/AppColor"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/dirImageView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="5dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/directory_icon" />
 
@@ -28,6 +29,7 @@
             android:layout_height="match_parent"
             android:layout_weight="4"
             android:gravity="center"
+            android:textColor="#ffffff"
             android:text="TextView" />
 
     </LinearLayout>
@@ -36,6 +38,7 @@
         android:id="@+id/uploadFileListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10" />
+        android:layout_marginTop="5dp"
+        android:layout_weight="7" />
 
 </LinearLayout>
