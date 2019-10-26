@@ -8,13 +8,11 @@
     android:layout_margin="20dp"
     tools:context="Activities.LoginActivity">
 
-    <TextView
+    <ImageView
+        android:id="@+id/imageView2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:gravity="bottom|center_horizontal"
-        android:text="로그인"
-        android:textSize="50dp" />
+        android:layout_height="wrap_content"
+        android:src="@drawable/title_blue" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,12 +20,11 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <TextView
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="clip_vertical|center_horizontal|center_vertical"
-            android:text="ID" />
+            android:src="@drawable/id" />
 
         <EditText
             android:id="@+id/emailEditText"
@@ -44,12 +41,11 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <TextView
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="password" />
+            android:src="@drawable/pw" />
 
         <EditText
             android:id="@+id/passwordEditText"
@@ -58,13 +54,13 @@
             android:layout_weight="4"
             android:inputType="textPassword" />
     </LinearLayout>
+
     <CheckBox
         android:id="@+id/autoLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:text="자동로그인"
-
         />
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,28 +70,37 @@
 
         <Button
             android:id="@+id/loginBtn"
+            style="@style/Widget.AppCompat.Button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="#A6B6EA"
             android:text="Login" />
 
         <Button
             android:id="@+id/joinBtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="#A6B6EA"
             android:text="JOIN" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/btn_googleSignIn"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="33dp"
+        android:layout_marginRight="33dp"
         android:layout_gravity="center"
         >
 
@@ -111,6 +116,6 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="1"
         />
 </LinearLayout>
