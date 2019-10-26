@@ -18,8 +18,7 @@
         android:layout_weight="1"
         android:layout_gravity="center"
         android:paddingTop="8dp"
-        android:layout_margin="30dp"
-        android:src="@drawable/title_white" />
+        android:src="@drawable/visible_logo" />
 
     <TextView
         android:layout_width="match_parent"
