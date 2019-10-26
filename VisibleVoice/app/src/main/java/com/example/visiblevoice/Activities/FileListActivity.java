@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 
 public class FileListActivity extends AppCompatActivity implements View.OnClickListener{
     private Intent intent;
-    private Button fileUploadBtn;
+    private ImageButton fileUploadBtn;
     private ListView musicListListView;
 
     private ArrayAdapter<String> listAdapter;

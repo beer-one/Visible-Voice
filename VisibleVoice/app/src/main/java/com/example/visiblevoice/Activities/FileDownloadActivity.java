@@ -14,6 +14,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,7 +44,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
     private SharedPreferences fileData;
     private TextView jsontextView;
     private TextView pngtextView;
-    private Button fileDownloadBtn;
+    private ImageButton fileDownloadBtn;
     private ProgressDialog progressDialog;
     private final int BUFSIZE = 4096;
     private byte[] buffer = new byte[BUFSIZE];
