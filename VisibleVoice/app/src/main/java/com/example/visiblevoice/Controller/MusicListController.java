@@ -51,7 +51,15 @@ public class MusicListController {
         return instance;
     }
     public void addMusic(Record music){ musicList.add(music);}
-    public String getCurrentMusicPath(){ return musicList.get(current).full_path; }
+    public String getCurrentMusicPath(){
+        return musicList.get(current).music_file.getAbsolutePath();
+    }
+    public String getCurrentJsonPath(){
+        return musicList.get(current).json_file.getAbsolutePath();
+    }
+    public String getCurrentPngPath(){//수정해야됨
+        return "";
+    }
     public void setCurrent(int cur){
         current=cur;
         Log.d("song","current music number is "+current);
