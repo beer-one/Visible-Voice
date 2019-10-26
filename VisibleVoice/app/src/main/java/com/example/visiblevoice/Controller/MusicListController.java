@@ -21,25 +21,11 @@ public class MusicListController {
         //musicdata.getAll()
         // set sample (you should remove this code)
 
-        String path= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/Over_the_Horizon_mp3/Over_the_Horizon.mp3";
-        String fileName="Over_the_Horizon.mp3";
-        Record record1=new Record(fileName,path);
-        addMusic(record1);
 
-
-        String path2= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/test2/test2.mp4";
-        String fileName2="test2.mp4";
-        Record record2=new Record(fileName2,path2);
-        addMusic(record2);
-
-        String path3= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/test3/test3.mp4";
-        String fileName3="test3.mp4";
-        Record record3=new Record(fileName3,path3);
-        addMusic(record3);
 
 
         Log.d("song","music list size: "+musicList.size());
-        Log.d("song","music list 0 : "+musicList.get(0).file_name);
+        //Log.d("song","music list 0 : "+musicList.get(0).file_name);
 
         ///////////////////////////////////////////
     }
@@ -50,6 +36,12 @@ public class MusicListController {
         }
         return instance;
     }
+    public void addRecord(Record record){
+        musicList.add(record);
+    }
+    public String getCurrentFilename(){
+        return musicList.get(current).file_name;
+    }
     public void addMusic(Record music){ musicList.add(music);}
     public String getCurrentMusicPath(){
         return musicList.get(current).music_file.getAbsolutePath();
@@ -58,7 +50,7 @@ public class MusicListController {
         return musicList.get(current).json_file.getAbsolutePath();
     }
     public String getCurrentPngPath(){//수정해야됨
-        return "";
+        return musicList.get(current).png_file.getAbsolutePath();
     }
     public void setCurrent(int cur){
         current=cur;

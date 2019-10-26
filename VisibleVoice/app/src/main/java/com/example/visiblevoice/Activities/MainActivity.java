@@ -3,7 +3,10 @@ package com.example.visiblevoice.Activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
@@ -33,6 +36,9 @@ import com.example.visiblevoice.Data.Lyrics;
 import com.example.visiblevoice.R;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity
@@ -42,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     private ImageView playBtn;
     private Button speedBtn;
     private SeekBar seekBar;
-    private TextView lyricsTextView;
+    private ImageView WordCloudImageView;
     private TextView useridView;
     private View navigationInflater;
     private SharedPreferences auto;
@@ -104,15 +110,26 @@ public class MainActivity extends AppCompatActivity
         playBtn=findViewById(R.id.play);
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
-        lyricsTextView=findViewById(R.id.lyricsTextView);
+        WordCloudImageView=findViewById(R.id.wordcloudImg);
 
 
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
-
+        currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
 
 
         initLayout();
 
+
+        try {
+            File WCfile = new File(currentfile.getString(AppDataInfo.CurrentFile.png,null));
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(WCfile));
+            WordCloudImageView.setImageBitmap(b);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch(NullPointerException ne){
+            ne.printStackTrace();
+        }
         String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
         useridView.setText("dongwook");
@@ -325,7 +342,14 @@ public class MainActivity extends AppCompatActivity
                     if(musicListController.musicList.size()!=0)
                         Log.d("song","before playing >>music 0  :" + musicListController.musicList.get(0).full_path);
 
-                    play_music(musicListController.getCurrentMusicPath());
+
+                    try{
+                        Log.d("file저장","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
+                        play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+                    }catch (NullPointerException ne){
+                        ne.printStackTrace();
+                    }
+
 //                    play_music("");
                 } else if (state ==1) { // playing -> pause
                     pause_music();

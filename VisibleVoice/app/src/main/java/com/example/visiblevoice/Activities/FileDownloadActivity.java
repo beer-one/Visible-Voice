@@ -21,12 +21,16 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import com.example.visiblevoice.Client.SFTPClient;
 import com.example.visiblevoice.Client.ServerInfo;
 import com.example.visiblevoice.CustomFirebaseMessagingService;
 import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.R;
+import com.example.visiblevoice.db.AppDatabase;
+import com.example.visiblevoice.db.RecordDAO;
+import com.example.visiblevoice.models.Record;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -48,6 +52,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
     private ProgressDialog progressDialog;
     private final int BUFSIZE = 4096;
     private byte[] buffer = new byte[BUFSIZE];
+    private RecordDAO recordDAO;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,8 +121,11 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         protected Void doInBackground(Void... voids) {
             Log.d("dong", "json 다운로드 : "+jsontextView.getText().toString());
             receiveData(jsontextView.getText().toString());
+
             Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
             receiveData(pngtextView.getText().toString());
+            //update
+
 
             try {
 
@@ -128,6 +136,20 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                 e.printStackTrace();
 
             }
+            recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                    .allowMainThreadQueries()   //Allows room to do operation on main thread
+                    .build()
+                    .getRecordDAO();
+
+            Record record = new Record();
+            String jsonFileName = jsontextView.getText().toString();
+            String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
+            Log.d("dong",fileName);
+            //record.setAudioPath();
+            Log.d("file저장","png 넣을때 : "+AppDataInfo.Path.VisibleVoiceFolder + "/"+pngtextView.getText().toString());
+            recordDAO.updateWCPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+pngtextView.getText().toString());
+            recordDAO.updateJSONPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+jsontextView.getText().toString());
+
             progressDialog.dismiss();
             Log.d("dong", "progressDialog 출력완료");
             //Toast.makeText(getApplicationContext(),"파일 다운로드가 완료되었습니다.",Toast.LENGTH_SHORT).show();
