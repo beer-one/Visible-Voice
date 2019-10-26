@@ -8,13 +8,17 @@
     android:orientation="vertical"
     tools:context=".Activities.JoinActivity">
 
-    <TextView
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:layout_weight="3"
-        android:gravity="bottom|center_horizontal"
-        android:layout_marginVertical="10dp"
-        android:text="회원가입" />
+        android:layout_height="0dp"
+        android:src="@drawable/title_blue" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp"
+        android:src="@drawable/join" />
 
 
     <LinearLayout
@@ -24,18 +28,17 @@
         android:layout_marginVertical="10dp"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="아이디를 입력하세요" />
+            android:src="@drawable/id" />
 
         <EditText
             android:id="@+id/idEditText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:ems="10"
             android:inputType="textPersonName" />
     </LinearLayout>
@@ -47,18 +50,17 @@
         android:layout_marginVertical="10dp"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="비밀번호를 입력하세요" />
+            android:src="@drawable/pw" />
 
         <EditText
             android:id="@+id/pwEditText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:ems="10"
             android:inputType="textPassword" />
     </LinearLayout>
@@ -69,30 +71,36 @@
         android:layout_marginVertical="10dp"
         android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="비밀번호를 다시 입력하세요" />
+            android:src="@drawable/pw_re" />
 
         <EditText
             android:id="@+id/rePwEditText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:ems="10"
             android:inputType="textPassword" />
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
     <Button
         android:id="@+id/joinButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:text="회원 가입" />
+        android:background="@color/AppColor"
+        android:text="JOIN"
+        android:textColor="#FFFFFF" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_weight="2" />
 </LinearLayout>
