@@ -90,6 +90,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private FirebaseFirestore db;
     private String deviceToken;
     private FirebaseAuth firebaseAuth;
+    private SharedPreferences currentfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +103,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         pwText = (EditText) findViewById(R.id.passwordEditText);
 
         auto = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
+        currentfile = getSharedPreferences(AppDataInfo.CurrentFile.key,AppCompatActivity.MODE_PRIVATE);
         checkBoxAutoLogin = findViewById(R.id.autoLogin);
 
         progressDialog = new ProgressDialog(this);
@@ -208,6 +210,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             autoLogin.putString(AppDataInfo.Login.userID, id);
                             autoLogin.putString(AppDataInfo.Login.userPwd, pw);
                             autoLogin.commit();
+
+                            SharedPreferences.Editor setCurrentmusic = currentfile.edit();
+                            //setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, );
+                            //setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
+                            setCurrentmusic.putString(AppDataInfo.CurrentFile.music, null);
+                            //setCurrentmusic.putString(AppDataInfo.CurrentFile.png, false);
+                            setCurrentmusic.commit();
                             updateFCMToken();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();

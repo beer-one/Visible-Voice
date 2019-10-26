@@ -40,14 +40,13 @@ public class MainActivity extends AppCompatActivity
 
     private ImageView fileMenuBtn;
     private ImageView playBtn;
-    private ImageView prevBtn;
-    private ImageView nextBtn;
     private Button speedBtn;
     private SeekBar seekBar;
     private TextView lyricsTextView;
     private TextView useridView;
     private View navigationInflater;
     private SharedPreferences auto;
+    private SharedPreferences currentfile;
     private Intent intent;
     private String email;
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-    @Override
+   /* @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(resultCode == GET_MUSIC_LIST){
             if(resultCode == GET_MUSIC_LIST) {
@@ -92,7 +91,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d("song","play new music...");
             }
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +148,18 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+
+        try{
+            if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
+                //play_music(musicListController.getCurrentMusicPath());
+                play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+                Log.d("song","play new music...");
+            }
+        }
+        catch (NullPointerException ne){
+            ne.printStackTrace();
+        }
 
         try{
             // get user's email
@@ -300,8 +311,9 @@ public class MainActivity extends AppCompatActivity
                 if(mediaPlayer!=null && mediaPlayer.isPlaying())
                     mediaPlayer.pause();
                 playing=false;
-                intent = new Intent(MainActivity.this, FileListActivity.class);
-                startActivityForResult(intent, GET_MUSIC_LIST);
+                //intent = new Intent(MainActivity.this, FileListActivity.class);
+                startActivity(new Intent(MainActivity.this, FileListActivity.class));
+                //startActivityForResult(intent, GET_MUSIC_LIST);
                 break;
             case R.id.speedBtn:
                 setSpeed();
