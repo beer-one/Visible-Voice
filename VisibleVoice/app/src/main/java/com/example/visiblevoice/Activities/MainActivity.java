@@ -103,8 +103,6 @@ public class MainActivity extends AppCompatActivity
 
         fileMenuBtn = findViewById(R.id.file_menu);
         playBtn=findViewById(R.id.play);
-        prevBtn=findViewById(R.id.prev);
-        nextBtn=findViewById(R.id.next);
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
         lyricsTextView=findViewById(R.id.lyricsTextView);
@@ -121,8 +119,6 @@ public class MainActivity extends AppCompatActivity
         useridView.setText("dongwook");
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
-        prevBtn.setOnClickListener(this);
-        nextBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -306,24 +302,6 @@ public class MainActivity extends AppCompatActivity
                 playing=false;
                 intent = new Intent(MainActivity.this, FileListActivity.class);
                 startActivityForResult(intent, GET_MUSIC_LIST);
-                break;
-            case R.id.prev :
-                if(mediaPlayer!=null)
-                    mediaPlayer.release();
-                mediaPlayer=null;
-                playing=false;
-                state=0;
-                musicListController.movePrevMusic();
-                play_music(musicListController.getCurrentMusicPath());
-                break;
-            case R.id.next :
-                if(mediaPlayer!=null)
-                    mediaPlayer.release();
-                mediaPlayer=null;
-                playing=false;
-                state=0;
-                musicListController.moveNextMusic();
-                play_music(musicListController.getCurrentMusicPath());
                 break;
             case R.id.speedBtn:
                 setSpeed();
