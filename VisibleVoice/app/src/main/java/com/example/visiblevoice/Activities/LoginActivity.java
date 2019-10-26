@@ -210,11 +210,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             autoLogin.commit();
                             updateFCMToken();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
                         } else {
                             // 로그인 실패
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
-                        finish();
+                        //finish();
                         progressDialog.dismiss();
 
                     }
