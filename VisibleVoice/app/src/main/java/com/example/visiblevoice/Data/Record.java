@@ -17,7 +17,7 @@ public class Record {
     public int id;
     public File music_file;
     public File json_file;
-    public Bitmap wordcloud_img;
+    public File png_file;
     public String full_path;
     public String file_name;
 
@@ -29,13 +29,13 @@ public class Record {
         this.file_name = file_name;
         this.music_file = music_file;
     }
-    public Record(){}
-    public Record(int id, File music_file, File json_file, Bitmap wordcloud_img) {
-        this.id = id;
+    public Record(String file_name, File music_file, File json_file, File png_file){
+        this.file_name = file_name;
         this.music_file = music_file;
         this.json_file = json_file;
-        this.wordcloud_img = wordcloud_img;
+        this.png_file = png_file;
     }
+    public Record(){}
 
     public File getMusic_file() {
         return music_file;
@@ -53,12 +53,12 @@ public class Record {
         this.json_file = json_file;
     }
 
-    public Bitmap getWordcloud_img() {
-        return wordcloud_img;
+    public File getPng_file() {
+        return png_file;
     }
 
-    public void setWordcloud_img(Bitmap wordcloud_img) {
-        this.wordcloud_img = wordcloud_img;
+    public void setPng_file(File png_file) {
+        this.png_file = png_file;
     }
 }
 

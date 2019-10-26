@@ -21,14 +21,18 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
 import com.example.visiblevoice.Client.HttpConnection;
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
-import com.example.visiblevoice.Data.Record;
+//import com.example.visiblevoice.Data.Record;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.Client.SFTPClient;
 import com.example.visiblevoice.Client.ServerInfo;
+import com.example.visiblevoice.db.AppDatabase;
+import com.example.visiblevoice.db.RecordDAO;
+import com.example.visiblevoice.models.Record;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,6 +66,7 @@ public class FileUploadActivity extends AppCompatActivity {
     private ArrayAdapter<String> listAdapter;
 
     private SharedPreferences userData;
+    private RecordDAO recordDAO;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -165,8 +170,20 @@ public class FileUploadActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     sendData(fileRoot);
-                    Record record = new Record(fileName, fileRoot);
-                    musicListController.addMusic(record);
+                    //Record record = new Record(fileName, fileRoot);
+                    //musicListController.addMusic(record);
+                    //insert
+                    recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                            .allowMainThreadQueries()   //Allows room to do operation on main thread
+                            .build()
+                            .getRecordDAO();
+
+                    Record record = new Record();
+                    record.setFileName(fileName.substring(0,fileName.length()-4));
+                    record.setAudioPath(fileRoot.getAbsolutePath());
+                    record.setWordCloudPath(null);
+                    record.setJsonPath(null);
+                    recordDAO.insert(record);
 
                     // make file name string
                     String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");

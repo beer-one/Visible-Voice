@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,14 +14,18 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
-import com.example.visiblevoice.Data.Record;
 import com.example.visiblevoice.R;
+import com.example.visiblevoice.db.AppDatabase;
+import com.example.visiblevoice.db.RecordDAO;
+import com.example.visiblevoice.models.Record;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileListActivity extends AppCompatActivity implements View.OnClickListener{
     private Intent intent;
@@ -31,13 +36,14 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
     private MusicListController musicListController=MusicListController.getInstance();
     private ArrayList<String> nameList;
     private SharedPreferences currentfile;
+    private RecordDAO recordDAO;
 
     @Override
     protected void onStart() {
         super.onStart();
 
         nameList=new ArrayList<String>();
-        for(Record record:musicListController.musicList)
+        for(com.example.visiblevoice.Data.Record record:musicListController.musicList)
             nameList.add(record.file_name);
 
         listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, nameList);
@@ -49,12 +55,36 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 musicListController.setCurrent(position);
 
                 SharedPreferences.Editor setCurrentmusic = currentfile.edit();
-                //setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, musicListController.get);
-                //setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
-                setCurrentmusic.putString(AppDataInfo.CurrentFile.music, musicListController.getCurrentMusicPath());
-                //setCurrentmusic.putString(AppDataInfo.CurrentFile.png, false);
-                setCurrentmusic.commit();
+                Log.d("file저장","파일이름 : "+musicListController.getCurrentFilename());
+                Log.d("file저장","음성파일이름 : "+musicListController.getCurrentMusicPath());
+                Log.d("file저장","json 파일이름 : "+musicListController.getCurrentJsonPath());
+                Log.d("file저장","png 파일이름 : "+musicListController.getCurrentPngPath());
+                try{
+                    setCurrentmusic.putString(AppDataInfo.CurrentFile.png, musicListController.getCurrentPngPath());
+                }
+                catch (NullPointerException ne){
+                    ne.printStackTrace();
+                }
 
+                try{
+                    setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
+                }
+                catch (NullPointerException ne){
+                        ne.printStackTrace();
+                }
+                try{
+                    if(musicListController.getCurrentFilename()!=null)
+                        setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, musicListController.getCurrentFilename());
+
+                    if(musicListController.getCurrentMusicPath()!=null)
+                        setCurrentmusic.putString(AppDataInfo.CurrentFile.music, musicListController.getCurrentMusicPath());
+
+                    setCurrentmusic.commit();
+                }
+                catch (NullPointerException ne){
+                    ne.printStackTrace();
+                }
+                setCurrentmusic.commit();
                 startActivity(new Intent(FileListActivity.this, MainActivity.class));
             }
         });
@@ -71,6 +101,109 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
 
         currentfile = getSharedPreferences(AppDataInfo.CurrentFile.key,AppCompatActivity.MODE_PRIVATE);
         fileUploadBtn.setOnClickListener(this);
+        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                .allowMainThreadQueries()   //Allows room to do operation on main thread
+                .build()
+                .getRecordDAO();
+        //recordDAO.clearRecordTable();
+        List<com.example.visiblevoice.models.Record> recordList= recordDAO.getRecords();
+        MusicListController musicListController = new MusicListController();
+
+
+        for(com.example.visiblevoice.models.Record record_model : recordList){
+            int check =1;
+            for(com.example.visiblevoice.Data.Record record_data:musicListController.musicList){
+                Log.d("filepath", "record_model.getFileName : "+record_model.getFileName());
+                Log.d("filepath", "record_data : "+record_data.file_name);
+                if(record_model.getFileName() == record_data.file_name){
+                    File json_file;
+                    File png_file;
+                    File audio_file;
+                    if(record_model.getWordCloudPath()==null){
+                        png_file = null;
+                    }
+                    else{
+                        png_file = new File(record_model.getWordCloudPath());
+                    }
+                    if(record_model.getJsonPath()==null){
+                        json_file = null;
+                    }
+                    else{
+                        json_file = new File(record_model.getJsonPath());
+                    }
+
+                    if(record_model.getAudioPath() ==null){
+                        audio_file = null;
+                    }
+                    else{
+                        audio_file = new File(record_model.getAudioPath());
+                    }
+
+                    record_data.setMusic_file(audio_file);
+                    record_data.setJson_file(json_file);
+                    record_data.setPng_file(png_file);
+                    check =0;
+                    break;
+                }
+            }
+            if(check==1){
+                File json_file;
+                File png_file;
+                File audio_file;
+                if(record_model.getWordCloudPath()==null){
+                    png_file = null;
+                }
+                else{
+                    png_file = new File(record_model.getWordCloudPath());
+                }
+                if(record_model.getJsonPath()==null){
+                    json_file = null;
+                }
+                else{
+                    json_file = new File(record_model.getJsonPath());
+                }
+
+                if(record_model.getAudioPath() ==null){
+                    audio_file = null;
+                }
+                else{
+                    audio_file = new File(record_model.getAudioPath());
+                }
+
+                com.example.visiblevoice.Data.Record record = new com.example.visiblevoice.Data.Record(record_model.getFileName(),audio_file,json_file,png_file);
+                Log.d("filepath", "외않되 : "+record.getPng_file());
+                //record.setPng_file(png_file);
+                //Log.d("filepath", "외않되2 : "+record.getPng_file());
+                musicListController.addRecord(record);
+
+            }
+        }
+
+
+
+        /*Thread updateThread =new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
+
+                });
+            }
+        });
+        try{
+            updateThread.start();
+            updateThread.join();
+        }catch (Exception e){
+            e.printStackTrace();
+        }*/
+
+        Log.d("filepath", "저장완료");
+
+
 
 
     }
