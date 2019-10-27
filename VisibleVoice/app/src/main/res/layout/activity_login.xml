@@ -74,7 +74,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@color/AppColor"
+            android:background="@drawable/color_round_shape"
             android:textColor="#ffffff"
             android:text="Login" />
 
@@ -84,7 +84,7 @@
             android:layout_height="match_parent"
             android:layout_margin="10dp"
             android:layout_weight="1"
-            android:background="@color/AppColor"
+            android:background="@drawable/color_round_shape"
             android:textColor="#ffffff"
             android:text="JOIN" />
     </LinearLayout>

@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="@color/AppColor"
+        android:background="@drawable/color_round_shape"
         android:orientation="horizontal"
         >
 
@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="@color/AppColor"
+        android:background="@drawable/color_round_shape"
         android:orientation="horizontal">
 
         <ImageView
