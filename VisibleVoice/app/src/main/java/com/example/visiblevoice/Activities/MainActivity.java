@@ -13,10 +13,8 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -25,7 +23,6 @@ import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -58,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences currentfile;
     private Intent intent;
     private String email;
+    private Button keywordSearchButton;
 
     private int speed=3; // speed has 5 step 0.5, 0.75, 1, 1.5, 2
     private int state=0; // state 0 = stop  // state 1 = playing // state 2 = pause
@@ -92,16 +90,6 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == GET_MUSIC_LIST){
-            if(resultCode == GET_MUSIC_LIST) {
-                play_music(musicListController.getCurrentMusicPath());
-                Log.d("song","play new music...");
-            }
-        }
-    }*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +107,8 @@ public class MainActivity extends AppCompatActivity
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
 
+        keywordSearchButton = findViewById(R.id.keywordSearchButton);
+        keywordSearchButton.setOnClickListener(new SearchClickListener());
 
         initLayout();
 
@@ -197,12 +187,8 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("소리가 보인다");
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
-
-        View viewToolbar = getLayoutInflater().inflate(R.layout.view_toolbar, null);
-        getSupportActionBar().setCustomView(viewToolbar, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
 
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_main_drawer_root);
         navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
@@ -400,5 +386,16 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class SearchClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), // 현재 화면의 제어권자
+                    KeywordSearchActivity.class);
+            intent.putExtra("filename", currentfile.getString(AppDataInfo.CurrentFile.json,null));
+            startActivity(intent);
+        }
     }
 }

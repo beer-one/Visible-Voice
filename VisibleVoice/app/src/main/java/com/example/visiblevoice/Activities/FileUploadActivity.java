@@ -306,16 +306,12 @@ public class FileUploadActivity extends AppCompatActivity {
 
     /** 웹 서버로 데이터 전송 */
     private void sendData(final File file) {
-        final SFTPClient sftpclient = new SFTPClient();
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        boolean status = false;
-
                         String username = userData.getString(AppDataInfo.Login.userID, null);
                         //VVpath = rootPath + "/"+"VisibleVoice";
                         SFTPClient sftpClient = new SFTPClient();
@@ -341,7 +337,7 @@ public class FileUploadActivity extends AppCompatActivity {
             Looper.loop();
         }
         @Override
-        public void onResponse(Call call, Response response) throws IOException {
+        public void onResponse(Call call, Response response) {
             Log.d("dong","response");
             System.out.println("response");
             try {
@@ -354,7 +350,7 @@ public class FileUploadActivity extends AppCompatActivity {
                 Looper.loop();
 
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
