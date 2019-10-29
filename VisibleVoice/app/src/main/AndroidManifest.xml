@@ -27,6 +27,7 @@
         <activity android:name=".Activities.JoinActivity" >
 
         </activity>
+        <activity android:name=".Activities.KeywordSearchActivity"></activity>
         <activity android:name=".Activities.FileListActivity" />
         <activity android:name=".Activities.MainActivity">
 

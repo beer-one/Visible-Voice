@@ -1,6 +1,7 @@
 package com.example.visiblevoice.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,10 +14,14 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,17 +34,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+
 
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
-import com.example.visiblevoice.Data.Lyrics;
+import com.example.visiblevoice.Data.Lyric;
 import com.example.visiblevoice.R;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
@@ -56,6 +69,15 @@ public class MainActivity extends AppCompatActivity
     private Intent intent;
     private String email;
     private Button keywordSearchButton;
+
+    //
+    private ListView lyric_listview;
+    private LyricAdapter lyric_adapter;
+    private ArrayList<Lyric> lyricArrayList;
+
+    //
+    private ViewPager viewPager;
+    private PagerAdapter pageAdapter;
 
     private int speed=3; // speed has 5 step 0.5, 0.75, 1, 1.5, 2
     private int state=0; // state 0 = stop  // state 1 = playing // state 2 = pause
@@ -101,7 +123,18 @@ public class MainActivity extends AppCompatActivity
         playBtn=findViewById(R.id.play);
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
-        WordCloudImageView=findViewById(R.id.wordcloudImg);
+        //WordCloudImageView=findViewById(R.id.wordcloudImg);
+
+
+
+
+        //
+        viewPager = (ViewPager) findViewById(R.id.pager); //
+        pageAdapter = new PagerAdapter
+                (getSupportFragmentManager(), 2);
+        viewPager.setAdapter(pageAdapter);
+
+
 
 
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
@@ -113,7 +146,7 @@ public class MainActivity extends AppCompatActivity
         initLayout();
 
 
-        try {
+       /* try {
             File WCfile = new File(currentfile.getString(AppDataInfo.CurrentFile.png,null));
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(WCfile));
             WordCloudImageView.setImageBitmap(b);
@@ -122,7 +155,7 @@ public class MainActivity extends AppCompatActivity
         }
         catch(NullPointerException ne){
             ne.printStackTrace();
-        }
+        }*/
         String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
         useridView.setText("dongwook");
@@ -294,7 +327,7 @@ public class MainActivity extends AppCompatActivity
 */
     }
 
-    private void move_music(Lyrics lyrics){
+    private void move_music(Lyric lyrics){
         // 리릭스에 입력된 시작 시간부터 미디어를 재생하는 메서드
         if(mediaPlayer == null) return;
         mediaPlayer.seekTo(lyrics.getStartTime());
@@ -395,7 +428,155 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(getApplicationContext(), // 현재 화면의 제어권자
                     KeywordSearchActivity.class);
             intent.putExtra("filename", currentfile.getString(AppDataInfo.CurrentFile.json,null));
+            Log.d("search-jsonfile", currentfile.getString(AppDataInfo.CurrentFile.json,null));
             startActivity(intent);
         }
     }
 }
+
+class WCFragment extends Fragment {
+
+    private ImageView WordCloudImageView;
+    private SharedPreferences currentfile;
+    private Context mContext;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View v = inflater.inflate(R.layout.fragment_wc, container, false);
+        WordCloudImageView=(ImageView) v.findViewById(R.id.wordcloudImg);
+
+        mContext = getContext();
+        currentfile= mContext.getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
+        try {
+            File WCfile = new File(currentfile.getString(AppDataInfo.CurrentFile.png,null));
+            Log.d("fragment","file : "+WCfile.getName());
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(WCfile));
+            Log.d("fragment","file : "+b);
+            WordCloudImageView.setImageBitmap(b);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch(NullPointerException ne){
+            ne.printStackTrace();
+        }
+        return v;
+    }
+
+}
+
+class LyricListViewFragment extends Fragment {
+    private ListView listView;
+    private LyricAdapter lyric_adapter;
+    private ArrayList<Lyric> lyricArrayList;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View v = inflater.inflate(R.layout.fragment_lyriclist, container, false);
+
+        listView = (ListView)v.findViewById(R.id.lyric_listview);
+
+        lyricArrayList = new ArrayList<Lyric>();
+        lyricArrayList.add(new Lyric(0,"rrr"));
+        lyricArrayList.add(new Lyric(1,"aaa"));
+        lyricArrayList.add(new Lyric(2,"bbb"));
+        lyricArrayList.add(new Lyric(0,"rrr"));
+        lyricArrayList.add(new Lyric(1,"aaa"));
+        lyricArrayList.add(new Lyric(2,"bbb"));
+        lyricArrayList.add(new Lyric(0,"rrr"));
+        lyricArrayList.add(new Lyric(1,"aaa"));
+        lyricArrayList.add(new Lyric(2,"bbb"));
+        lyricArrayList.add(new Lyric(0,"rrr"));
+        lyricArrayList.add(new Lyric(1,"aaa"));
+        lyricArrayList.add(new Lyric(2,"bbb"));
+        lyricArrayList.add(new Lyric(0,"rrr"));
+        lyricArrayList.add(new Lyric(1,"aaa"));
+        lyricArrayList.add(new Lyric(2,"bbb"));
+
+        listView.setDivider(null);
+
+        lyric_adapter = new LyricAdapter(getContext(),lyricArrayList);
+       /* mContext = getContext();
+        currentfile= mContext.getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);*/
+        listView.setAdapter(lyric_adapter);
+        return v;
+    }
+
+}
+
+class PagerAdapter extends FragmentStatePagerAdapter {
+    int mNumOfTabs;
+
+    public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+        super(fm);
+        this.mNumOfTabs = NumOfTabs;
+    }
+
+    @Override
+    public Fragment getItem(int position) {
+
+        switch (position) {
+            case 0:
+                WCFragment tab1 = new WCFragment();
+                return tab1;
+            case 1:
+                LyricListViewFragment tab2 = new LyricListViewFragment();
+                return tab2;
+
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public int getCount() {
+        return mNumOfTabs;
+    }
+}
+
+
+class LyricAdapter extends BaseAdapter {
+    private LayoutInflater inflater;
+    private ArrayList<Lyric> lyrics = null;
+    private int count = 0;
+
+    public LyricAdapter(Context context, ArrayList<Lyric> lyrics) {
+        this.lyrics = lyrics;
+        this.count = lyrics.size();
+        this.inflater = (LayoutInflater)context.getSystemService(
+                Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @Override
+    public int getCount() {
+        return count;
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return lyrics.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if(convertView == null) {
+            //개별 리릭 xml 불러줘야함
+            convertView = inflater.inflate(R.layout.lyric_item, parent, false);
+        }
+
+        Lyric lyric = lyrics.get(position);
+
+        //그 각각의 리릭 안에서 텍스트뷰 하나 뽑아옴
+        TextView text = (TextView)convertView.findViewById(R.id.textview_lyric);
+        text.setText(lyric.getText());
+
+        return convertView;
+
+    }
+
+}
+

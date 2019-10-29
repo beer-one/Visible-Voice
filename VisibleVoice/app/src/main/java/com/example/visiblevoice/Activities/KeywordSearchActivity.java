@@ -2,6 +2,7 @@ package com.example.visiblevoice.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -35,17 +36,22 @@ public class KeywordSearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search_keyword);
         Intent intent = getIntent();
 
         sentenceList = new ArrayList<>();
         currentSentenceList = new ArrayList<>();
         getDataFromFile(intent.getExtras().getString("filename"));
-        searchView = findViewById(R.id.keywordSearchView);
-        searchView.setOnQueryTextListener(new SearchRequestListener());
+        Log.d("searchActivity-json", intent.getExtras().getString("filename"));
+        try{
+            searchView = findViewById(R.id.keywordSearchView);
+            searchView.setOnQueryTextListener(new SearchRequestListener());
+            listView = findViewById(R.id.sentenceListView);
+            listView.setOnItemClickListener(new itemClickListener());
+        }catch(NullPointerException ne) {
+            ne.printStackTrace();
+        }
 
-        listView = findViewById(R.id.sentenceListView);
-        listView.setOnItemClickListener(new itemClickListener());
     }
 
     private void getDataFromFile(String filename) {
