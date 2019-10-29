@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -43,14 +44,21 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.Lyric;
+import com.example.visiblevoice.Data.Sentence;
 import com.example.visiblevoice.R;
+import com.example.visiblevoice.algorithm.KMP;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,6 +100,7 @@ public class MainActivity extends AppCompatActivity
 
     ActionBarDrawerToggle drawerToggle;
     Toolbar toolbar;
+    public static Context mContext;
 
     private Thread th=new Thread(
             new Runnable(){
@@ -134,14 +143,16 @@ public class MainActivity extends AppCompatActivity
                 (getSupportFragmentManager(), 2);
         viewPager.setAdapter(pageAdapter);
 
-
+        mContext = this;
 
 
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
 
+
+
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
-        keywordSearchButton.setOnClickListener(new SearchClickListener());
+        //keywordSearchButton.setOnClickListener(new SearchClickListener());
 
         initLayout();
 
@@ -327,10 +338,11 @@ public class MainActivity extends AppCompatActivity
 */
     }
 
-    private void move_music(Lyric lyrics){
+    public void move_music(Lyric lyrics){
         // 리릭스에 입력된 시작 시간부터 미디어를 재생하는 메서드
         if(mediaPlayer == null) return;
-        mediaPlayer.seekTo(lyrics.getStartTime());
+        Log.d("가사","lyrics.getStartTime() : "+lyrics.getStartTime());
+        mediaPlayer.seekTo((int)lyrics.getStartTime()*1000);
     }
     private void logout() {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -360,6 +372,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.speedBtn:
                 setSpeed();
+                break;
+            case R.id.keywordSearchButton:
+                Intent intent = new Intent(getApplicationContext(), // 현재 화면의 제어권자
+                        KeywordSearchActivity.class);
+                intent.putExtra("filename", currentfile.getString(AppDataInfo.CurrentFile.json,null));
+                Log.d("search-jsonfile", currentfile.getString(AppDataInfo.CurrentFile.json,null));
+                startActivity(intent);
                 break;
             case R.id.play:
                 if(state==0) { // stop -> playing
@@ -421,17 +440,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private class SearchClickListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), // 현재 화면의 제어권자
-                    KeywordSearchActivity.class);
-            intent.putExtra("filename", currentfile.getString(AppDataInfo.CurrentFile.json,null));
-            Log.d("search-jsonfile", currentfile.getString(AppDataInfo.CurrentFile.json,null));
-            startActivity(intent);
-        }
-    }
 }
 
 class WCFragment extends Fragment {
@@ -468,15 +476,20 @@ class LyricListViewFragment extends Fragment {
     private ListView listView;
     private LyricAdapter lyric_adapter;
     private ArrayList<Lyric> lyricArrayList;
+    private SharedPreferences currentfile;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View v = inflater.inflate(R.layout.fragment_lyriclist, container, false);
-
+        currentfile= getContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         listView = (ListView)v.findViewById(R.id.lyric_listview);
-
         lyricArrayList = new ArrayList<Lyric>();
-        lyricArrayList.add(new Lyric(0,"rrr"));
+        getDataFromFile(currentfile.getString(AppDataInfo.CurrentFile.json,null));
+        /*for(Lyric lyric : lyricArrayList) {
+            lyricArrayList.add(lyric);
+        }*/
+
+       /* lyricArrayList.add(new Lyric(0,"rrr"));
         lyricArrayList.add(new Lyric(1,"aaa"));
         lyricArrayList.add(new Lyric(2,"bbb"));
         lyricArrayList.add(new Lyric(0,"rrr"));
@@ -490,7 +503,7 @@ class LyricListViewFragment extends Fragment {
         lyricArrayList.add(new Lyric(2,"bbb"));
         lyricArrayList.add(new Lyric(0,"rrr"));
         lyricArrayList.add(new Lyric(1,"aaa"));
-        lyricArrayList.add(new Lyric(2,"bbb"));
+        lyricArrayList.add(new Lyric(2,"bbb"));*/
 
         listView.setDivider(null);
 
@@ -498,7 +511,51 @@ class LyricListViewFragment extends Fragment {
        /* mContext = getContext();
         currentfile= mContext.getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);*/
         listView.setAdapter(lyric_adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("가사","lyricArrayList.get(position)의 시간 : "+lyricArrayList.get(position).getStartTime());
+                ((MainActivity)MainActivity.mContext).move_music(lyricArrayList.get(position));
+
+            }
+        });
         return v;
+    }
+    private void getDataFromFile(String filename) {
+        try {
+            String json = readJsonFromFile(filename);
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray lyrics = jsonObject.getJSONArray("sentences");
+
+            for(int i = 0; i < lyrics.length(); i++) {
+                JSONObject o = lyrics.getJSONObject(i);
+                lyricArrayList.add(new Lyric(Float.parseFloat(o.getJSONArray("words").getJSONObject(0).getString("start_time")), o.getString("sentence")));
+            }
+            Log.d("가사","lyricArrayList.size() ; "+lyricArrayList.size());
+            Log.d("가사","lyricArrayList ; "+lyricArrayList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (NullPointerException ne) {
+            ne.printStackTrace();
+        }
+    }
+
+    private String readJsonFromFile(String filename) throws NullPointerException {
+        String result = null;
+        try {
+            InputStream is = new FileInputStream(new File(filename));
+            byte[] buffer = new byte[is.available()];
+            is.read(buffer);
+            is.close();
+            return new String(buffer, "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            throw new NullPointerException();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new NullPointerException();
+        }
     }
 
 }
@@ -571,8 +628,10 @@ class LyricAdapter extends BaseAdapter {
         Lyric lyric = lyrics.get(position);
 
         //그 각각의 리릭 안에서 텍스트뷰 하나 뽑아옴
-        TextView text = (TextView)convertView.findViewById(R.id.textview_lyric);
-        text.setText(lyric.getText());
+        //TextView time_text = (TextView)convertView.findViewById(R.id.time_TextView);
+        TextView lyric_text = (TextView)convertView.findViewById(R.id.lyric_TextView);
+        //time_text.setText(Float.toString(lyric.getStartTime()));
+        lyric_text.setText(lyric.getText());
 
         return convertView;
 
