@@ -4,8 +4,10 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textview_lyric"
+        android:id="@+id/lyric_TextView"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="TextView" />
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center_horizontal"
+        android:text="sentence" />
 </LinearLayout>
