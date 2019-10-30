@@ -158,6 +158,10 @@ public class MainActivity extends AppCompatActivity
 //        Log.d("song","get email >>>"+email);
     }
     public void refreshMediaPlayer(){
+        viewPager = (ViewPager) findViewById(R.id.pager); //
+        pageAdapter = new PagerAdapter
+                (getSupportFragmentManager(), 2);
+        viewPager.setAdapter(pageAdapter);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
