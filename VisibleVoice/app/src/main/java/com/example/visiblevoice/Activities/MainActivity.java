@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
 
 
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
-        //keywordSearchButton.setOnClickListener(new SearchClickListener());
+        keywordSearchButton.setOnClickListener(new SearchClickListener());
 
         initLayout();
 
@@ -373,13 +373,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.speedBtn:
                 setSpeed();
                 break;
-            case R.id.keywordSearchButton:
-                Intent intent = new Intent(getApplicationContext(), // 현재 화면의 제어권자
-                        KeywordSearchActivity.class);
-                intent.putExtra("filename", currentfile.getString(AppDataInfo.CurrentFile.json,null));
-                Log.d("search-jsonfile", currentfile.getString(AppDataInfo.CurrentFile.json,null));
-                startActivity(intent);
-                break;
             case R.id.play:
                 if(state==0) { // stop -> playing
                     Log.d("song","before playing >>music list size :" + musicListController.musicList.size());
@@ -402,6 +395,17 @@ public class MainActivity extends AppCompatActivity
                     restart_music();
                 }
                 break;
+        }
+    }
+    private class SearchClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), // 현재 화면의 제어권자
+                    KeywordSearchActivity.class);
+            intent.putExtra("filename", currentfile.getString(AppDataInfo.CurrentFile.json,null));
+            Log.d("search-jsonfile", currentfile.getString(AppDataInfo.CurrentFile.json,null));
+            startActivity(intent);
         }
     }
 
@@ -485,25 +489,6 @@ class LyricListViewFragment extends Fragment {
         listView = (ListView)v.findViewById(R.id.lyric_listview);
         lyricArrayList = new ArrayList<Lyric>();
         getDataFromFile(currentfile.getString(AppDataInfo.CurrentFile.json,null));
-        /*for(Lyric lyric : lyricArrayList) {
-            lyricArrayList.add(lyric);
-        }*/
-
-       /* lyricArrayList.add(new Lyric(0,"rrr"));
-        lyricArrayList.add(new Lyric(1,"aaa"));
-        lyricArrayList.add(new Lyric(2,"bbb"));
-        lyricArrayList.add(new Lyric(0,"rrr"));
-        lyricArrayList.add(new Lyric(1,"aaa"));
-        lyricArrayList.add(new Lyric(2,"bbb"));
-        lyricArrayList.add(new Lyric(0,"rrr"));
-        lyricArrayList.add(new Lyric(1,"aaa"));
-        lyricArrayList.add(new Lyric(2,"bbb"));
-        lyricArrayList.add(new Lyric(0,"rrr"));
-        lyricArrayList.add(new Lyric(1,"aaa"));
-        lyricArrayList.add(new Lyric(2,"bbb"));
-        lyricArrayList.add(new Lyric(0,"rrr"));
-        lyricArrayList.add(new Lyric(1,"aaa"));
-        lyricArrayList.add(new Lyric(2,"bbb"));*/
 
         listView.setDivider(null);
 
