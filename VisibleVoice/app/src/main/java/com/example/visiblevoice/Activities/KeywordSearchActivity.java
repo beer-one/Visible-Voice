@@ -11,7 +11,7 @@ import android.widget.SearchView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.visiblevoice.Adapter.KeywordSearchAdapter;
-import com.example.visiblevoice.Data.Sentence;
+import com.example.visiblevoice.Data.Lyric;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.algorithm.KMP;
 
@@ -28,8 +28,8 @@ import java.util.ArrayList;
 
 
 public class KeywordSearchActivity extends AppCompatActivity {
-    private ArrayList<Sentence> currentSentenceList;
-    private ArrayList<Sentence> sentenceList;
+    private ArrayList<Lyric> currentLyricList;
+    private ArrayList<Lyric> lyricList;
     private SearchView searchView;
     private ListView listView;
 
@@ -39,8 +39,8 @@ public class KeywordSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_keyword);
         Intent intent = getIntent();
 
-        sentenceList = new ArrayList<>();
-        currentSentenceList = new ArrayList<>();
+        lyricList = new ArrayList<>();
+        currentLyricList = new ArrayList<>();
         getDataFromFile(intent.getExtras().getString("filename"));
         Log.d("searchActivity-json", intent.getExtras().getString("filename"));
         try{
@@ -63,7 +63,7 @@ public class KeywordSearchActivity extends AppCompatActivity {
 
             for(int i = 0; i < sentences.length(); i++) {
                 JSONObject o = sentences.getJSONObject(i);
-                sentenceList.add(new Sentence(o.getJSONArray("words").getJSONObject(0).getString("start_time"), o.getString("sentence")));
+                lyricList.add(new Lyric(Float.parseFloat(o.getJSONArray("words").getJSONObject(0).getString("start_time")), o.getString("sentence")));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -73,7 +73,6 @@ public class KeywordSearchActivity extends AppCompatActivity {
     }
 
     private String readJsonFromFile(String filename) throws NullPointerException {
-        String result = null;
         try {
             InputStream is = new FileInputStream(new File(filename));
             byte[] buffer = new byte[is.available()];
@@ -90,14 +89,18 @@ public class KeywordSearchActivity extends AppCompatActivity {
     }
 
     private void search(String keyword) {
-        currentSentenceList.clear();
+        currentLyricList.clear();
+        ArrayList<ArrayList<Integer>> posLists = new ArrayList<>();
 
-        for(Sentence sentence : sentenceList) {
-            if(KMP.keywordSearch(sentence.getSentence(), keyword))
-                currentSentenceList.add(sentence);
+        for(Lyric lyric : lyricList) {
+            ArrayList<Integer> list = KMP.keywordSearch(lyric.getText(), keyword);
+            if(list.size() != 0) {
+                posLists.add(list);
+                currentLyricList.add(lyric);
+            }
         }
 
-        listView.setAdapter(new KeywordSearchAdapter(currentSentenceList));
+        listView.setAdapter(new KeywordSearchAdapter(currentLyricList, posLists, keyword));
     }
 
     private class SearchRequestListener implements SearchView.OnQueryTextListener {
@@ -121,7 +124,7 @@ public class KeywordSearchActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
             //  출처: https://liveonthekeyboard.tistory.com/entry/안드로이드-startActivityForResult-onActivityResult-사용법 [키위남]
             Intent resultIntent = new Intent();
-            resultIntent.putExtra("timeResult", currentSentenceList.get(i).getTime());
+            resultIntent.putExtra("timeResult", currentLyricList.get(i).getStartTime());
             listView.getItemAtPosition(i);
             setResult(RESULT_OK,resultIntent);
             finish();

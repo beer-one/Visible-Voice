@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
@@ -44,11 +43,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.Lyric;
-import com.example.visiblevoice.Data.Sentence;
 import com.example.visiblevoice.R;
-import com.example.visiblevoice.algorithm.KMP;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,7 +56,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
@@ -69,21 +64,12 @@ public class MainActivity extends AppCompatActivity
     private ImageView playBtn;
     private Button speedBtn;
     private SeekBar seekBar;
-    private ImageView WordCloudImageView;
     private TextView useridView;
     private View navigationInflater;
     private SharedPreferences auto;
     private SharedPreferences currentfile;
-    private Intent intent;
-    private String email;
     private Button keywordSearchButton;
 
-    //
-    private ListView lyric_listview;
-    private LyricAdapter lyric_adapter;
-    private ArrayList<Lyric> lyricArrayList;
-
-    //
     private ViewPager viewPager;
     private PagerAdapter pageAdapter;
 
@@ -132,12 +118,7 @@ public class MainActivity extends AppCompatActivity
         playBtn=findViewById(R.id.play);
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
-        //WordCloudImageView=findViewById(R.id.wordcloudImg);
 
-
-
-
-        //
         viewPager = (ViewPager) findViewById(R.id.pager); //
         pageAdapter = new PagerAdapter
                 (getSupportFragmentManager(), 2);
@@ -145,28 +126,14 @@ public class MainActivity extends AppCompatActivity
 
         mContext = this;
 
-
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
-
-
 
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
         keywordSearchButton.setOnClickListener(new SearchClickListener());
 
         initLayout();
 
-
-       /* try {
-            File WCfile = new File(currentfile.getString(AppDataInfo.CurrentFile.png,null));
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(WCfile));
-            WordCloudImageView.setImageBitmap(b);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        catch(NullPointerException ne){
-            ne.printStackTrace();
-        }*/
         String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
         useridView.setText("dongwook");
@@ -215,17 +182,17 @@ public class MainActivity extends AppCompatActivity
             ne.printStackTrace();
         }
 
-        try{
-            // get user's email
-            // TO-DO : you should get play list using email
-            //       : musicController.addMusic() <- put record in music controller
-            intent = getIntent();
-            //email=(String) intent.getExtras().get("email");
-            ////////////////////////////////////////////////
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        Log.d("song","get email >>>"+email);
+//        try{
+//            // get user's email
+//            // TO-DO : you should get play list using email
+//            //       : musicController.addMusic() <- put record in music controller
+//            intent = getIntent();
+//            //email=(String) intent.getExtras().get("email");
+//            ////////////////////////////////////////////////
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        Log.d("song","get email >>>"+email);
     }
     private void initLayout() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -356,8 +323,6 @@ public class MainActivity extends AppCompatActivity
         editor.putBoolean("checkbox",false);
         editor.commit();
         finish();
-        //intent = new Intent(MainActivity.this, LoginActivity.class);
-        //startActivity(intent);
     }
     @Override
     public void onClick(View v) {

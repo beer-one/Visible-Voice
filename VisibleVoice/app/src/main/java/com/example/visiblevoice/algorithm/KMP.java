@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 // 출처: https://mygumi.tistory.com/61 [마이구미의 HelloWorld]
 public class KMP {
-    public static boolean keywordSearch(String str, String pattern) {
+    public static ArrayList<Integer> keywordSearch(String str, String pattern) {
+
         ArrayList<Integer> list = new ArrayList<Integer>();
         int[] pi = getPi(pattern);
         int n = str.length(), m = pattern.length(), j = 0;
@@ -21,13 +22,14 @@ public class KMP {
             }
             if (s[i] == p[j]) {
                 if (j == m - 1) {
-                    return true;
+                    list.add(i - m + 1); // 여러 개의 찾을 문자열이 있을 수 있기 때문.
+                    j = pi[j];
                 } else {
                     j++;
                 }
             }
         }
-        return false;
+        return list;
     }
 
     public static int[] getPi(String pattern) {
