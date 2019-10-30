@@ -84,7 +84,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                         setCurrentmusic.putString(AppDataInfo.CurrentFile.music, musicListController.getCurrentMusicPath());
 
                     setCurrentmusic.commit();
-                    
+
                 }
                 catch (NullPointerException ne){
                     ne.printStackTrace();
@@ -193,6 +193,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
             case R.id.fileUploadBtn :
                 intent = new Intent(FileListActivity.this, FileUploadActivity.class);
                 startActivity(intent);
+                finish();
                 break;
         }
     }

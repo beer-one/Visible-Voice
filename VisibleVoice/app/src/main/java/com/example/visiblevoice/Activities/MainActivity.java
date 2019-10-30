@@ -125,6 +125,8 @@ public class MainActivity extends AppCompatActivity
 
         initLayout();
 
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 
         String userid = auto.getString(AppDataInfo.Login.userID, null);
@@ -133,7 +135,35 @@ public class MainActivity extends AppCompatActivity
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
+                if(fromUser){
+                    try{
+                        if(mediaPlayer!=null){
+                            Log.d("song","term is "+i);
+                            mediaPlayer.seekTo(i);
+                        }
+                        if(!mediaPlayer.isPlaying()) {
+                            mediaPlayer.start();
+                            playBtn.setImageResource(R.drawable.pause);
+                            state=1;
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
 
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         updateMusicList();
 
 
@@ -240,35 +270,7 @@ public class MainActivity extends AppCompatActivity
                 (getSupportFragmentManager(), 2);
         viewPager.setAdapter(pageAdapter);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
-                if(fromUser){
-                    try{
-                        if(mediaPlayer!=null){
-                            Log.d("song","term is "+i);
-                            mediaPlayer.seekTo(i);
-                        }
-                        if(!mediaPlayer.isPlaying()) {
-                            mediaPlayer.start();
-                            playBtn.setImageResource(R.drawable.pause);
-                            state=1;
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
         try{
             if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
@@ -311,24 +313,22 @@ public class MainActivity extends AppCompatActivity
         Log.d("song","play music... "+fileName);
         Uri fileUri = Uri.parse( fileName );
 
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
         Log.d("song","set mediaPlayer  "+mediaPlayer.toString());
 
         // 재생이 끝날때 이벤트 처리
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                musicListController.moveNextMusic();
-                state=0;
-            }
-        });
-
         try {
             // 재생 시작
+            mediaPlayer.reset();
             mediaPlayer.setDataSource(MainActivity.this, fileUri);
-            mediaPlayer.prepare(); mediaPlayer.start();
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    musicListController.moveNextMusic();
+                    state=0;
+                }
+            });
 
             state=1;
 
@@ -340,10 +340,13 @@ public class MainActivity extends AppCompatActivity
                 playing=true;
                 seekBar.setProgress(0);
 
-                if(musicThread.isAlive())
+                if(musicThread.isAlive()) {
                     musicThread.interrupt();
+                    Log.d("musicThread", "musicThread is interrupted");
+                }
 
                 while(musicThread.isAlive());
+                Log.d("musicThread", "musicThread is dead");
                 musicThread = null;
                 musicThread = new MusicThread();
 
