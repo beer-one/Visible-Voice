@@ -211,12 +211,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             autoLogin.putString(AppDataInfo.Login.userPwd, pw);
                             autoLogin.commit();
 
-                            SharedPreferences.Editor setCurrentmusic = currentfile.edit();
-                            //setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, );
-                            //setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
-                            setCurrentmusic.putString(AppDataInfo.CurrentFile.music, null);
-                            //setCurrentmusic.putString(AppDataInfo.CurrentFile.png, false);
-                            setCurrentmusic.commit();
                             updateFCMToken();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                             finish();
