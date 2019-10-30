@@ -85,7 +85,13 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                     ne.printStackTrace();
                 }
                 setCurrentmusic.commit();
-                startActivity(new Intent(FileListActivity.this, MainActivity.class));
+                /*
+                To do:
+                나중에 main변경후 finish로 수정해야됨.
+                 */
+                //startActivity(new Intent(FileListActivity.this, MainActivity.class));
+                ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
+                finish();
             }
         });
 

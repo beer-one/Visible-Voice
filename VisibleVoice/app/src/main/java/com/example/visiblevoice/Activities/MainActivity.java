@@ -140,6 +140,25 @@ public class MainActivity extends AppCompatActivity
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
+
+
+
+
+
+//        try{
+//            // get user's email
+//            // TO-DO : you should get play list using email
+//            //       : musicController.addMusic() <- put record in music controller
+//            intent = getIntent();
+//            //email=(String) intent.getExtras().get("email");
+//            ////////////////////////////////////////////////
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        Log.d("song","get email >>>"+email);
+    }
+    public void refreshMediaPlayer(){
+        currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean fromUser) {
@@ -170,7 +189,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-
         try{
             if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
                 //play_music(musicListController.getCurrentMusicPath());
@@ -181,19 +199,8 @@ public class MainActivity extends AppCompatActivity
         catch (NullPointerException ne){
             ne.printStackTrace();
         }
-
-//        try{
-//            // get user's email
-//            // TO-DO : you should get play list using email
-//            //       : musicController.addMusic() <- put record in music controller
-//            intent = getIntent();
-//            //email=(String) intent.getExtras().get("email");
-//            ////////////////////////////////////////////////
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        Log.d("song","get email >>>"+email);
     }
+
     private void initLayout() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -328,9 +335,9 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.file_menu :
-                if(mediaPlayer!=null && mediaPlayer.isPlaying())
+                /*if(mediaPlayer!=null && mediaPlayer.isPlaying())
                     mediaPlayer.pause();
-                playing=false;
+                playing=false;*/
                 //intent = new Intent(MainActivity.this, FileListActivity.class);
                 startActivity(new Intent(MainActivity.this, FileListActivity.class));
                 //startActivityForResult(intent, GET_MUSIC_LIST);
