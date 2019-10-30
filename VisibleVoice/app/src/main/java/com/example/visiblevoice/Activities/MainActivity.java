@@ -37,6 +37,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.room.Room;
 import androidx.viewpager.widget.ViewPager;
 
 
@@ -44,6 +45,9 @@ import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.Lyric;
 import com.example.visiblevoice.R;
+import com.example.visiblevoice.db.AppDatabase;
+import com.example.visiblevoice.db.RecordDAO;
+import com.example.visiblevoice.models.Record;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
@@ -56,6 +60,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener{
@@ -84,34 +89,20 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
+    private RecordDAO recordDAO;
+
     ActionBarDrawerToggle drawerToggle;
     Toolbar toolbar;
     public static Context mContext;
 
-    private Thread th=new Thread(
-            new Runnable(){
-                @Override
-                public void run() { // 쓰레드가 시작되면 콜백되는 메서드
-                    // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
-                    while(true) {
-                        if(playing && state == 1){
-                            try {
-                                int progress = mediaPlayer.getCurrentPosition();
-                                seekBar.setProgress(progress);
-                                Thread.sleep(1000);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            });
+    private MusicThread musicThread = new MusicThread();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        currentfile= getApplicationContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
+        Log.d("저장확인","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
         musicListController = MusicListController.getInstance();
 
         fileMenuBtn = findViewById(R.id.file_menu);
@@ -127,12 +118,14 @@ public class MainActivity extends AppCompatActivity
         mContext = this;
 
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
-        currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
+
 
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
         keywordSearchButton.setOnClickListener(new SearchClickListener());
 
         initLayout();
+
+
 
         String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
@@ -141,6 +134,7 @@ public class MainActivity extends AppCompatActivity
         playBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
 
+        updateMusicList();
 
 
 
@@ -156,6 +150,89 @@ public class MainActivity extends AppCompatActivity
 //            e.printStackTrace();
 //        }
 //        Log.d("song","get email >>>"+email);
+    }
+    public void updateMusicList(){
+
+        currentfile = getSharedPreferences(AppDataInfo.CurrentFile.key,AppCompatActivity.MODE_PRIVATE);
+
+        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                .allowMainThreadQueries()   //Allows room to do operation on main thread
+                .build()
+                .getRecordDAO();
+        //recordDAO.clearRecordTable();
+        List<Record> recordList= recordDAO.getRecords();
+        musicListController = new MusicListController();
+
+
+        for(com.example.visiblevoice.models.Record record_model : recordList){
+            int check =1;
+            for(com.example.visiblevoice.Data.Record record_data:musicListController.musicList){
+                Log.d("filepath", "record_model.getFileName : "+record_model.getFileName());
+                Log.d("filepath", "record_data : "+record_data.file_name);
+                if(record_model.getFileName() == record_data.file_name){
+                    File json_file;
+                    File png_file;
+                    File audio_file;
+                    if(record_model.getWordCloudPath()==null){
+                        png_file = null;
+                    }
+                    else{
+                        png_file = new File(record_model.getWordCloudPath());
+                    }
+                    if(record_model.getJsonPath()==null){
+                        json_file = null;
+                    }
+                    else{
+                        json_file = new File(record_model.getJsonPath());
+                    }
+
+                    if(record_model.getAudioPath() ==null){
+                        audio_file = null;
+                    }
+                    else{
+                        audio_file = new File(record_model.getAudioPath());
+                    }
+
+                    record_data.setMusic_file(audio_file);
+                    record_data.setJson_file(json_file);
+                    record_data.setPng_file(png_file);
+                    check =0;
+                    break;
+                }
+            }
+            if(check==1){
+                File json_file;
+                File png_file;
+                File audio_file;
+                if(record_model.getWordCloudPath()==null){
+                    png_file = null;
+                }
+                else{
+                    png_file = new File(record_model.getWordCloudPath());
+                }
+                if(record_model.getJsonPath()==null){
+                    json_file = null;
+                }
+                else{
+                    json_file = new File(record_model.getJsonPath());
+                }
+
+                if(record_model.getAudioPath() ==null){
+                    audio_file = null;
+                }
+                else{
+                    audio_file = new File(record_model.getAudioPath());
+                }
+
+                com.example.visiblevoice.Data.Record record = new com.example.visiblevoice.Data.Record(record_model.getFileName(),audio_file,json_file,png_file);
+                Log.d("filepath", "외않되 : "+record.getPng_file());
+                //record.setPng_file(png_file);
+                musicListController.addRecord(record);
+
+            }
+        }
+
+
     }
     public void refreshMediaPlayer(){
         viewPager = (ViewPager) findViewById(R.id.pager); //
@@ -263,7 +340,14 @@ public class MainActivity extends AppCompatActivity
                 playing=true;
                 seekBar.setProgress(0);
 
-                th.start();
+                if(musicThread.isAlive())
+                    musicThread.interrupt();
+
+                while(musicThread.isAlive());
+                musicThread = null;
+                musicThread = new MusicThread();
+
+                musicThread.start();
             }catch (Exception e){
             }
             Log.d("song","state is 1");
@@ -418,6 +502,25 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class MusicThread extends Thread {
+        public void run() { // 쓰레드가 시작되면 콜백되는 메서드
+            // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
+            try {
+                while(!Thread.currentThread().isInterrupted()) {
+                    if(playing && state == 1){
+
+                        int progress = mediaPlayer.getCurrentPosition();
+                        seekBar.setProgress(progress);
+                        Thread.sleep(1000);
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.visiblevoice.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
@@ -37,11 +38,22 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
     private ArrayList<String> nameList;
     private SharedPreferences currentfile;
     private RecordDAO recordDAO;
+    public static Context mContext;
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_file_list);
 
+        fileUploadBtn = findViewById(R.id.fileUploadBtn);
+        fileUploadBtn.setOnClickListener(this);
+        musicListListView=findViewById(R.id.musicListListView);
+
+        mContext = this;
+
+        updateMusicList();
+
+        Log.d("filepath", "저장완료");
         nameList=new ArrayList<String>();
         for(com.example.visiblevoice.Data.Record record:musicListController.musicList)
             nameList.add(record.file_name);
@@ -60,19 +72,11 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 Log.d("file저장","json 파일이름 : "+musicListController.getCurrentJsonPath());
                 Log.d("file저장","png 파일이름 : "+musicListController.getCurrentPngPath());
                 try{
-                    setCurrentmusic.putString(AppDataInfo.CurrentFile.png, musicListController.getCurrentPngPath());
-                }
-                catch (NullPointerException ne){
-                    ne.printStackTrace();
-                }
+                    if(musicListController.getCurrentPngPath()!=null)
+                        setCurrentmusic.putString(AppDataInfo.CurrentFile.png, musicListController.getCurrentPngPath());
+                    if(musicListController.getCurrentJsonPath()!=null)
+                        setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
 
-                try{
-                    setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
-                }
-                catch (NullPointerException ne){
-                        ne.printStackTrace();
-                }
-                try{
                     if(musicListController.getCurrentFilename()!=null)
                         setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, musicListController.getCurrentFilename());
 
@@ -80,6 +84,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                         setCurrentmusic.putString(AppDataInfo.CurrentFile.music, musicListController.getCurrentMusicPath());
 
                     setCurrentmusic.commit();
+                    
                 }
                 catch (NullPointerException ne){
                     ne.printStackTrace();
@@ -94,26 +99,20 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 finish();
             }
         });
-
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_file_list);
+    public void updateMusicList(){
 
-        fileUploadBtn = findViewById(R.id.fileUploadBtn);
-        musicListListView=findViewById(R.id.musicListListView);
 
-        currentfile = getSharedPreferences(AppDataInfo.CurrentFile.key,AppCompatActivity.MODE_PRIVATE);
-        fileUploadBtn.setOnClickListener(this);
+        currentfile = getApplicationContext().getSharedPreferences(AppDataInfo.CurrentFile.key,AppCompatActivity.MODE_PRIVATE);
+
         recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
                 .allowMainThreadQueries()   //Allows room to do operation on main thread
                 .build()
                 .getRecordDAO();
         //recordDAO.clearRecordTable();
         List<com.example.visiblevoice.models.Record> recordList= recordDAO.getRecords();
-        MusicListController musicListController = new MusicListController();
+        musicListController = new MusicListController();
 
 
         for(com.example.visiblevoice.models.Record record_model : recordList){
@@ -179,37 +178,10 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 com.example.visiblevoice.Data.Record record = new com.example.visiblevoice.Data.Record(record_model.getFileName(),audio_file,json_file,png_file);
                 Log.d("filepath", "외않되 : "+record.getPng_file());
                 //record.setPng_file(png_file);
-                //Log.d("filepath", "외않되2 : "+record.getPng_file());
                 musicListController.addRecord(record);
 
             }
         }
-
-
-
-        /*Thread updateThread =new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-
-                });
-            }
-        });
-        try{
-            updateThread.start();
-            updateThread.join();
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
-
-        Log.d("filepath", "저장완료");
-
-
 
 
     }
