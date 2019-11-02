@@ -4,7 +4,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/semi_gray"
+    android:background="@color/semi_white"
     android:minHeight="?attr/actionBarSize"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -24,7 +24,7 @@
             android:layout_margin="5dp"
             android:layout_weight="10"
             android:scaleType="fitCenter"
-            android:src="@drawable/title_white2" />
+            android:src="@drawable/title_black" />
     <ImageButton
         android:id="@+id/keywordSearchButton"
         android:layout_width="0dp"
