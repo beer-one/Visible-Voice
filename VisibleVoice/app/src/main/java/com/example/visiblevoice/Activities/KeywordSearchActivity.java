@@ -91,15 +91,15 @@ public class KeywordSearchActivity extends AppCompatActivity {
     private void search(String keyword) {
         currentLyricList.clear();
         ArrayList<ArrayList<Integer>> posLists = new ArrayList<>();
-
-        for(Lyric lyric : lyricList) {
-            ArrayList<Integer> list = KMP.keywordSearch(lyric.getText(), keyword);
-            if(list.size() != 0) {
-                posLists.add(list);
-                currentLyricList.add(lyric);
+        if(keyword.length() != 0) {
+            for (Lyric lyric : lyricList) {
+                ArrayList<Integer> list = KMP.keywordSearch(lyric.getText(), keyword);
+                if (list.size() != 0) {
+                    posLists.add(list);
+                    currentLyricList.add(lyric);
+                }
             }
         }
-
         listView.setAdapter(new KeywordSearchAdapter(currentLyricList, posLists, keyword));
     }
 
@@ -132,5 +132,3 @@ public class KeywordSearchActivity extends AppCompatActivity {
         }
     }
 }
-
-

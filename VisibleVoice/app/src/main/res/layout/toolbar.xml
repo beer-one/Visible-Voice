@@ -8,5 +8,11 @@
     android:minHeight="?attr/actionBarSize"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
+    <Button
+        android:gravity="right"
+        android:id="@+id/keywordSearchButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
 
 </androidx.appcompat.widget.Toolbar>
