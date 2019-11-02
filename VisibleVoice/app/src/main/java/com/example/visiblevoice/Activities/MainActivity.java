@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     private View navigationInflater;
     private SharedPreferences auto;
     private SharedPreferences currentfile;
-    private Button keywordSearchButton;
+    private ImageButton keywordSearchButton;
 
     private ViewPager viewPager;
     private PagerAdapter pageAdapter;
@@ -823,9 +824,9 @@ class LyricAdapter extends BaseAdapter {
         //time_text.setText(Float.toString(lyric.getStartTime()));
         lyric_text.setText(lyric.getText());
         if(currentTime == lyrics.get(position).getStartTime())
-            lyric_text.setTextColor(0xFF0000FF);
+            lyric_text.setTextColor(AppDataInfo.Color.selected_lyric);
         else
-            lyric_text.setTextColor(0xFF000000);
+            lyric_text.setTextColor(AppDataInfo.Color.lyric);
 
 
         return convertView;
