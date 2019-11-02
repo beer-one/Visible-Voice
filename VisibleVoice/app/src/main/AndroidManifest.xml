@@ -22,7 +22,6 @@
         <activity android:name=".Activities.FileDownloadActivity">
 
         </activity>
-        <activity android:name=".Activities.WordCloudActivity" />
         <activity android:name=".Activities.FileUploadActivity"></activity>
         <activity android:name=".Activities.JoinActivity" >
 

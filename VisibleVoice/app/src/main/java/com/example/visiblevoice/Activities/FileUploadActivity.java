@@ -348,7 +348,7 @@ public class FileUploadActivity extends AppCompatActivity {
                 Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(FileUploadActivity.this, FileListActivity.class));
                 Looper.loop();
-
+                finish();
 
             } catch (IOException e) {
                 e.printStackTrace();
