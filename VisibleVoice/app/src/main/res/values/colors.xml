@@ -6,4 +6,5 @@
     <color name="AppColor">#4472C4</color>
     <color name="semi_white">#80FFFFFF</color>
 
+    <color name="semi_gray">#80BEBCBC</color>
 </resources>

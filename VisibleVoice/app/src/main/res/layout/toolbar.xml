@@ -4,7 +4,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/semi_white"
+    android:background="@color/semi_gray"
     android:minHeight="?attr/actionBarSize"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -12,11 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal" >
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_weight="10"
-        />
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="10"
+            android:scaleType="fitCenter"
+            android:src="@drawable/title_white2" />
     <ImageButton
         android:id="@+id/keywordSearchButton"
         android:layout_width="0dp"
