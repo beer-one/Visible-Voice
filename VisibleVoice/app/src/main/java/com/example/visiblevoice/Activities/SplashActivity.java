@@ -26,10 +26,13 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         Log.d("song","splash start");
 
-        splashImageView=(ImageView)findViewById(R.id.splashImageView);
-        Animation slowly_appear;
-        slowly_appear = AnimationUtils.loadAnimation(this,R.anim.fadein);
-        splashImageView.setAnimation(slowly_appear);
+        try{
+            splashImageView=(ImageView)findViewById(R.id.splashImageView);
+            Animation slowly_appear;
+            slowly_appear = AnimationUtils.loadAnimation(this,R.anim.fadein);
+            splashImageView.setAnimation(slowly_appear);
+        }catch (Exception e) {
+        }
 
 
         Log.d("song","splash set contentview");
