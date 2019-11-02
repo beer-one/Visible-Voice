@@ -132,5 +132,3 @@ public class KeywordSearchActivity extends AppCompatActivity {
         }
     }
 }
-
-
