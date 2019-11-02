@@ -27,7 +27,8 @@ public class AppDataInfo {
     }
     public static final class Color{
         public static final int selected_lyric = 0xFF0000FF;
-        public static final int lyric = 0xFF000000;
+        public static final int lyric = 0xFFFFFFFF;
+        public static final int white = 0xFFFFFFFF;
     }
 
 }
