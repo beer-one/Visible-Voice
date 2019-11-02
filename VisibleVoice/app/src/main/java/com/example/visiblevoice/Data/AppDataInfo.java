@@ -25,5 +25,9 @@ public class AppDataInfo {
         public static final String userID = "userID";
         public static final String userPwd = "userPwd";
     }
+    public static final class Color{
+        public static final int selected_lyric = 0xFF0000FF;
+        public static final int lyric = 0xFF000000;
+    }
 
 }

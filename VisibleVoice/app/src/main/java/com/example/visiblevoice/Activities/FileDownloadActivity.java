@@ -156,6 +156,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
             Log.d("dong", "토스트 출력 완료");
             Intent intent = new Intent(FileDownloadActivity.this, FileListActivity.class);
             startActivity(intent);
+            finish();
             return null;
         }
 
