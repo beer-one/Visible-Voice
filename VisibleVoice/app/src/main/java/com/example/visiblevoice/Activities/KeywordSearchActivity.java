@@ -1,6 +1,7 @@
 package com.example.visiblevoice.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.SearchView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.visiblevoice.Adapter.KeywordSearchAdapter;
+import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.Lyric;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.algorithm.KMP;
@@ -32,6 +34,7 @@ public class KeywordSearchActivity extends AppCompatActivity {
     private ArrayList<Lyric> lyricList;
     private SearchView searchView;
     private ListView listView;
+    private SharedPreferences currentfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class KeywordSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_keyword);
         Intent intent = getIntent();
 
+        currentfile= getApplicationContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         lyricList = new ArrayList<>();
         currentLyricList = new ArrayList<>();
         getDataFromFile(intent.getExtras().getString("filename"));
@@ -127,6 +131,7 @@ public class KeywordSearchActivity extends AppCompatActivity {
             resultIntent.putExtra("timeResult", currentLyricList.get(i).getStartTime());
             listView.getItemAtPosition(i);
             setResult(RESULT_OK,resultIntent);*/
+            ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
             ((MainActivity)MainActivity.mContext).move_music( currentLyricList.get(i));
             finish();
         }

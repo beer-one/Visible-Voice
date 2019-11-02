@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void play_music(String fileName){
+    public void play_music(String fileName){
         Log.d("song","play music... "+fileName);
         Uri fileUri = Uri.parse( fileName );
 
@@ -532,16 +532,24 @@ public class MainActivity extends AppCompatActivity
                                 }
                             });
                         }
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
 
                     }
                 }
-            } catch (Exception e) {
+            }catch (InterruptedException ie){
+                ie.printStackTrace();
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
+
+            playing = false;
         }
     }
 
+    public boolean getPlaying() {
+        return playing;
+    }
     private void insertSftpKey(String str) {
         AssetManager asset = getResources().getAssets();
         InputStream is = null;
@@ -630,6 +638,9 @@ class LyricListViewFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                // Log.d("아이템 객체",lyric_adapter.getView(position,,listView)+"");
+                //if(((MainActivity)MainActivity.mContext))
+                if(!((MainActivity)MainActivity.mContext).getPlaying())
+                    ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
                 Log.d("가사","lyricArrayList.get(position)의 시간 : "+lyricArrayList.get(position).getStartTime());
                 ((MainActivity)MainActivity.mContext).move_music(lyricArrayList.get(position));
                 //listView.setSelection(position);//가사
