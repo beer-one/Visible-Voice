@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -34,23 +35,28 @@ public class SplashActivity extends Activity {
         }catch (Exception e) {
         }
 
-
         Log.d("song","splash set contentview");
         auto = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
         try {
-            Thread.sleep(2000);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if(!(auto.getBoolean(AppDataInfo.Login.checkbox,false))){
+                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    }
+                    else{
+                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    }
+                }
+            }, 2000);
+            //Thread.sleep(2000);
         }
-        catch (InterruptedException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
         Log.d("song","sleep");
 
-        if(!(auto.getBoolean(AppDataInfo.Login.checkbox,false))){
-            startActivity(new Intent(this, LoginActivity.class));
-        }
-        else{
-            startActivity(new Intent(this, MainActivity.class));
-        }
 
         finish();
     }
