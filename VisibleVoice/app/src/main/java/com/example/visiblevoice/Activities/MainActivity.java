@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity
     private Button speedBtn;
     private SeekBar seekBar;
     private TextView useridView;
+    private TextView titleTextView;
     private View navigationInflater;
     private SharedPreferences auto;
     private SharedPreferences currentfile;
@@ -117,10 +118,13 @@ public class MainActivity extends AppCompatActivity
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
 
+        titleTextView = findViewById(R.id.title);
+        titleTextView.setText(currentfile.getString(AppDataInfo.CurrentFile.filename,null));
         viewPager = (ViewPager) findViewById(R.id.pager); //
         pageAdapter = new PagerAdapter
                 (getSupportFragmentManager(), 2);
         viewPager.setAdapter(pageAdapter);
+
 
         mContext = this;
 
@@ -269,6 +273,8 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(pageAdapter);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
 
+        Log.d("title",currentfile.getString(AppDataInfo.CurrentFile.filename,null)+"");
+        titleTextView.setText(currentfile.getString(AppDataInfo.CurrentFile.filename,null));
 
         try{
             if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
