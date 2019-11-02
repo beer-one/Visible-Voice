@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background_1"
     >
 
     <!--Custom Toolbar-->
@@ -13,10 +14,12 @@
         android:id="@+id/keywordSearchView"
         android:layout_width="match_parent"
         android:background="@drawable/round_shape"
+        android:layout_margin="10dp"
         android:layout_height="50dp" />
 
     <ListView
         android:id="@+id/sentenceListView"
+        android:background="#FFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

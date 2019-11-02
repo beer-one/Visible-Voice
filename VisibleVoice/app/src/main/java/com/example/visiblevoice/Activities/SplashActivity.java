@@ -31,7 +31,7 @@ public class SplashActivity extends Activity {
             splashImageView=(ImageView)findViewById(R.id.splashImageView);
             Animation slowly_appear;
             slowly_appear = AnimationUtils.loadAnimation(this,R.anim.fadein);
-            splashImageView.setAnimation(slowly_appear);
+//            splashImageView.setAnimation(slowly_appear);
         }catch (Exception e) {
         }
 
