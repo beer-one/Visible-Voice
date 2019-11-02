@@ -24,7 +24,7 @@
             android:layout_margin="5dp"
             android:layout_weight="10"
             android:scaleType="fitCenter"
-            android:src="@drawable/title_blue" />
+            android:src="@drawable/title_white2" />
     <ImageButton
         android:id="@+id/keywordSearchButton"
         android:layout_width="0dp"
