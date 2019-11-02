@@ -12,6 +12,7 @@
     <SearchView
         android:id="@+id/keywordSearchView"
         android:layout_width="match_parent"
+        android:background="@drawable/round_shape"
         android:layout_height="50dp" />
 
     <ListView
