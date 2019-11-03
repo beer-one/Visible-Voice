@@ -10,7 +10,7 @@
     <include layout="@layout/toolbar" />
 
     <TextView
-        android:text="ycpark"
+        android:text="파일을 등록해주세요."
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="0dp"

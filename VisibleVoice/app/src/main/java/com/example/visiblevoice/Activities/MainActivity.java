@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
 
         String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
-        useridView.setText("dongwook");
+        useridView.setText(auto.getString(AppDataInfo.Login.userID,null));
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
@@ -192,6 +192,20 @@ public class MainActivity extends AppCompatActivity
         });
         updateMusicList();
 
+//        if(currentfile.getString(AppDataInfo.CurrentFile.music,null) != null) {
+//            play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+//            setButtonEnable(true);
+//            pause_music();
+//        } else {
+//            setButtonEnable(false);
+//        }
+
+
+    }
+
+    public void setButtonEnable(boolean able) {
+        keywordSearchButton.setEnabled(able);
+        playBtn.setEnabled(able);
     }
     public void updateMusicList(){
 
@@ -273,8 +287,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         }
-
-
     }
     public void refreshMediaPlayer(){
         viewPager = (ViewPager) findViewById(R.id.pager); //
@@ -353,8 +365,6 @@ public class MainActivity extends AppCompatActivity
                 }
             });
 
-            state=1;
-
             playBtn.setImageResource(R.drawable.pause);
 
             seekBar.setMax(mediaPlayer.getDuration());
@@ -376,6 +386,7 @@ public class MainActivity extends AppCompatActivity
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
                 playMusicAsyncTask.execute();
             }catch (Exception e){
+                e.printStackTrace();
             }
             Log.d("song","state is 1");
         } catch (IOException e) {
@@ -550,6 +561,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... voids) {
             try {
+                Log.d("progress","doinbackground  ");
                 while(!isCancelled()) {
                     Log.d("progress","state : "+state);
                     if(state == 1){

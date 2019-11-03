@@ -109,6 +109,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                  */
                 //startActivity(new Intent(FileListActivity.this, MainActivity.class));
                 ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
+                ((MainActivity)MainActivity.mContext).setButtonEnable(true);
                 finish();
             }
         });
