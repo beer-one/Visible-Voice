@@ -112,17 +112,51 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 finish();
             }
         });
+        musicListListView.setLongClickable(true);
         musicListListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
 
+            private String fileName;
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 Log.d("long",musicListController.getFilename(position)+"클릭");
-                String fileName = musicListController.getFilename(position);
-                recordDAO.deleteRecord(fileName);
-                musicListController.removeRecord(position);
-                //updateMusicList();
-                listAdapter.notifyDataSetChanged();
+                fileName = musicListController.getFilename(position);
+
                 //musicListListView.setAdapter(listAdapter);
+                AlertDialog.Builder alert = new AlertDialog.Builder(
+                        FileListActivity.this);
+                alert.setTitle("파일 삭제");
+                alert.setMessage("선택하신 파일 "+fileName+"을 삭제하시겠 습니까?");
+                alert.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //do your work here
+                        Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
+                        recordDAO.deleteRecord(fileName);
+                        musicListController.removeRecord(position);
+                        File jsonfile = new File(AppDataInfo.Path.VisibleVoiceFolder+"/"+fileName+".json");
+                        File pngfile = new File(AppDataInfo.Path.VisibleVoiceFolder+"/"+fileName+".png");
+                        if(jsonfile.exists())
+                            jsonfile.delete();
+                        if(pngfile.exists())
+                            pngfile.delete();
+                        //updateMusicList();
+
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+                alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.dismiss();
+                    }
+                });
+
+                alert.show();
+                listAdapter.notifyDataSetChanged();
                /* AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
                 builder.setTitle("파일 삭제").setMessage("선택하신 파일 "+musicListController.getFilename(position)+"을 변환하시겠습니까?");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
@@ -130,7 +164,10 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                     public void onClick(DialogInterface dialog, int id)
                     {
                         Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
-
+                        recordDAO.deleteRecord(fileName);
+                        musicListController.removeRecord(position);
+                        //updateMusicList();
+                        listAdapter.notifyDataSetChanged();
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
@@ -141,8 +178,8 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                     }
                 });
                 AlertDialog alertDialog = builder.create();
-                alertDialog.show();*/
-                Log.d("long","alertdialog");
+                alertDialog.show();
+                Log.d("long","alertdialog");*/
                 return true;
             }
         });
