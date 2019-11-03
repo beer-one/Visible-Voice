@@ -309,9 +309,12 @@ public class MainActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
         navigationInflater = getLayoutInflater().inflate(R.layout.nav_header_main, null, false);//다른 view의 객체 가져오기위해사용
 
-        useridView = (TextView) navigationInflater.findViewById((R.id.userIdTextView));
-        Log.d("useridview",useridView.getText().toString());
+        View nav_header_view = navigationView.getHeaderView(0);
+
+        useridView = (TextView) nav_header_view.findViewById((R.id.userIdTextView));
+        Log.d("useridview",useridView.getText().toString());;
         useridView.setText(auto.getString(AppDataInfo.Login.userID, null));
+        Log.d("useridview2",useridView.getText().toString());;
         drawerToggle = new ActionBarDrawerToggle(
                 this,
                 drawerLayout,

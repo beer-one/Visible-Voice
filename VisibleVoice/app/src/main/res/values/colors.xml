@@ -9,4 +9,5 @@
     <color name="semi_gray">#80BEBCBC</color>
     <color name="gray">#3F3F3F</color>
     <color name="AccentTextColor">#2C3C79</color>
+    <color name ="navColor">#00a7c4</color>
 </resources>
