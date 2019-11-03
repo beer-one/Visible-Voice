@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity
 
         String userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
-        useridView.setText("dongwook");
+        useridView.setText(auto.getString(AppDataInfo.Login.userID,null));
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
