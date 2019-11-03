@@ -46,8 +46,7 @@ import java.util.ArrayList;
 public class FileDownloadActivity extends AppCompatActivity implements View.OnClickListener{
     private SharedPreferences userData;
     private SharedPreferences fileData;
-    private TextView jsontextView;
-    private TextView pngtextView;
+    private TextView filenameTextview;
     private ImageButton fileDownloadBtn;
     private ProgressDialog progressDialog;
     private final int BUFSIZE = 4096;
@@ -59,10 +58,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_file_download);
         userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
         fileData = getSharedPreferences(AppDataInfo.File.key,AppCompatActivity.MODE_PRIVATE);
-        jsontextView =findViewById(R.id.jsonTextView);
-        jsontextView.setText(fileData.getString(AppDataInfo.File.json,null));
-        pngtextView = findViewById(R.id.pngTextView);
-        pngtextView.setText(fileData.getString(AppDataInfo.File.png,null));
+        filenameTextview = findViewById(R.id.filenameTextview);
         fileDownloadBtn = findViewById(R.id.file_download_btn);
         progressDialog = new ProgressDialog(this);
 
@@ -74,12 +70,12 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()){
             case R.id.file_download_btn:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("파일 다운로드").setMessage("변환된 파일을 다운로드 하시겠습니까?");
+                builder.setTitle("음성파일 분석 완료").setMessage("분석된 파일정보를 적용하시겠습니까?");
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int id)
                     {
-                        Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                         try{
                             new BackgroundTask().execute();
                         }
@@ -92,7 +88,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void onClick(DialogInterface dialog, int id)
                     {
-                        Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
                     }
                 });
                 AlertDialog alertDialog = builder.create();
@@ -119,11 +115,11 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         //배열이라 여러개를 받을 수 도 있다. ex) excute(100, 10, 20, 30); 이런식으로 전달 받으면 된다.
         @Override
         protected Void doInBackground(Void... voids) {
-            Log.d("dong", "json 다운로드 : "+jsontextView.getText().toString());
-            receiveData(jsontextView.getText().toString());
+            //Log.d("dong", "json 다운로드 : "+jsontextView.getText().toString());
+            receiveData(fileData.getString(AppDataInfo.File.json,null));
 
-            Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
-            receiveData(pngtextView.getText().toString());
+            //Log.d("dong", "png 다운로드 : "+pngtextView.getText().toString());
+            receiveData(fileData.getString(AppDataInfo.File.png,null));
             //update
 
 
@@ -142,13 +138,20 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                     .getRecordDAO();
 
             Record record = new Record();
-            String jsonFileName = jsontextView.getText().toString();
+            String jsonFileName = fileData.getString(AppDataInfo.File.json,null);
+            String pngFileName = fileData.getString(AppDataInfo.File.png,null);
             String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
+            record.setFileName(fileName);
+            record.setAudioPath(fileData.getString(AppDataInfo.File.music_path,null));
+            record.setWordCloudPath(AppDataInfo.Path.VisibleVoiceFolder + "/"+pngFileName);
+            record.setJsonPath(AppDataInfo.Path.VisibleVoiceFolder + "/"+jsonFileName);
+            recordDAO.insert(record);
+
             Log.d("dong",fileName);
             //record.setAudioPath();
-            Log.d("file저장","png 넣을때 : "+AppDataInfo.Path.VisibleVoiceFolder + "/"+pngtextView.getText().toString());
-            recordDAO.updateWCPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+pngtextView.getText().toString());
-            recordDAO.updateJSONPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+jsontextView.getText().toString());
+            Log.d("file저장","png 넣을때 : "+AppDataInfo.Path.VisibleVoiceFolder + "/"+pngFileName);
+            recordDAO.updateWCPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+pngFileName);
+            recordDAO.updateJSONPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+jsonFileName);
 
             progressDialog.dismiss();
             Log.d("dong", "progressDialog 출력완료");
