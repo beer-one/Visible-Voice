@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity
     private int speed=3; // speed has 5 step 0.5, 0.75, 1, 1.5, 2
     private int state=0; // state 0 = stop  // state 1 = playing // state 2 = pause
     private MediaPlayer mediaPlayer;
-    //private boolean playing=false;
-
-    public static final int GET_MUSIC_LIST = 3333;
 
     public MusicListController musicListController;
     private DrawerLayout drawerLayout;
@@ -164,11 +161,6 @@ public class MainActivity extends AppCompatActivity
                         if(mediaPlayer!=null){
                             Log.d("song","term is "+i);
                             mediaPlayer.seekTo(i);
-
-                            /*LyricListViewFragment fragment = ((LyricListViewFragment)getSupportFragmentManager().findFragmentById(R.id.lyric_listview));
-                            Log.d("fragment",fragment+"");
-                            fragment.moveListViewItem(i);*/
-
                         }
                         if(!mediaPlayer.isPlaying()) {
                             mediaPlayer.start();
@@ -191,6 +183,15 @@ public class MainActivity extends AppCompatActivity
             }
         });
         updateMusicList();
+
+        if(currentfile.getString(AppDataInfo.CurrentFile.filename, null) != null) {
+            try {
+                setMediaPlayer(currentfile.getString(AppDataInfo.CurrentFile.filename, null));
+                musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
     public void updateMusicList(){
@@ -288,7 +289,6 @@ public class MainActivity extends AppCompatActivity
 
         try{
             if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
-                //play_music(musicListController.getCurrentMusicPath());
                 play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
                 Log.d("song","play new music...");
             }
@@ -301,9 +301,6 @@ public class MainActivity extends AppCompatActivity
     private void initLayout() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setTitle("소리가 보인다");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
- //       getSupportActionBar().setHomeAsUpIndicator(R);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_main_drawer_root);
         navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
@@ -332,27 +329,31 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void play_music(String fileName){
-        Log.d("song","play music... "+fileName);
+    public void setMediaPlayer(String fileName) throws IOException {
+        // 재생 시작
         Uri fileUri = Uri.parse( fileName );
 
+        mediaPlayer.reset();
+        mediaPlayer.setDataSource(MainActivity.this, fileUri);
+        mediaPlayer.prepare();
+        mediaPlayer.start();
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                musicListController.moveNextMusic();
+                state=0;
+            }
+        });
+    }
+
+    public void play_music(String fileName){
+        Log.d("song","play music... "+fileName);
         Log.d("song","mediaPlayer.getDuration()  "+mediaPlayer.getDuration());
 
         // 재생이 끝날때 이벤트 처리
         try {
             // 재생 시작
-            mediaPlayer.reset();
-            mediaPlayer.setDataSource(MainActivity.this, fileUri);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    musicListController.moveNextMusic();
-                    state=0;
-                }
-            });
-
+            setMediaPlayer(fileName);
             state=1;
 
             playBtn.setImageResource(R.drawable.pause);
@@ -422,10 +423,6 @@ public class MainActivity extends AppCompatActivity
         if(mediaPlayer==null) return;
         mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(s));
         if(state != 1) mediaPlayer.pause();
-/*
-        state=1;
-        playBtn.setImageResource(R.drawable.pause);
-*/
     }
 
     public void move_music(Lyric lyrics){
@@ -433,7 +430,6 @@ public class MainActivity extends AppCompatActivity
         if(mediaPlayer == null) return;
         Log.d("가사","lyrics.getStartTime() : "+lyrics.getStartTime());
         mediaPlayer.seekTo((int)lyrics.getStartTime()*1000);
-       // ((LyricListViewFragment)getSupportFragmentManager().findFragmentById(R.id.lyric_listview)).moveListViewItem((int)lyrics.getStartTime()*1000);
 
     }
     private void logout() {
@@ -453,12 +449,7 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.file_menu :
-                /*if(mediaPlayer!=null && mediaPlayer.isPlaying())
-                    mediaPlayer.pause();
-                playing=false;*/
-                //intent = new Intent(MainActivity.this, FileListActivity.class);
                 startActivity(new Intent(MainActivity.this, FileListActivity.class));
-                //startActivityForResult(intent, GET_MUSIC_LIST);
                 break;
             case R.id.speedBtn:
                 setSpeed();
@@ -470,19 +461,15 @@ public class MainActivity extends AppCompatActivity
                     if(musicListController.musicList.size()!=0)
                         Log.d("song","before playing >>music 0  :" + musicListController.musicList.get(0).full_path);
 
-
-                    try{
-
+                    try {
                         Log.d("file저장","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
                         play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
-                    }catch (NullPointerException ne){
+                    } catch (NullPointerException ne){
                         ne.printStackTrace();
                     }
-
-//                    play_music("");
                 } else if (state ==1) { // playing -> pause
                     pause_music();
-                } else if(state == 2) { // pause -> playing
+                } else if (state == 2) { // pause -> playing
                     restart_music();
                 }
                 break;
@@ -524,7 +511,6 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        //drawerLayout.closeDrawer(GravityCompat.START);
         return false;
 
     }
@@ -555,15 +541,11 @@ public class MainActivity extends AppCompatActivity
                     if(state == 1){
 
                         int progress = mediaPlayer.getCurrentPosition();
-                        seekBar.setProgress(progress);
-                        //mediaPlayer.getDuration();
+
                         Log.d("progress",progress+"");
-                        pos = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress);
-                        //Log.d("progress", "pos = " + pos + ", cur = " + current);
+                        pos = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress/1000);
                         publishProgress(progress);
                         Thread.sleep(1000);
-
-
                     }
                 }
             }catch (InterruptedException ie){
@@ -581,7 +563,8 @@ public class MainActivity extends AppCompatActivity
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             ((LyricListViewFragment)pageAdapter.getItem(1)).moveListViewItem(pos);
-            curentTimeTextView.setText(timeToString(values[0]/1000));
+            curentTimeTextView.setText(timeToString(values[0]));
+            seekBar.setProgress(values[0]);
         }
 
         @Override
@@ -600,8 +583,8 @@ public class MainActivity extends AppCompatActivity
         }*/
     }
 
-    public boolean getPlaying() {
-        return state==1;
+    public int getState() {
+        return state;
     }
     private void insertSftpKey(String str) {
         AssetManager asset = getResources().getAssets();
@@ -666,12 +649,10 @@ class LyricListViewFragment extends Fragment {
     private LyricAdapter lyric_adapter;
     private ArrayList<Lyric> lyricArrayList;
     private SharedPreferences currentfile;
-    private int currentPosition;
     Context lContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        currentPosition=0;
 
         View v = inflater.inflate(R.layout.fragment_lyriclist, container, false);
         currentfile= getContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
@@ -690,19 +671,19 @@ class LyricListViewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-               // Log.d("아이템 객체",lyric_adapter.getView(position,,listView)+"");
-                //if(((MainActivity)MainActivity.mContext))
-                Log.d("가사","play : "+((MainActivity)MainActivity.mContext).getPlaying());
-                if(!((MainActivity)MainActivity.mContext).getPlaying()){
-                    Log.d("가사","play music"+lyricArrayList.get(position).getStartTime());
-                    ((MainActivity)MainActivity.mContext).restart_music();
+                Log.d("가사","play : "+((MainActivity)MainActivity.mContext).getState());
+
+                switch(((MainActivity)MainActivity.mContext).getState()) {
+                    case 0:
+                        ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+                        break;
+                    case 2:
+                        ((MainActivity)MainActivity.mContext).restart_music();
+                        break;
                 }
 
                 Log.d("가사","lyricArrayList.get(position)의 시간 : "+lyricArrayList.get(position).getStartTime());
                 ((MainActivity)MainActivity.mContext).move_music(lyricArrayList.get(position));
-                //listView.setSelection(position);//가사
-                //moveListViewItem((int)lyricArrayList.get(position).getStartTime()*1000);
-                //listView.smoothScrollToPosition(position);
 
             }
         });
@@ -724,13 +705,9 @@ class LyricListViewFragment extends Fragment {
         Log.d("position", "currentPosition : "+currentPosition);
 
 
-        //setTextColor(prevPosition,false, lyricArrayList.get(currentPosition).getStartTime());
         lyric_adapter.setCurrentTime(lyricArrayList.get(currentPosition).getStartTime());
         lyric_adapter.notifyDataSetChanged();
         listView.smoothScrollToPosition(currentPosition);
-       // lyric_adapter.notifyDataSetChanged();
-        //setTextColor(currentPosition,true, lyricArrayList.get(currentPosition).getStartTime());
-
     }
 
     private void getDataFromFile(String filename) {
@@ -753,7 +730,6 @@ class LyricListViewFragment extends Fragment {
     }
 
     private String readJsonFromFile(String filename) throws NullPointerException {
-        String result = null;
         try {
             InputStream is = new FileInputStream(new File(filename));
             byte[] buffer = new byte[is.available()];
@@ -768,39 +744,6 @@ class LyricListViewFragment extends Fragment {
             throw new NullPointerException();
         }
     }
-
-    private void setTextColor(int pos, boolean on, float currentTime) {
-
-        int firstPos = listView.getFirstVisiblePosition();
-
-        int wantedPos = pos - firstPos;
-
-        if (wantedPos < 0 || wantedPos >= listView.getChildCount()) {
-
-            return;
-
-        }
-
-        TextView childView = listView.getChildAt(wantedPos).findViewById(R.id.lyric_TextView);
-
-        if (childView == null) {
-
-            return;
-
-        }
-
-        if (on && currentTime == lyricArrayList.get(pos).getStartTime()) {
-
-            childView.setTextColor(0xFF0000FF);
-
-        } else {
-
-            childView.setTextColor(0xFF000000);
-
-        }
-
-    }
-
 }
 
 class PagerAdapter extends FragmentStatePagerAdapter {
@@ -874,10 +817,8 @@ class LyricAdapter extends BaseAdapter {
 
 
         //그 각각의 리릭 안에서 텍스트뷰 하나 뽑아옴
-        //TextView time_text = (TextView)convertView.findViewById(R.id.time_TextView);
         TextView lyric_text = (TextView)convertView.findViewById(R.id.lyric_TextView);
 
-        //time_text.setText(Float.toString(lyric.getStartTime()));
         lyric_text.setText(lyric.getText());
         if(currentTime == lyrics.get(position).getStartTime())
             lyric_text.setTextColor(AppDataInfo.Color.selected_lyric);

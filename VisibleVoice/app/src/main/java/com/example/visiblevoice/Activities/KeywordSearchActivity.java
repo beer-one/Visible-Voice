@@ -126,14 +126,16 @@ public class KeywordSearchActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            //  출처: https://liveonthekeyboard.tistory.com/entry/안드로이드-startActivityForResult-onActivityResult-사용법 [키위남]
-           /* Intent resultIntent = new Intent();
-            resultIntent.putExtra("timeResult", currentLyricList.get(i).getStartTime());
-            listView.getItemAtPosition(i);
-            setResult(RESULT_OK,resultIntent);*/
 
-           if(!((MainActivity)MainActivity.mContext).getPlaying())
-               ((MainActivity)MainActivity.mContext).restart_music();
+            switch(((MainActivity)MainActivity.mContext).getState()) {
+                case 0:
+                    ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+                    break;
+                case 2:
+                    ((MainActivity)MainActivity.mContext).restart_music();
+                    break;
+            }
+
             ((MainActivity)MainActivity.mContext).move_music( currentLyricList.get(i));
             finish();
         }
