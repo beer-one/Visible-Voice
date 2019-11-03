@@ -131,7 +131,9 @@ public class KeywordSearchActivity extends AppCompatActivity {
             resultIntent.putExtra("timeResult", currentLyricList.get(i).getStartTime());
             listView.getItemAtPosition(i);
             setResult(RESULT_OK,resultIntent);*/
-            ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+
+           if(!((MainActivity)MainActivity.mContext).getPlaying())
+               ((MainActivity)MainActivity.mContext).restart_music();
             ((MainActivity)MainActivity.mContext).move_music( currentLyricList.get(i));
             finish();
         }

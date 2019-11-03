@@ -36,8 +36,14 @@ public class MusicListController {
         }
         return instance;
     }
+    public void removeRecord(int idx){
+        musicList.remove(idx);
+    }
     public void addRecord(Record record){
         musicList.add(record);
+    }
+    public String getFilename(int idx){
+        return musicList.get(idx).file_name;
     }
     public String getCurrentFilename(){
         return musicList.get(current).file_name;

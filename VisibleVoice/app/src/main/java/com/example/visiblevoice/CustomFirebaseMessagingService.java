@@ -64,22 +64,21 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
-            if (/* Check if data needs to be processed by long running job */ true) {
+            /*if (*//* Check if data needs to be processed by long running job *//* true) {
                 // For long-running tasks (10 seconds or more) use WorkManager.
                 scheduleJob();
             } else {
                 // Handle message within 10 seconds
                 handleNow();
-            }
+            }*/
 
         }
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-        }
+
         try{
-            sendNotification(remoteMessage.getNotification().getBody());
+            Log.d(TAG,"body 출력 : "+ remoteMessage.getData());
+            sendNotification(remoteMessage.getData());
         }
         catch (NullPointerException ne) {
             ne.printStackTrace();
@@ -152,7 +151,8 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(Map<String,String > messageBody) {
+        Log.d(TAG,"sendnotification body 출력 : "+messageBody);
         Intent intent = new Intent(this, FileDownloadActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -162,9 +162,10 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.app_image)
-                        .setContentTitle(getString(R.string.fcm_message))
-                        .setContentText(messageBody)
+                        .setSmallIcon(R.drawable.vv_logo)
+                        .setContentTitle(getString(R.string.download_complete_title))
+                        .setContentText(getString(R.string.download_complete_context))
+                        .setVibrate(new long[]{1000, 1000})
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);

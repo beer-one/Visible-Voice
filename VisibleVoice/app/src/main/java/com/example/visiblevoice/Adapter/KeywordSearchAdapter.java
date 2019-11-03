@@ -66,7 +66,7 @@ public class KeywordSearchAdapter extends BaseAdapter {
         for(int i : posList.get(position))
             ssb.setSpan(new ForegroundColorSpan(Color.parseColor("#FF0000")), i, i + keyword.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        timeTextView.setText(lyricsList.get(position).getStartTime() + "");
+        timeTextView.setText(lyricsList.get(position).timeToString());
         sentenceTextView.setText(ssb);
         return convertView;
     }

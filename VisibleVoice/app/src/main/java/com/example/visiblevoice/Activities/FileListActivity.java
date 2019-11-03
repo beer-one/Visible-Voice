@@ -1,11 +1,15 @@
 package com.example.visiblevoice.Activities;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,8 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import com.example.visiblevoice.Controller.MusicListController;
@@ -25,6 +29,7 @@ import com.example.visiblevoice.db.RecordDAO;
 import com.example.visiblevoice.models.Record;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +65,14 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
 
         listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, nameList);
         musicListListView.setAdapter(listAdapter);
+        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                .allowMainThreadQueries()   //Allows room to do operation on main thread
+                .build()
+                .getRecordDAO();
+
+        Record record = new Record();
+        /*String jsonFileName = jsontextView.getText().toString();
+        String fileName = jsonFileName.substring(0,jsonFileName.length()-5);*/
 
         musicListListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -97,6 +110,40 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 //startActivity(new Intent(FileListActivity.this, MainActivity.class));
                 ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
                 finish();
+            }
+        });
+        musicListListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                Log.d("long",musicListController.getFilename(position)+"클릭");
+                String fileName = musicListController.getFilename(position);
+                recordDAO.deleteRecord(fileName);
+                musicListController.removeRecord(position);
+                //updateMusicList();
+                listAdapter.notifyDataSetChanged();
+                //musicListListView.setAdapter(listAdapter);
+               /* AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setTitle("파일 삭제").setMessage("선택하신 파일 "+musicListController.getFilename(position)+"을 변환하시겠습니까?");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();*/
+                Log.d("long","alertdialog");
+                return true;
             }
         });
     }
@@ -197,4 +244,5 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 break;
         }
     }
+
 }
