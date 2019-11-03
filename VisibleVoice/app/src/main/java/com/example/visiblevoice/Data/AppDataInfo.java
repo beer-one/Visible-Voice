@@ -5,6 +5,7 @@ import android.os.Environment;
 public class AppDataInfo {
     public  static final class File {
         public static final String key = "downloadfile";
+        public static final String music_path = "music_path";
         public static final String json = "json";
         public static final String png = "png";
     }

@@ -66,6 +66,7 @@ public class FileUploadActivity extends AppCompatActivity {
     private ArrayAdapter<String> listAdapter;
 
     private SharedPreferences userData;
+    private SharedPreferences fileData;
     private RecordDAO recordDAO;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class FileUploadActivity extends AppCompatActivity {
         listView = (ListView)findViewById(R.id.uploadFileListView);
         items = new ArrayList<>();
         listAdapter = new ArrayAdapter<String>(FileUploadActivity.this, android.R.layout.simple_list_item_1, items);
-
+        fileData= getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
         userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
 
         // check sd card is mounted
@@ -173,22 +174,9 @@ public class FileUploadActivity extends AppCompatActivity {
                     //Record record = new Record(fileName, fileRoot);
                     //musicListController.addMusic(record);
                     //insert
-                    recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
-                            .allowMainThreadQueries()   //Allows room to do operation on main thread
-                            .build()
-                            .getRecordDAO();
-
-                    try{
-                        Record record = new Record();
-                        record.setFileName(fileName.substring(0,fileName.length()-4));
-                        record.setAudioPath(fileRoot.getAbsolutePath());
-                        record.setWordCloudPath(null);
-                        record.setJsonPath(null);
-                        recordDAO.insert(record);
-                    }
-                    catch (Exception e){
-                        e.printStackTrace();
-                    }
+                    SharedPreferences.Editor file_data = fileData.edit();
+                    file_data.putString(AppDataInfo.File.music_path,fileRoot.getAbsolutePath());
+                    file_data.commit();
 
                     // make file name string
                     String fname=rootPath.replace("/","+")+fileName.replace("\\.","+");
