@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences auto;
     private SharedPreferences currentfile;
     private ImageButton keywordSearchButton;
+    private ImageButton menuButton;
 
     private ViewPager viewPager;
     private PagerAdapter pageAdapter;
@@ -133,6 +135,8 @@ public class MainActivity extends AppCompatActivity
 
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
         keywordSearchButton.setOnClickListener(new SearchClickListener());
+
+        menuButton=findViewById(R.id.menuButton);
 
         initLayout();
 
@@ -291,9 +295,9 @@ public class MainActivity extends AppCompatActivity
     private void initLayout() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("소리가 보인다");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.menu_white);
+//        getSupportActionBar().setTitle("소리가 보인다");
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+ //       getSupportActionBar().setHomeAsUpIndicator(R);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_main_drawer_root);
         navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
@@ -311,6 +315,12 @@ public class MainActivity extends AppCompatActivity
         );
         drawerLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
     }
 
     public void play_music(String fileName){
