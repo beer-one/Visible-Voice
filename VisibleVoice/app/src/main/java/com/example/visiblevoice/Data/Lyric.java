@@ -22,4 +22,13 @@ public class Lyric {
     //public void setFinishTime(int finishTime) { this.finishTime = finishTime; }
     public float getStartTime() { return startTime; }
     public void setStartTime(float startTime) { this.startTime = startTime; }
+    public String timeToString() {
+        int hours = (int)startTime / 3600;
+        int minutes = ((int)startTime % 3600) / 60;
+        int seconds = ((int)startTime % 3600) % 60;
+        String ret = hours == 0 ? "00:" : hours < 10 ? "0"+hours : hours+"";
+        ret += (minutes == 0 ? "00:" : minutes < 10 ? "0"+minutes+":" : minutes+":");
+        ret += (seconds == 0 ? "00" : seconds < 10 ? "0"+seconds : seconds+"");
+        return ret;
+    }
 }

@@ -19,9 +19,11 @@
         android:text="time" />
 
     <TextView
+        android:layout_margin="10dp"
         android:id="@+id/sentenceTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:justificationMode="inter_word"
         android:gravity="center_vertical"
         android:textColor="@color/gray"
         android:text="sentence" />

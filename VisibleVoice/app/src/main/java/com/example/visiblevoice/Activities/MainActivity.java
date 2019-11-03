@@ -11,6 +11,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -82,6 +83,8 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences currentfile;
     private ImageButton keywordSearchButton;
     private ImageButton menuButton;
+    private TextView curentTimeTextView;
+    private TextView musicTimeTextView;
 
     private ViewPager viewPager;
     private PagerAdapter pageAdapter;
@@ -89,7 +92,7 @@ public class MainActivity extends AppCompatActivity
     private int speed=3; // speed has 5 step 0.5, 0.75, 1, 1.5, 2
     private int state=0; // state 0 = stop  // state 1 = playing // state 2 = pause
     private MediaPlayer mediaPlayer;
-    private boolean playing=true;
+    //private boolean playing=false;
 
     public static final int GET_MUSIC_LIST = 3333;
 
@@ -103,8 +106,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     public static Context mContext;
 
-    private MusicThread musicThread = new MusicThread();
-
+    private PlayMusicAsyncTask playMusicAsyncTask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +130,10 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(pageAdapter);
 
 
+        curentTimeTextView = (findViewById(R.id.currentTimeText));
+        musicTimeTextView = (findViewById(R.id.totalTimeText));
+
+        playMusicAsyncTask = new PlayMusicAsyncTask();
         mContext = this;
 
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
@@ -327,7 +333,7 @@ public class MainActivity extends AppCompatActivity
         Log.d("song","play music... "+fileName);
         Uri fileUri = Uri.parse( fileName );
 
-        Log.d("song","set mediaPlayer  "+mediaPlayer.toString());
+        Log.d("song","mediaPlayer.getDuration()  "+mediaPlayer.getDuration());
 
         // 재생이 끝날때 이벤트 처리
         try {
@@ -351,20 +357,21 @@ public class MainActivity extends AppCompatActivity
             seekBar.setMax(mediaPlayer.getDuration());
             // seekbar 이동을 위한 스레드 시작
             try{
-                playing=true;
+                state=1;
                 seekBar.setProgress(0);
 
-                if(musicThread.isAlive()) {
-                    musicThread.interrupt();
+                if(playMusicAsyncTask.getStatus()==AsyncTask.Status.RUNNING) {
+                    playMusicAsyncTask.cancel(true);
                     Log.d("musicThread", "musicThread is interrupted");
                 }
 
-                while(musicThread.isAlive());
+                while(playMusicAsyncTask.getStatus()==AsyncTask.Status.RUNNING);
                 Log.d("musicThread", "musicThread is dead");
-                musicThread = null;
-                musicThread = new MusicThread();
+                playMusicAsyncTask = null;
+                playMusicAsyncTask = new PlayMusicAsyncTask();
 
-                musicThread.start();
+                musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
+                playMusicAsyncTask.execute();
             }catch (Exception e){
             }
             Log.d("song","state is 1");
@@ -373,7 +380,7 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
     }
-    private void restart_music(){
+    public void restart_music(){
         if(mediaPlayer==null) return;
         mediaPlayer.start();
         state=1;
@@ -385,6 +392,7 @@ public class MainActivity extends AppCompatActivity
         mediaPlayer.pause();
         state=2;
         playBtn.setImageResource(R.drawable.play);
+
 //        Log.d("song","state is 2");
     }
     private void setSpeed(){
@@ -461,6 +469,7 @@ public class MainActivity extends AppCompatActivity
 
 
                     try{
+
                         Log.d("file저장","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
                         play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
                     }catch (NullPointerException ne){
@@ -475,6 +484,15 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
         }
+    }
+    public String timeToString(float time) {
+        int hours = (int)time / 3600;
+        int minutes = ((int)time % 3600) / 60;
+        int seconds = ((int)time % 3600) % 60;
+        String ret = hours == 0 ? "00:" : hours < 10 ? "0"+hours : hours+"";
+        ret += (minutes == 0 ? "00:" : minutes < 10 ? "0"+minutes+":" : minutes+":");
+        ret += (seconds == 0 ? "00" : seconds < 10 ? "0"+seconds : seconds+"");
+        return ret;
     }
     private class SearchClickListener implements View.OnClickListener {
 
@@ -523,33 +541,25 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private class MusicThread extends Thread {
-        int current = 0;
+    private class PlayMusicAsyncTask extends AsyncTask<Void , Integer , Void>{
 
-        public void run() { // 쓰레드가 시작되면 콜백되는 메서드
-            // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
+        private int pos;
+        @Override
+        protected Void doInBackground(Void... voids) {
             try {
-                while(!Thread.currentThread().isInterrupted()) {
-                    if(playing && state == 1){
+                while(!isCancelled()) {
+                    Log.d("progress","state : "+state);
+                    if(state == 1){
 
                         int progress = mediaPlayer.getCurrentPosition();
                         seekBar.setProgress(progress);
+                        //mediaPlayer.getDuration();
                         Log.d("progress",progress+"");
-                        final int pos = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress);
-                        Log.d("progress", "pos = " + pos + ", cur = " + current);
-                        if(pos != current) {
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-
-
-                                    ((LyricListViewFragment)pageAdapter.getItem(1)).moveListViewItem(pos);
-                                    current = pos;
-                                }
-                            });
-                        }
+                        pos = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress);
+                        //Log.d("progress", "pos = " + pos + ", cur = " + current);
+                        publishProgress(progress);
                         Thread.sleep(1000);
+
 
                     }
                 }
@@ -560,12 +570,35 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
 
-            playing = false;
+            state = 2;
+            return null;
         }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            ((LyricListViewFragment)pageAdapter.getItem(1)).moveListViewItem(pos);
+            curentTimeTextView.setText(timeToString(values[0]/1000));
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+       /* @Override
+        protected void onProgressUpdate(Integer... progress) {
+            // 파일 다운로드 퍼센티지 표시 작업
+        }
+
+        @Override
+        protected void onPostExecute(Long result) {
+            // doInBackground 에서 받아온 total 값 사용 장소
+        }*/
     }
 
     public boolean getPlaying() {
-        return playing;
+        return state==1;
     }
     private void insertSftpKey(String str) {
         AssetManager asset = getResources().getAssets();
@@ -656,8 +689,12 @@ class LyricListViewFragment extends Fragment {
 
                // Log.d("아이템 객체",lyric_adapter.getView(position,,listView)+"");
                 //if(((MainActivity)MainActivity.mContext))
-                if(!((MainActivity)MainActivity.mContext).getPlaying())
-                    ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+                Log.d("가사","play : "+((MainActivity)MainActivity.mContext).getPlaying());
+                if(!((MainActivity)MainActivity.mContext).getPlaying()){
+                    Log.d("가사","play music"+lyricArrayList.get(position).getStartTime());
+                    ((MainActivity)MainActivity.mContext).restart_music();
+                }
+
                 Log.d("가사","lyricArrayList.get(position)의 시간 : "+lyricArrayList.get(position).getStartTime());
                 ((MainActivity)MainActivity.mContext).move_music(lyricArrayList.get(position));
                 //listView.setSelection(position);//가사
