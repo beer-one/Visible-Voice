@@ -184,9 +184,10 @@ public class MainActivity extends AppCompatActivity
         });
         updateMusicList();
 
-        if(currentfile.getString(AppDataInfo.CurrentFile.filename, null) != null) {
+        Log.d("currentfile", currentfile.getString(AppDataInfo.CurrentFile.music, null));
+        if(currentfile.getString(AppDataInfo.CurrentFile.music, null) != null) {
             try {
-                setMediaPlayer(currentfile.getString(AppDataInfo.CurrentFile.filename, null));
+                setMediaPlayer(currentfile.getString(AppDataInfo.CurrentFile.music, null));
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -289,8 +290,9 @@ public class MainActivity extends AppCompatActivity
 
         try{
             if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
-                play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
                 Log.d("song","play new music...");
+                play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
+
             }
         }
         catch (NullPointerException ne){
@@ -336,14 +338,7 @@ public class MainActivity extends AppCompatActivity
         mediaPlayer.reset();
         mediaPlayer.setDataSource(MainActivity.this, fileUri);
         mediaPlayer.prepare();
-        mediaPlayer.start();
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                musicListController.moveNextMusic();
-                state=0;
-            }
-        });
+
     }
 
     public void play_music(String fileName){
@@ -355,6 +350,14 @@ public class MainActivity extends AppCompatActivity
             // 재생 시작
             setMediaPlayer(fileName);
             state=1;
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    musicListController.moveNextMusic();
+                    state=0;
+                }
+            });
 
             playBtn.setImageResource(R.drawable.pause);
 
@@ -364,12 +367,14 @@ public class MainActivity extends AppCompatActivity
                 state=1;
                 seekBar.setProgress(0);
 
+                Log.d("musicThread", "status = " + playMusicAsyncTask.getStatus());
+                Log.d("musicThread", "Running : " + AsyncTask.Status.RUNNING);
                 if(playMusicAsyncTask.getStatus()==AsyncTask.Status.RUNNING) {
-                    playMusicAsyncTask.cancel(true);
-                    Log.d("musicThread", "musicThread is interrupted");
+                    playMusicAsyncTask.cancel(false);
+                    //while (playMusicAsyncTask.getStatus() != AsyncTask.Status.FINISHED)
+                    Log.d("musicThread", "status = " + playMusicAsyncTask.getStatus());
                 }
 
-                while(playMusicAsyncTask.getStatus()==AsyncTask.Status.RUNNING);
                 Log.d("musicThread", "musicThread is dead");
                 playMusicAsyncTask = null;
                 playMusicAsyncTask = new PlayMusicAsyncTask();
@@ -377,6 +382,7 @@ public class MainActivity extends AppCompatActivity
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
                 playMusicAsyncTask.execute();
             }catch (Exception e){
+                e.printStackTrace();
             }
             Log.d("song","state is 1");
         } catch (IOException e) {
@@ -531,56 +537,72 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class PlayMusicAsyncTask extends AsyncTask<Void , Integer , Void>{
-
-        private int pos;
+        private int currentPosition = 0;
         @Override
         protected Void doInBackground(Void... voids) {
             try {
                 while(!isCancelled()) {
+                    Log.d("progress", "status: " + this.getStatus());
                     Log.d("progress","state : "+state);
                     if(state == 1){
 
                         int progress = mediaPlayer.getCurrentPosition();
 
                         Log.d("progress",progress+"");
-                        pos = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress/1000);
-                        publishProgress(progress);
-                        Thread.sleep(1000);
+                        int position = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress);
+                        publishProgress(progress, position);
                     }
+                    Thread.sleep(1000);
                 }
             }catch (InterruptedException ie){
+                Log.d("musicThread", "musicThread is interrupted");
                 ie.printStackTrace();
             }
             catch (Exception e) {
                 e.printStackTrace();
             }
-
+            Log.d("musicThread", "musicThread is interrupted2");
             state = 2;
             return null;
         }
 
         @Override
+        protected void onCancelled(Void aVoid) {
+            super.onCancelled(aVoid);
+            Log.d("musicThead", "is cancelled");
+
+        }
+
+        @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            ((LyricListViewFragment)pageAdapter.getItem(1)).moveListViewItem(pos);
-            curentTimeTextView.setText(timeToString(values[0]));
+            Log.d("progress","length : "+values[1]);
+            if(values[1] != currentPosition) {
+                ((LyricListViewFragment) pageAdapter.getItem(1)).moveListViewItem(values[1]);
+                currentPosition = values[1];
+            }
+            Log.d("progress","length : "+values.length);
+            Log.d("progress","value[0] : "+values[0]/1000);
+            curentTimeTextView.setText(timeToString(values[0]/1000));
             seekBar.setProgress(values[0]);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+
         }
 
        /* @Override
         protected void onProgressUpdate(Integer... progress) {
             // 파일 다운로드 퍼센티지 표시 작업
         }
-
+        */
         @Override
-        protected void onPostExecute(Long result) {
+        protected void onPostExecute(Void aVoid) {
             // doInBackground 에서 받아온 total 값 사용 장소
-        }*/
+            Log.d("musicThead", "onPostExecute");
+        }
     }
 
     public int getState() {
