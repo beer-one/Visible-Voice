@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -53,12 +56,15 @@ import com.google.android.material.navigation.NavigationView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,10 +76,12 @@ public class MainActivity extends AppCompatActivity
     private Button speedBtn;
     private SeekBar seekBar;
     private TextView useridView;
+    private TextView titleTextView;
     private View navigationInflater;
     private SharedPreferences auto;
     private SharedPreferences currentfile;
-    private Button keywordSearchButton;
+    private ImageButton keywordSearchButton;
+    private ImageButton menuButton;
 
     private ViewPager viewPager;
     private PagerAdapter pageAdapter;
@@ -101,6 +109,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        insertSftpKey("id_rsa");
+        insertSftpKey("id_rsa.pub");
         currentfile= getApplicationContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         Log.d("저장확인","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
         musicListController = MusicListController.getInstance();
@@ -110,10 +120,13 @@ public class MainActivity extends AppCompatActivity
         speedBtn=findViewById(R.id.speedBtn);
         seekBar=findViewById(R.id.seekbar);
 
+        titleTextView = findViewById(R.id.title);
+        titleTextView.setText(currentfile.getString(AppDataInfo.CurrentFile.filename,null));
         viewPager = (ViewPager) findViewById(R.id.pager); //
         pageAdapter = new PagerAdapter
                 (getSupportFragmentManager(), 2);
         viewPager.setAdapter(pageAdapter);
+
 
         mContext = this;
 
@@ -122,6 +135,8 @@ public class MainActivity extends AppCompatActivity
 
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
         keywordSearchButton.setOnClickListener(new SearchClickListener());
+
+        menuButton=findViewById(R.id.menuButton);
 
         initLayout();
 
@@ -143,6 +158,11 @@ public class MainActivity extends AppCompatActivity
                         if(mediaPlayer!=null){
                             Log.d("song","term is "+i);
                             mediaPlayer.seekTo(i);
+
+                            /*LyricListViewFragment fragment = ((LyricListViewFragment)getSupportFragmentManager().findFragmentById(R.id.lyric_listview));
+                            Log.d("fragment",fragment+"");
+                            fragment.moveListViewItem(i);*/
+
                         }
                         if(!mediaPlayer.isPlaying()) {
                             mediaPlayer.start();
@@ -166,20 +186,6 @@ public class MainActivity extends AppCompatActivity
         });
         updateMusicList();
 
-
-
-
-//        try{
-//            // get user's email
-//            // TO-DO : you should get play list using email
-//            //       : musicController.addMusic() <- put record in music controller
-//            intent = getIntent();
-//            //email=(String) intent.getExtras().get("email");
-//            ////////////////////////////////////////////////
-//        }catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        Log.d("song","get email >>>"+email);
     }
     public void updateMusicList(){
 
@@ -271,6 +277,8 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(pageAdapter);
         currentfile= getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
 
+        Log.d("title",currentfile.getString(AppDataInfo.CurrentFile.filename,null)+"");
+        titleTextView.setText(currentfile.getString(AppDataInfo.CurrentFile.filename,null));
 
         try{
             if(currentfile.getString(AppDataInfo.CurrentFile.music,null)!=null){
@@ -287,9 +295,9 @@ public class MainActivity extends AppCompatActivity
     private void initLayout() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("소리가 보인다");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+//        getSupportActionBar().setTitle("소리가 보인다");
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+ //       getSupportActionBar().setHomeAsUpIndicator(R);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_main_drawer_root);
         navigationView = (NavigationView) findViewById(R.id.nv_main_navigation_root);
@@ -307,9 +315,15 @@ public class MainActivity extends AppCompatActivity
         );
         drawerLayout.addDrawerListener(drawerToggle);
         navigationView.setNavigationItemSelectedListener(this);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
     }
 
-    private void play_music(String fileName){
+    public void play_music(String fileName){
         Log.d("song","play music... "+fileName);
         Uri fileUri = Uri.parse( fileName );
 
@@ -408,6 +422,8 @@ public class MainActivity extends AppCompatActivity
         if(mediaPlayer == null) return;
         Log.d("가사","lyrics.getStartTime() : "+lyrics.getStartTime());
         mediaPlayer.seekTo((int)lyrics.getStartTime()*1000);
+       // ((LyricListViewFragment)getSupportFragmentManager().findFragmentById(R.id.lyric_listview)).moveListViewItem((int)lyrics.getStartTime()*1000);
+
     }
     private void logout() {
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -508,6 +524,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class MusicThread extends Thread {
+        int current = 0;
+
         public void run() { // 쓰레드가 시작되면 콜백되는 메서드
             // 씨크바 막대기 조금씩 움직이기 (노래 끝날 때까지 반복)
             try {
@@ -516,13 +534,62 @@ public class MainActivity extends AppCompatActivity
 
                         int progress = mediaPlayer.getCurrentPosition();
                         seekBar.setProgress(progress);
+                        Log.d("progress",progress+"");
+                        final int pos = ((LyricListViewFragment)pageAdapter.getItem(1)).findListViewItem(progress);
+                        Log.d("progress", "pos = " + pos + ", cur = " + current);
+                        if(pos != current) {
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+
+
+                                    ((LyricListViewFragment)pageAdapter.getItem(1)).moveListViewItem(pos);
+                                    current = pos;
+                                }
+                            });
+                        }
                         Thread.sleep(1000);
 
                     }
                 }
-            } catch (Exception e) {
+            }catch (InterruptedException ie){
+                ie.printStackTrace();
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
+
+            playing = false;
+        }
+    }
+
+    public boolean getPlaying() {
+        return playing;
+    }
+    private void insertSftpKey(String str) {
+        AssetManager asset = getResources().getAssets();
+        InputStream is = null;
+
+        try {
+            is = asset.open("key/" + str);
+            File dir = new File(AppDataInfo.Path.VisibleVoiceFolder);
+            dir.mkdir();
+            OutputStream os = new FileOutputStream(new File(AppDataInfo.Path.VisibleVoiceFolder+"/"+ str));
+
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while((len = is.read(buffer)) != -1) {
+                os.write(buffer, 0, len);
+                System.out.println(new String(buffer));
+            }
+            os.close();
+            is.close();
+
+            Log.d("key", "insert success");
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -563,9 +630,13 @@ class LyricListViewFragment extends Fragment {
     private LyricAdapter lyric_adapter;
     private ArrayList<Lyric> lyricArrayList;
     private SharedPreferences currentfile;
+    private int currentPosition;
+    Context lContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        currentPosition=0;
+
         View v = inflater.inflate(R.layout.fragment_lyriclist, container, false);
         currentfile= getContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         listView = (ListView)v.findViewById(R.id.lyric_listview);
@@ -573,7 +644,7 @@ class LyricListViewFragment extends Fragment {
         getDataFromFile(currentfile.getString(AppDataInfo.CurrentFile.json,null));
 
         listView.setDivider(null);
-
+        lContext = getContext();
         lyric_adapter = new LyricAdapter(getContext(),lyricArrayList);
        /* mContext = getContext();
         currentfile= mContext.getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);*/
@@ -582,13 +653,46 @@ class LyricListViewFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+               // Log.d("아이템 객체",lyric_adapter.getView(position,,listView)+"");
+                //if(((MainActivity)MainActivity.mContext))
+                if(!((MainActivity)MainActivity.mContext).getPlaying())
+                    ((MainActivity)MainActivity.mContext).play_music(currentfile.getString(AppDataInfo.CurrentFile.music,null));
                 Log.d("가사","lyricArrayList.get(position)의 시간 : "+lyricArrayList.get(position).getStartTime());
                 ((MainActivity)MainActivity.mContext).move_music(lyricArrayList.get(position));
+                //listView.setSelection(position);//가사
+                //moveListViewItem((int)lyricArrayList.get(position).getStartTime()*1000);
+                //listView.smoothScrollToPosition(position);
 
             }
         });
+
         return v;
     }
+    public int findListViewItem(int currentPosition){
+        for(int cnt = 1; cnt < lyricArrayList.size(); cnt++){
+            if(lyricArrayList.get(cnt).getStartTime()*1000 > currentPosition){
+                Log.d("progress","cnt : "+cnt);
+                return cnt-1;
+            }
+        }
+        return lyricArrayList.size()-1;
+    }
+
+    public void moveListViewItem(int currentPosition){
+
+        Log.d("position", "currentPosition : "+currentPosition);
+
+
+        //setTextColor(prevPosition,false, lyricArrayList.get(currentPosition).getStartTime());
+        lyric_adapter.setCurrentTime(lyricArrayList.get(currentPosition).getStartTime());
+        lyric_adapter.notifyDataSetChanged();
+        listView.smoothScrollToPosition(currentPosition);
+       // lyric_adapter.notifyDataSetChanged();
+        //setTextColor(currentPosition,true, lyricArrayList.get(currentPosition).getStartTime());
+
+    }
+
     private void getDataFromFile(String filename) {
         try {
             String json = readJsonFromFile(filename);
@@ -625,14 +729,49 @@ class LyricListViewFragment extends Fragment {
         }
     }
 
+    private void setTextColor(int pos, boolean on, float currentTime) {
+
+        int firstPos = listView.getFirstVisiblePosition();
+
+        int wantedPos = pos - firstPos;
+
+        if (wantedPos < 0 || wantedPos >= listView.getChildCount()) {
+
+            return;
+
+        }
+
+        TextView childView = listView.getChildAt(wantedPos).findViewById(R.id.lyric_TextView);
+
+        if (childView == null) {
+
+            return;
+
+        }
+
+        if (on && currentTime == lyricArrayList.get(pos).getStartTime()) {
+
+            childView.setTextColor(0xFF0000FF);
+
+        } else {
+
+            childView.setTextColor(0xFF000000);
+
+        }
+
+    }
+
 }
 
 class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
-
+    private WCFragment wcFragment;
+    private LyricListViewFragment lyricListViewFragment;
     public PagerAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
+        wcFragment = new WCFragment();
+        lyricListViewFragment = new LyricListViewFragment();
     }
 
     @Override
@@ -640,12 +779,9 @@ class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                WCFragment tab1 = new WCFragment();
-                return tab1;
+                return wcFragment;
             case 1:
-                LyricListViewFragment tab2 = new LyricListViewFragment();
-                return tab2;
-
+                return lyricListViewFragment;
             default:
                 return null;
         }
@@ -662,6 +798,7 @@ class LyricAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private ArrayList<Lyric> lyrics = null;
     private int count = 0;
+    private float currentTime;
 
     public LyricAdapter(Context context, ArrayList<Lyric> lyrics) {
         this.lyrics = lyrics;
@@ -687,6 +824,7 @@ class LyricAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("getView", "LyricAdapter getView() 호출");
         if(convertView == null) {
             //개별 리릭 xml 불러줘야함
             convertView = inflater.inflate(R.layout.lyric_item, parent, false);
@@ -694,15 +832,28 @@ class LyricAdapter extends BaseAdapter {
 
         Lyric lyric = lyrics.get(position);
 
+
         //그 각각의 리릭 안에서 텍스트뷰 하나 뽑아옴
         //TextView time_text = (TextView)convertView.findViewById(R.id.time_TextView);
         TextView lyric_text = (TextView)convertView.findViewById(R.id.lyric_TextView);
+
         //time_text.setText(Float.toString(lyric.getStartTime()));
         lyric_text.setText(lyric.getText());
+        if(currentTime == lyrics.get(position).getStartTime())
+            lyric_text.setTextColor(AppDataInfo.Color.selected_lyric);
+        else
+            lyric_text.setTextColor(AppDataInfo.Color.lyric);
+
 
         return convertView;
 
     }
 
+    public float getCurrentTime() {
+        return currentTime;
+    }
+    public void setCurrentTime(float currentTime) {
+        this.currentTime = currentTime;
+    }
 }
 

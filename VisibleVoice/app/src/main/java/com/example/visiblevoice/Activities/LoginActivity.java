@@ -191,6 +191,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.joinBtn:
                 intent = new Intent(LoginActivity.this, JoinActivity.class);
                 startActivity(intent);
+                finish();
         }
     }
     // 로그인
@@ -315,6 +316,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onClick(View view) {
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
+                finish();
             }
         });
 
@@ -335,7 +337,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             intent.putExtra("email", user.getEmail());
                             startActivity(intent);
-//                          finish();
+                            finish();
                         } else {
                             Log.d("song", "Authentication Failed");
                         }
@@ -388,7 +390,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Intent intent = new Intent(LoginActivity.mContext, MainActivity.class);
                 intent.putExtra("email", userEmail);
                 startActivity(intent);
-//              finish();
+                finish();
             }
         }
     }

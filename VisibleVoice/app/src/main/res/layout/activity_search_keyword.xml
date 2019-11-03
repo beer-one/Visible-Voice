@@ -4,19 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/background_1"
     >
-
-    <!--Custom Toolbar-->
-    <include layout="@layout/toolbar" />
 
     <SearchView
         android:id="@+id/keywordSearchView"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="10dp"
+        android:background="@drawable/round_shape"
+        />
 
     <ListView
         android:id="@+id/sentenceListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:background="@color/semi_white"
+        android:divider="#00000000"
+        android:dividerHeight="4dp"
+        android:padding="10dp" />
 
 </LinearLayout>

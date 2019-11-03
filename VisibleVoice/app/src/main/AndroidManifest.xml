@@ -22,7 +22,6 @@
         <activity android:name=".Activities.FileDownloadActivity">
 
         </activity>
-        <activity android:name=".Activities.WordCloudActivity" />
         <activity android:name=".Activities.FileUploadActivity"></activity>
         <activity android:name=".Activities.JoinActivity" >
 
@@ -30,21 +29,19 @@
         <activity android:name=".Activities.KeywordSearchActivity"></activity>
         <activity android:name=".Activities.FileListActivity" />
         <activity android:name=".Activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
         <activity android:name=".Activities.LoginActivity">
 
         </activity>
         <activity
-            android:name=".Activities.SplashActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            android:name=".Activities.SplashActivity">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <service
