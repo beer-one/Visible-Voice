@@ -18,12 +18,12 @@
 
     <ListView
         android:id="@+id/sentenceListView"
-        android:background="@color/semi_white"
-        android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="10"
+        android:background="@color/semi_white"
+        android:divider="#00000000"
         android:dividerHeight="4dp"
-        />
+        android:padding="10dp" />
 
 </LinearLayout>
