@@ -29,6 +29,11 @@
         <activity android:name=".Activities.KeywordSearchActivity"></activity>
         <activity android:name=".Activities.FileListActivity" />
         <activity android:name=".Activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
         <activity android:name=".Activities.LoginActivity">
@@ -37,11 +42,6 @@
         <activity
             android:name=".Activities.SplashActivity">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <service
