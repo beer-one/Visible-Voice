@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.example.visiblevoice.Data.AppDataInfo;
 import com.example.visiblevoice.Data.Lyric;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.algorithm.KMP;
@@ -64,7 +65,7 @@ public class KeywordSearchAdapter extends BaseAdapter {
         SpannableStringBuilder ssb = new SpannableStringBuilder(lyricsList.get(position).getText());
 
         for(int i : posList.get(position))
-            ssb.setSpan(new ForegroundColorSpan(Color.parseColor("#FF0000")), i, i + keyword.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.setSpan(new ForegroundColorSpan(Color.parseColor(AppDataInfo.Color.gray_string)), i, i + keyword.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         timeTextView.setText(lyricsList.get(position).getStartTime() + "");
         sentenceTextView.setText(ssb);
