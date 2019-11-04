@@ -61,7 +61,9 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         filenameTextview = findViewById(R.id.filenameTextview);
         fileDownloadBtn = findViewById(R.id.file_download_btn);
         progressDialog = new ProgressDialog(this);
-
+        String jsonFileName = fileData.getString(AppDataInfo.File.json,null);
+        String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
+        filenameTextview.setText(fileName+".m4a",null);
         fileDownloadBtn.setOnClickListener(this);
     }
 
