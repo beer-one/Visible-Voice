@@ -11,4 +11,4 @@
 /build
 /captures
 .externalNativeBuild
-app/asset/*
+app/src/main/asset/*
