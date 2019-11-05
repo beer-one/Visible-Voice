@@ -39,38 +39,34 @@ def transcribe_gcs(gcs_uri, username, filename):
     # them to get the transcripts for the entire audio file.
  
     transcript = "" 
-    sentence_list = []
+    sentences = []
     contents = {}
     for k in response.results:
-        
-        
+                
         alternatives = k.alternatives
-        sentence = []
+        sentence = {}
         #print(alternatives)
         for alternative in alternatives:
             #print(alternative)
 
             transcript = transcript + alternative.transcript.encode('utf-8')
             #f.write('Transcript: {}\n'.format(alternative.transcript.encode('utf-8')))
-          
-            
+            sentence["sentence"] = alternative.transcript.encode('utf-8')
+            words = []
+
             for word_info in alternative.words:
                 content = {}
                 content["word"] = word_info.word.encode('utf-8')
                 content["start_time"]  = str(word_info.start_time.seconds + word_info.start_time.nanos * 1e-9)
-                
-                #print(type(word_info.start_time))
-                #print(str(word_info.start_time))
-                sentence.append(content)
-                #f.write('Word: {}, start_time: {}, end_time: {}\n'.format(
-                #    word.encode('utf-8'),
-                #    start_time.seconds + start_time.nanos * 1e-9)
-        sentence_list.append(sentence)  
+                words.append(content)
+            sentence["words"] = words
+        
+        sentences.append(sentence)  
         transcript += "\n" 
 
  
-    contents["Transcript"] = transcript
-    contents["sentences"] = sentence_list
+    contents["transcript"] = transcript
+    contents["sentences"] = sentences
     #pickle.dump(contents,f)
     with io.open(storagePath + username + "/" + gcs_uri.split("/")[-1][:-len("flac")] + "json",'w') as f :
         f.write(json.dumps(contents,ensure_ascii=False).decode('utf-8'))

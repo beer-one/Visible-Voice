@@ -1,0 +1,34 @@
+spring:
+    servlet:
+        multipart:
+            max-file-size: 500MB
+            max-request-size: 500MB
+
+---
+server:
+    port: 8080
+    address: 0.0.0.0
+
+---
+path:
+    storage: /home/vvuser/
+    ffmpeg: /usr/bin/ffmpeg
+    ffprobe: /usr/bin/ffprobe
+    gcp: gs://visible_voice/
+    credential: visiblevoice-a4862-firebase-adminsdk-7f6ie-48cf0a7c77.json
+
+---
+process:
+    upload: src/main/java/com/visiblesound/gcp/upload_from_server_to_GCP.py
+    stt: src/main/java/com/visiblesound/gcp/transcribe_async.py
+    wordcloud: src/main/java/com/visiblesound/wordcloud/generate_word_cloud_with_args.py
+ 
+---
+format:
+    sound: .flac
+    image: .png
+    data: .json
+
+---
+database:
+    collection: users

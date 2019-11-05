@@ -4,7 +4,8 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
-    }
+    
+	}
 }
 
 apply plugin: 'java'
@@ -19,6 +20,7 @@ sourceCompatibility = 1.8
 mainClassName = "com.visiblesound.Application"
 repositories {
     mavenCentral()
+	google()
 }
 
 dependencies {
@@ -39,4 +41,5 @@ dependencies {
     //google client lib for upload to bucket
     compile 'com.google.cloud:google-cloud-bigquery:1.85.0'
     compile 'com.google.cloud:google-cloud-storage:1.61.0'
+	implementation 'com.google.firebase:firebase-admin:6.11.0'
 }

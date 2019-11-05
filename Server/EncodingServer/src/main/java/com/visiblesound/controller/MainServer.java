@@ -28,7 +28,6 @@ public class MainServer {
 		
 		//testing, delete below later
 		//System.out.println("running helloServer");
-		SpeechToTextThread.sendNotification();
 
 		System.out.println("Hello");
         return "Hello world!!";

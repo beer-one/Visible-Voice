@@ -12,11 +12,14 @@ import sys
 import os
 import json
 
+
 #get argvs
 input_json_path = sys.argv[1] #jsonFile
 output_path = sys.argv[2] #output png path
 
 # read file
+print("input_json_path: " + input_json_path)
+print("output_path: " + output_path)
 with open(input_json_path, 'r') as f:
     data=f.read()
 
@@ -24,7 +27,7 @@ with open(input_json_path, 'r') as f:
 obj = json.loads(data)
 
 # show values
-transcript = obj['Transcript'].encode('utf-8')
+transcript = obj['transcript'].encode('utf-8')
 print("parsed Transcript: ",transcript)
 
 
@@ -46,8 +49,20 @@ for noun in nouns:
 
 #set font and stopwords
 print("pwd: ",os.getcwd())
+
+#font_path = 'NanumGothic.ttf' 
+#stopword_path = 'stopwords.txt'
 font_path = 'src/main/java/com/visiblesound/wordcloud/NanumGothic.ttf'
-stopwords = set(STOPWORDS)   
+stopword_path = 'src/main/java/com/visiblesound/wordcloud/stopwords.txt'
+stopwords = set()
+
+#read stop words from the file
+if len(concated_nouns) > 100 :
+    f_stopwords = open(stopword_path,"r")
+    stopword_list_from_file = f_stopwords.readlines()
+    for sw in stopword_list_from_file:
+        stopwords.add(sw.strip('\n').decode('utf-8'))
+    f_stopwords.close()
 
 #init Wordcloud
 wordcloud = WordCloud(width = 800, height = 800, 
@@ -58,7 +73,7 @@ wordcloud = WordCloud(width = 800, height = 800,
 
 #generate word cloud with nouns
 wordcloud.generate(concated_nouns) 
-  
+
 # plot the WordCloud image                        
 plt.figure(figsize = (8, 8), facecolor = None) 
 plt.imshow(wordcloud) 
