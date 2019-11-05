@@ -21,6 +21,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -77,30 +80,7 @@ public class JoinActivity extends AppCompatActivity {
                 pw=pwEditText.getText().toString();
                 String re=rePwEditText.getText().toString();
                 //아이디 유효성 검사 (영문소문자, 숫자만 허용)
-                boolean check=true;
-                for (int i = 0; i < id.length(); i++) {
-                    char ch = id.charAt(i);
-                   /* if (!(ch >= '0' && ch <= '9') && !(ch >= 'a' && ch <= 'z')&&!(ch >= 'A' && ch <= 'Z')) {
-                        Toast.makeText(JoinActivity.this,"아이디는 숫자와 영문자만 가능합니다",Toast.LENGTH_LONG).show();
-                        return;
-                    }*/
-                    if (check && ((ch >= 'a' && ch <= 'z')||(ch >= 'A' && ch <= 'Z'))) {
-                        check=false;
-                    }
-                }
-                if(check){
-                    Toast.makeText(JoinActivity.this,"아이디에는 영어가 포함되어야합니다.",Toast.LENGTH_LONG).show();
-                    return;
-                }
 
-                /*if(id==null || id.length()<4 || id.length()>12) {
-                    Toast.makeText(JoinActivity.this,"아이디를 4~12자 이내로 입력하세요",Toast.LENGTH_LONG).show();
-                    return;
-                }*/
-                if(pw==null || pw.length()<4) {
-                    Toast.makeText(JoinActivity.this,"비밀번호를 4자 이상 입력하세요",Toast.LENGTH_LONG).show();
-                    return;
-                }
                 if(!re.equals(pw)) {
                     Toast.makeText(JoinActivity.this,"비밀번호를 다시 확인해주세요",Toast.LENGTH_LONG).show();
                     return;
@@ -111,27 +91,6 @@ public class JoinActivity extends AppCompatActivity {
             }
         });
     }
-    /*private ValueEventListener checkRegister = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            Iterator<DataSnapshot> child = dataSnapshot.getChildren().iterator();
-            while (child.hasNext()) {
-                if (idEditText.getText().toString().equals(child.next().getKey())) {
-                    Toast.makeText(getApplicationContext(), "이미 존재하는 아이디 입니다.", Toast.LENGTH_LONG).show();
-                    myRef.removeEventListener(this);
-                    return;
-                }
-            }
-            User user = new User(id,deviceToken);
-            myRef.push().setValue(user);
-            Log.d("사용자", "set value " + user);
-        }
-
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-        }
-    };*/
 
     private void createUser(final String id, String pw) {
         progressDialog.setMessage("등록중입니다. 기다려 주세요...");
@@ -164,15 +123,24 @@ public class JoinActivity extends AppCompatActivity {
                                             Log.w("firestore", "Error writing document", e);
                                         }
                                     });
+                            progressDialog.dismiss();
+                            finish();
                             //startActivity(new Intent(JoinActivity.this, LoginActivity.class));
                         } else {
                             // 회원가입 실패
                             Log.d("회원가입 실패",task.getException().getMessage());
-                            Toast.makeText(JoinActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            //finish();
+                            Log.d("회원가입 실패", task.getException().getClass().toString());
+
+                            if (task.getException() instanceof FirebaseAuthWeakPasswordException)
+                                Toast.makeText(JoinActivity.this, "최소 6자리 이상 비밀번호를 입력하십시오.", Toast.LENGTH_SHORT).show();
+                            else if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                                Toast.makeText(JoinActivity.this, "이미 존재하는 계정입니다.", Toast.LENGTH_SHORT).show();
+                            else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException)
+                                Toast.makeText(JoinActivity.this, "이메일 형식과 맞지않습니다.", Toast.LENGTH_SHORT).show();
+
+                            progressDialog.dismiss();
                         }
-                        finish();
-                        progressDialog.dismiss();
+
 
                     }
                 });
