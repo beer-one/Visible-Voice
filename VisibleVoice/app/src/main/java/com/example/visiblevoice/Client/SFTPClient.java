@@ -65,6 +65,7 @@ public class SFTPClient {
                     try{
                         session = jSch.getSession(userName, host, port);
 
+
                         java.util.Properties config = new java.util.Properties();
                         config.put("StrictHostKeyChecking", "no");
                         session.setConfig(config);
@@ -102,10 +103,11 @@ public class SFTPClient {
             Thread mkdirThread = new Thread() {
                 public void run() {
                     try{
-                        Log.d("dong","dir : "+ dir);
+
 
                         channelSftp.cd(dir);
                         channelSftp.mkdir(mkdirName);
+                        Log.d("MKDIRJOOHAN","ls : "+ channelSftp.ls("."));
                         channelSftp.chmod(0777,dir+"/"+mkdirName);
                     }catch (Exception e){
                         e.printStackTrace();
