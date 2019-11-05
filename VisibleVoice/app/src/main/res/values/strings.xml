@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">소리가보인다</string>
+    <!--<string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>-->
+    <string name="fcm_message">FCM Message</string>
+    <string name="download_complete_context">파일 변환이 완료되었습니다.</string>
+    <string name="download_complete_title">변환 완료</string>
+    <string name="nav_item_logout">로그아웃</string>
+    <string name="nav_sub_menu">Sub Menu</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+</resources>
