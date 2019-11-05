@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management' 
+apply plugin: 'application'
+        
+group 'VisibleSound'
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+mainClassName = "com.visiblesound.Application"
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Required:: SpringFramework
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-web')
+
+    // Required:: JUnit test
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+
+    runtime('com.h2database:h2')
+    compileOnly('org.projectlombok:lombok')
+
+    compile('net.bramp.ffmpeg:ffmpeg:0.6.2')
+    
+    //google client lib for upload to bucket
+    compile 'com.google.cloud:google-cloud-bigquery:1.85.0'
+    compile 'com.google.cloud:google-cloud-storage:1.61.0'
+}
