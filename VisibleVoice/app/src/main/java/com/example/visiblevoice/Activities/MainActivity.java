@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity
 
         auto = getSharedPreferences(AppDataInfo.Login.key, Activity.MODE_PRIVATE);
 
-
         keywordSearchButton = findViewById(R.id.keywordSearchButton);
         keywordSearchButton.setOnClickListener(new SearchClickListener());
 
@@ -184,9 +183,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
         updateMusicList();
-
-        Log.d("currentfile", currentfile.getString(AppDataInfo.CurrentFile.music, null));
-        if(currentfile.getString(AppDataInfo.CurrentFile.music, null) != null) {
+        
+		if(currentfile.getString(AppDataInfo.CurrentFile.music, null) != null) {
             try {
                 setMediaPlayer(currentfile.getString(AppDataInfo.CurrentFile.music, null));
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
@@ -615,9 +613,9 @@ public class MainActivity extends AppCompatActivity
 
         try {
             is = asset.open("key/" + str);
-            File dir = new File(AppDataInfo.Path.VisibleVoiceFolder);
+            File dir = new File(getFilesDir().getAbsolutePath() + "/" + AppDataInfo.Login.userID);
             dir.mkdir();
-            OutputStream os = new FileOutputStream(new File(AppDataInfo.Path.VisibleVoiceFolder+"/"+ str));
+            OutputStream os = new FileOutputStream(new File(getFilesDir().getAbsolutePath() + "/"+ str));
 
             byte[] buffer = new byte[1024];
             int len = 0;

@@ -140,10 +140,14 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                             jsonfile.delete();
                         if(pngfile.exists())
                             pngfile.delete();
-                        //updateMusicList();
 
+
+                        nameList.remove(position);
+                        listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, nameList);
+                        musicListListView.setAdapter(listAdapter);
+                        
                         dialog.dismiss();
-                        finish();
+                        //finish();
                     }
                 });
                 alert.setNegativeButton("NO", new DialogInterface.OnClickListener() {

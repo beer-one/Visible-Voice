@@ -304,9 +304,10 @@ public class FileUploadActivity extends AppCompatActivity {
                         //VVpath = rootPath + "/"+"VisibleVoice";
                         SFTPClient sftpClient = new SFTPClient();
 
-                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,AppDataInfo.Path.VisibleVoiceFolder+"/"+ServerInfo.privatekey);
+                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,getFilesDir().getAbsolutePath() +"/"+ServerInfo.privatekey);
+                        //Log.d("MKDIRJOOHAN",sftpClient.)
                         sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
-                        //Log.d()
+                        Log.d("MKDIRJOOHAN",ServerInfo.folderPath+"< >"+username);
                         sftpClient.upload(username,file);
                         httpConn.requestWebServer(username,file.getName(), callback);
                     }

@@ -191,7 +191,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.joinBtn:
                 intent = new Intent(LoginActivity.this, JoinActivity.class);
                 startActivity(intent);
-                finish();
         }
     }
     // 로그인
@@ -214,7 +213,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             updateFCMToken();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            finish();
+
                         } else {
                             // 로그인 실패
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -243,33 +242,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                 });
 
-        /*mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        String key = mDatabase.child("users").push().getKey();
-        final String userid = idText.getText().toString();
-        mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-                    // user 정보 가져오기
-                    User user = messageData.getValue(User.class);
-                    Log.d("login check", user.toString());
-                    // 매치가 되어서 같으면 Token 정보를 바꾼다.
-                    if (userid.equals(user.getUserID())) {
-                        User updateUser = new User(user.getUserID(), deviceToken);
-
-                        mDatabase.child(messageData.getKey()).removeValue();
-                        mDatabase.push().setValue(updateUser);
-                        mDatabase.removeEventListener(this);
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Fail", "Fialed to read value");
-            }
-        });*/
     }
 
     private void naverLoginInit() {
