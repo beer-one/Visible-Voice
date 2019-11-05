@@ -98,6 +98,8 @@ public class LyricListViewFragment extends Fragment {
 
     private void getDataFromFile(String filename) {
         try {
+            if(filename==null)
+                return;
             String json = readJsonFromFile(filename);
             JSONObject jsonObject = new JSONObject(json);
             JSONArray lyrics = jsonObject.getJSONArray("sentences");
@@ -117,6 +119,8 @@ public class LyricListViewFragment extends Fragment {
 
     private String readJsonFromFile(String filename) throws NullPointerException {
         try {
+            if(filename==null)
+                return null;
             InputStream is = new FileInputStream(new File(filename));
             byte[] buffer = new byte[is.available()];
             is.read(buffer);

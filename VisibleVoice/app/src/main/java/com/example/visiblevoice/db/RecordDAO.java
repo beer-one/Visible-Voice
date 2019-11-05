@@ -23,4 +23,6 @@ public interface RecordDAO {
     public void updateWCPath(String fileName,String wordCloudPath);
     @Query("UPDATE record SET JsonPath=:JsonPath WHERE fileName=:fileName")
     public void updateJSONPath(String fileName,String JsonPath);
+    @Query("SELECT COUNT(fileName) FROM record")
+    public int getNumberRecord();
 }

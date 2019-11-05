@@ -145,7 +145,10 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                         nameList.remove(position);
                         listAdapter = new ArrayAdapter<String>(FileListActivity.this, android.R.layout.simple_list_item_1, nameList);
                         musicListListView.setAdapter(listAdapter);
-                        
+                        //currentfile.
+
+                        resetCurrentFile();//삭제후 currentfile 변경
+
                         dialog.dismiss();
                         //finish();
                     }
@@ -189,6 +192,38 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
         });
     }
 
+    public void resetCurrentFile(){//삭제후 currentfile 변경
+        SharedPreferences.Editor setCurrentmusic = currentfile.edit();
+        Log.d("삭제후 파일변경","db record 개수 : "+recordDAO.getNumberRecord());
+        Log.d("삭제후 파일변경","music list 개수 : "+musicListController.getMusicListSize());
+        if(recordDAO.getNumberRecord()>0){
+            musicListController.setCurrent(0);
+
+            Log.d("삭제후 파일변경","파일이름 : "+musicListController.getCurrentFilename());
+            Log.d("삭제후 파일변경","음성파일이름 : "+musicListController.getCurrentMusicPath());
+            Log.d("삭제후 파일변경","json 파일이름 : "+musicListController.getCurrentJsonPath());
+            Log.d("삭제후 파일변경","png 파일이름 : "+musicListController.getCurrentPngPath());
+
+            try{
+                setCurrentmusic.putString(AppDataInfo.CurrentFile.png, musicListController.getCurrentPngPath());
+                setCurrentmusic.putString(AppDataInfo.CurrentFile.json , musicListController.getCurrentJsonPath());
+                setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, musicListController.getCurrentFilename());
+                setCurrentmusic.putString(AppDataInfo.CurrentFile.music, musicListController.getCurrentMusicPath());
+            }
+            catch (NullPointerException ne){
+                ne.printStackTrace();
+            }
+            setCurrentmusic.commit();
+        }
+        else{
+            setCurrentmusic.putString(AppDataInfo.CurrentFile.png, null);
+            setCurrentmusic.putString(AppDataInfo.CurrentFile.json , null);
+            setCurrentmusic.putString(AppDataInfo.CurrentFile.filename, "실행할 파일이 없습니다.");
+            setCurrentmusic.putString(AppDataInfo.CurrentFile.music, null);
+            setCurrentmusic.commit();
+        }
+        ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
+    }
     public void updateMusicList(){
 
 
