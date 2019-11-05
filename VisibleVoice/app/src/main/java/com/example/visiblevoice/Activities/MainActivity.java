@@ -183,9 +183,8 @@ public class MainActivity extends AppCompatActivity
             }
         });
         updateMusicList();
-
-        //Log.d("currentfile", currentfile.getString(AppDataInfo.CurrentFile.music, null));
-        if(currentfile.getString(AppDataInfo.CurrentFile.music, null) != null) {
+        
+		if(currentfile.getString(AppDataInfo.CurrentFile.music, null) != null) {
             try {
                 setMediaPlayer(currentfile.getString(AppDataInfo.CurrentFile.music, null));
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
