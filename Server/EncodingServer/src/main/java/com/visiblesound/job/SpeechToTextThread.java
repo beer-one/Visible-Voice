@@ -25,10 +25,13 @@ import com.google.firebase.auth.*;
 import com.google.auth.oauth2.*;
 import com.google.firebase.database.*;
 import com.google.firebase.messaging.*;
-
+import com.google.cloud.firestore.*;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+import com.google.api.core.ApiFuture;
+import com.google.firebase.cloud.FirestoreClient;
 
 public class SpeechToTextThread extends Thread {
 	private String username;
@@ -57,83 +60,52 @@ public class SpeechToTextThread extends Thread {
         runCommand(new String[] { "python", "src/main/java/com/visiblesound/gcp/transcribe_async.py", "gs://visible_voice/", username, convertedFileName });
 		System.out.println("LOG_STT_THREAD: " + "stt success!!");
 
-		runCommand(new String[] { "python", "src/main/java/com/visiblesound/wordcloud/generate_word_cloud_with_args.py", storagePath + username + "/" + filename, storagePath + username + "/" + filename.split("\\.")[0] + "." + "png"});
+		runCommand(new String[] { "python", "src/main/java/com/visiblesound/wordcloud/generate_word_cloud_with_args.py", storagePath + username + "/" + filename.split("\\.")[0] + ".json", storagePath + username + "/" + filename.split("\\.")[0] + ".png"});
 
         sendNotification();
         System.out.println("LOG_STT_THREAD: " + "sent notification!!!");
 	}
 
-    public static void sendNotification(){
+    public void sendNotification(){
 
         System.out.println("LOG_STT_THREAD: running sendNotification");
         //init firebase
-        FileInputStream serviceAccount = null;
-        try{
-            serviceAccount = new FileInputStream("visiblevoice-a4862-firebase-adminsdk-7f6ie-48cf0a7c77.json");
-            FirebaseOptions options = new FirebaseOptions.Builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .setDatabaseUrl("https://visiblevoice-a4862.firebaseio.com")
-            .build();
-            FirebaseApp.initializeApp(options);
-        }catch(Exception e){
-            System.out.println("LOG_STT_THREAD_FireBase Init error: "+e.getMessage());
-        }
-
-        
-        //query
-        //get registrationToken from the query
-        
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("users");
-
-        // Attach a listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            for (DataSnapshot messageData : dataSnapshot.getChildren()) {
-
-                    String email = ((Map<String,Object>)messageData.getValue()).get("userID").toString() ;
-
-                    if(email.equals("gygacpu@naver.com")){
-                        String registrationToken = ((Map<String,Object>)messageData.getValue()).get("deviceToken").toString();
-                        System.out.println("LOG_STT_THREAD_registrationToken: "+registrationToken);
-                        
-                        Message message = Message.builder()
-                            .putData("Your audio has been visualized successfully!", "1")
-                            .setToken(registrationToken)
-                            .build();
-
-                        // Send a message to the device corresponding to the provided
-                        // registration token.
-                        try{
-                        String response = FirebaseMessaging.getInstance().send(message);
-                        System.out.println("LOG_STT_THREAD_response: "+response);
-                        // Response is a message ID string.
-                        }catch(Exception e){
-                            System.out.println("LOG_STT_THREAD_send_Error: "+e.getMessage());
-                        }
-                        break;
-                    }
-                }   
-        }
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            System.out.println("The read failed: " + databaseError.getCode());
-        }});
-
-		Message message = Message.builder()
-			.putData("Your audio has been visualized successfully!", "1")
-			.setToken("dg5H0sAUfBs:APA91bGPD1gflUQvHiCsPv6LVrt_vUQ0vzy0YedMl3Vx-OngJtv5UXUdZ_9BzFOmoppT1mdsJuI3cOwfgbEaXViRbJHDdANN27JVWaTe6J5W0URdwhcF_Vd2BZd2qA-1c2cbAOhQs-vu")
-			.build();
+		Firestore db = FirestoreClient.getFirestore();
+		DocumentReference docRef = db.collection("users").document(username);	
+        ApiFuture<DocumentSnapshot> future = docRef.get();
 
 		try {
-			String response = FirebaseMessaging.getInstance().send(message);
-			System.out.println("Response: " + response);
-		} catch (Exception e) {
-			System.out.println("err");
-		}
+			DocumentSnapshot document = future.get();
+			String token = "";
+        	if (document.exists()) {
+            	System.out.println("Document data: " + document.getData());
+            	token = document.getData().get("deviceToken").toString();
+            	System.out.println(token);
 
-        
+        	} else {
+            	System.out.println("No such document!");
+				return;
+        	}
+			
+			Message message = Message.builder()
+                .putData("json", filename.split("\\.")[0] + ".json")
+                .putData("png", filename.split("\\.")[0] + ".png")
+                .setToken(token)
+                .build();
+
+			System.out.println("Json: "+ filename.split("\\.")[0] + ".json");
+			System.out.println("Png: "+ filename.split("\\.")[0] + ".png");
+
+        	String response = FirebaseMessaging.getInstance().send(message);
+			System.out.println("Response: " + response);
+
+		} catch (InterruptedException ie) {
+			ie.printStackTrace();
+		} catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (FirebaseMessagingException e) {
+            e.printStackTrace();
+        }
     }
 
 	public String convertFile(String username, String filename) {
