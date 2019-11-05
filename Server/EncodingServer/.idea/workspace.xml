@@ -2,31 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="3ceb4ad6-040f-4d9b-8b1c-7a42d7214e01" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Adapter/LyricAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Adapter/PagerAdapter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/fragments/LyricListViewFragment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10/taskHistory/taskHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/FileDownloadActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/FileDownloadActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/FileListActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/FileListActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/FileUploadActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/FileUploadActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/JoinActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/JoinActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/LoginActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Activities/MainActivity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Data/Record.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/Data/Record.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/db/RecordDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/db/RecordDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/models/Record.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/java/com/example/visiblevoice/models/Record.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/res/layout/nav_header_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/res/layout/nav_header_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/res/menu/drawer.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/main/res/menu/drawer.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/META-INF/VisibleSound.VisibleSound.main.kotlin_module" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/visiblesound/job/SpeechToTextThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/visiblesound/job/SpeechToTextThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ServerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ServerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../VisibleVoice/app/src/test/java/com/example/visiblevoice/ExampleUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../VisibleVoice/app/src/test/java/com/example/visiblevoice/ExampleUnitTest.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -65,20 +48,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="498">
-              <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/job/SpeechToTextThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1080">
-              <caret line="72" column="21" selection-start-line="72" selection-start-column="21" selection-end-line="72" selection-end-column="21" />
+            <state relative-caret-position="855">
+              <caret line="89" column="26" selection-start-line="89" selection-start-column="26" selection-end-line="89" selection-end-column="26" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/java/ServerTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="336">
+              <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -87,40 +73,42 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/requirements.txt">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gradlew.bat">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/Application.java">
+        <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="45">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gradlew">
+        <entry file="file://$PROJECT_DIR$/visiblevoice-a4862-firebase-adminsdk-7f6ie-de22ce514a.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/google-services.json">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/controller/MainServer.java">
+        <entry file="file://$PROJECT_DIR$/visiblevoice-a4862-firebase-adminsdk-7f6ie-48cf0a7c77.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="33" selection-start-line="33" selection-end-line="33" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="180">
+              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="615">
+              <caret line="41" column="5" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -177,17 +165,18 @@
         <option value="$PROJECT_DIR$/src/main/java/com/visiblesound/model/TestObj.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/visiblesound/model/UploadFile.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/visiblesound/model/FileValidator.java" />
-        <option value="$PROJECT_DIR$/src/test/java/ServerTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/visiblesound/controller/MainServer.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/application.properties" />
         <option value="$PROJECT_DIR$/src/main/java/com/visiblesound/job/SpeechToTextThread.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
+        <option value="$PROJECT_DIR$/visiblevoice-a4862-firebase-adminsdk-7f6ie-48cf0a7c77.json" />
+        <option value="$PROJECT_DIR$/src/main/resources/application.properties" />
+        <option value="$PROJECT_DIR$/src/test/java/ServerTest.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1680" />
+    <option name="width" value="840" />
     <option name="height" value="1027" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -196,29 +185,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="VisibleSound" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-            </path>
-            <path>
-              <item name="VisibleSound" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-            </path>
-            <path>
-              <item name="VisibleSound" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -259,12 +225,60 @@
               <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="visiblesound" type="462c0819:PsiDirectoryNode" />
-              <item name="job" type="462c0819:PsiDirectoryNode" />
+              <item name="gcp" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="VisibleSound" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EncodingServer" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="VisibleSound" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EncodingServer" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="VisibleSound" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EncodingServer" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="VisibleSound" type="b2602c69:ProjectViewProjectNode" />
+              <item name="EncodingServer" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="upload" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="VisibleSound" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="VisibleSound" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+            </path>
+            <path>
+              <item name="VisibleSound" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="VisibleSound" type="2674bda8:ScopeViewTreeModel$GroupNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -274,7 +288,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1572957169254" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1572971001977" />
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -283,6 +297,11 @@
     <property name="project.structure.proportion" value="0.14890511" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="vcs.Subversion" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -296,7 +315,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.EncodingServer [dependencies]">
+  <component name="RunManager" selected="JUnit.ServerTest">
     <configuration name="EncodingServer [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -315,6 +334,14 @@
       </ExternalSystemSettings>
       <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
+    </configuration>
+    <configuration name="ServerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="VisibleSound.VisibleSound.test" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="ServerTest" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <configuration name="ServerTest.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="VisibleSound.VisibleSound.test" />
@@ -341,6 +368,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.ServerTest" />
         <item itemvalue="Gradle.EncodingServer [dependencies]" />
         <item itemvalue="Spring Boot.Application" />
         <item itemvalue="JUnit.ServerTest.test" />
@@ -362,41 +390,63 @@
       <workItem from="1565157046619" duration="4940000" />
       <workItem from="1565167539838" duration="7326000" />
       <workItem from="1572956619819" duration="691000" />
+      <workItem from="1572963874583" duration="81000" />
+      <workItem from="1572964963522" duration="17000" />
+      <workItem from="1572965230829" duration="755000" />
+      <workItem from="1572966045785" duration="4437000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="ServerTest_test - 2019.08.07 at 22h 57m 55s.xml">
-      <configuration name="ServerTest.test" configurationId="JUnit" />
+    <history-entry file="ServerTest - 2019.11.06 at 00h 32m 46s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="ServerTest_test - 2019.08.07 at 22h 58m 49s.xml">
-      <configuration name="ServerTest.test" configurationId="JUnit" />
+    <history-entry file="ServerTest - 2019.11.06 at 00h 34m 44s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="ServerTest_test - 2019.08.07 at 23h 00m 23s.xml">
-      <configuration name="ServerTest.test" configurationId="JUnit" />
+    <history-entry file="ServerTest - 2019.11.06 at 00h 34m 59s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="ServerTest_test - 2019.08.07 at 23h 01m 50s.xml">
-      <configuration name="ServerTest.test" configurationId="JUnit" />
+    <history-entry file="ServerTest - 2019.11.06 at 00h 36m 01s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ServerTest - 2019.11.06 at 00h 41m 07s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ServerTest - 2019.11.06 at 00h 42m 59s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ServerTest - 2019.11.06 at 00h 43m 37s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ServerTest - 2019.11.06 at 00h 44m 59s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ServerTest - 2019.11.06 at 00h 45m 27s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="ServerTest - 2019.11.06 at 00h 48m 55s.xml">
+      <configuration name="ServerTest" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17335000" />
+    <option name="totallyTimeSpent" value="22625000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
+    <frame x="0" y="23" width="840" height="1027" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.75187165" visible="true" weight="0.2973138" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.7461774" visible="true" weight="0.31578946" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Capture Tool" order="4" />
       <window_info id="UI Designer" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info id="Web" order="7" sideWeight="0.24812834" side_tool="true" visible="true" weight="0.2973138" />
+      <window_info id="Web" order="7" sideWeight="0.25382262" side_tool="true" visible="true" weight="0.31578946" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.30053475" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30053475" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -431,13 +481,6 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/model/UploadFile.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/model/FileValidator.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bramp.ffmpeg/ffmpeg/0.6.2/42b608feaa27a6705ac6d453bde23f6cdbf461fe/ffmpeg-0.6.2-sources.jar!/net/bramp/ffmpeg/probe/FFmpegProbeResult.java" />
-    <entry file="file://$PROJECT_DIR$/src/test/java/ServerTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-actuator/2.1.6.RELEASE/5422732136c0b3db089fcd80f69f8ffeffc7106b/spring-boot-actuator-2.1.6.RELEASE-sources.jar!/org/springframework/boot/actuate/metrics/web/servlet/WebMvcMetricsFilter.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-autoconfigure/2.1.6.RELEASE/cd87ebca4cb4f40ace39540e119173a3922933be/spring-boot-autoconfigure-2.1.6.RELEASE-sources.jar!/org/springframework/boot/autoconfigure/web/servlet/DispatcherServletAutoConfiguration.java" />
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc/5.1.8.RELEASE/1b39bc8f5e65621e891efb0dc6e2d5cf7e443ae3/spring-webmvc-5.1.8.RELEASE-sources.jar!/org/springframework/web/servlet/DispatcherServlet.java" />
@@ -461,14 +504,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
+    <entry file="file://$PROJECT_DIR$/.idea/uiDesigner.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradlew.bat">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/Application.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="44" selection-start-line="1" selection-start-column="44" selection-end-line="1" selection-end-column="44" />
+        <state relative-caret-position="120">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/uiDesigner.xml">
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/settings.gradle">
@@ -478,30 +536,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/vcs.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" selection-start-line="5" selection-end-line="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/Application.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gradlew.bat">
+    <entry file="file://$PROJECT_DIR$/gradlew">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/controller/MainServer.java">
@@ -524,26 +559,61 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gradlew">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="615">
+          <caret line="41" column="5" selection-start-line="41" selection-start-column="5" selection-end-line="41" selection-end-column="5" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/visiblesound/job/SpeechToTextThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1080">
-          <caret line="72" column="21" selection-start-line="72" selection-start-column="21" selection-end-line="72" selection-end-column="21" />
+        <state relative-caret-position="855">
+          <caret line="89" column="26" selection-start-line="89" selection-start-column="26" selection-end-line="89" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
+    <entry file="file://$PROJECT_DIR$/visiblevoice-a4862-firebase-adminsdk-7f6ie-48cf0a7c77.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="498">
-          <caret line="37" lean-forward="true" selection-start-line="37" selection-end-line="37" />
+        <state relative-caret-position="180">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/google-services.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/visiblevoice-a4862-firebase-adminsdk-7f6ie-de22ce514a.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/application.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/ServerTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -599,11 +669,12 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>Web|main|VisibleSound.VisibleSound</last-edited>
+          <last-edited>VisibleSound.VisibleSound</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>
