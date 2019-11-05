@@ -36,6 +36,9 @@ public class MusicListController {
         }
         return instance;
     }
+    public int getMusicListSize() {
+        return musicList.size();
+    }
     public void removeRecord(int idx){
         musicList.remove(idx);
     }

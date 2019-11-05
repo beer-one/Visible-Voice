@@ -112,9 +112,31 @@ public class MainActivity extends AppCompatActivity
         insertSftpKey("id_rsa");
         insertSftpKey("id_rsa.pub");
         currentfile= getApplicationContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
-        Log.d("저장확인","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
+
         musicListController = MusicListController.getInstance();
 
+        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                .allowMainThreadQueries()   //Allows room to do operation on main thread
+                .build()
+                .getRecordDAO();
+        Log.d("musiclist size ",recordDAO.getNumberRecord()+"");
+        if(recordDAO.getNumberRecord()<=0){
+            SharedPreferences.Editor current_data = currentfile.edit();
+            current_data.putString(AppDataInfo.CurrentFile.filename,"실행할 파일이 없습니다.");
+            current_data.putString(AppDataInfo.CurrentFile.json,null);
+            current_data.putString(AppDataInfo.CurrentFile.png,null);
+            current_data.putString(AppDataInfo.CurrentFile.music,null);
+            current_data.commit();
+        }
+        else{
+            if(currentfile.getString(AppDataInfo.CurrentFile.music,null)==null){
+                SharedPreferences.Editor current_data = currentfile.edit();
+                current_data.putString(AppDataInfo.CurrentFile.filename,"실행중인 파일이 없습니다.");
+                current_data.commit();
+            }
+        }
+
+        Log.d("저장확인","실행할 음성파일 : "+currentfile.getString(AppDataInfo.CurrentFile.music,null));
         fileMenuBtn = findViewById(R.id.file_menu);
         playBtn=findViewById(R.id.play);
         speedBtn=findViewById(R.id.speedBtn);
@@ -545,6 +567,8 @@ public class MainActivity extends AppCompatActivity
                     Log.d("progress","state : "+state);
                     if(state == 1){
 
+                        if(recordDAO.getNumberRecord()<=0)
+                            return null;
                         int progress = mediaPlayer.getCurrentPosition();
 
                         Log.d("progress",progress+"");

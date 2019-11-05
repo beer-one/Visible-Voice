@@ -35,11 +35,13 @@ public class WCFragment extends Fragment {
         mContext = getContext();
         currentfile= mContext.getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
         try {
-            File WCfile = new File(currentfile.getString(AppDataInfo.CurrentFile.png,null));
-            Log.d("fragment","file : "+WCfile.getName());
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(WCfile));
-            Log.d("fragment","file : "+b);
-            WordCloudImageView.setImageBitmap(b);
+            if(currentfile.getString(AppDataInfo.CurrentFile.png,null)!=null) {
+                File WCfile = new File(currentfile.getString(AppDataInfo.CurrentFile.png,null));
+                Log.d("fragment","file : "+WCfile.getName());
+                Bitmap b = BitmapFactory.decodeStream(new FileInputStream(WCfile));
+                Log.d("fragment","file : "+b);
+                WordCloudImageView.setImageBitmap(b);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
