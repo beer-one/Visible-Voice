@@ -5,11 +5,13 @@ public class FileInfo {
     private boolean isDir;
     private int capacity;
     private static final int SIZE = 1024;
+    private int children;
 
     public FileInfo(String filename, boolean isDir, int capacity) {
         this.filename = filename;
         this.isDir = isDir;
         this.capacity = capacity;
+        this.children = 0;
     }
 
     public void setFilename(String filename) { this.filename = filename; }
@@ -33,5 +35,9 @@ public class FileInfo {
             return String.format("%.1fGB", c);
         return c+"";
     }
+    public void setChildren(int children) {
+        this.children = children;
+    }
+    public int getChildren() { return children; }
 
 }

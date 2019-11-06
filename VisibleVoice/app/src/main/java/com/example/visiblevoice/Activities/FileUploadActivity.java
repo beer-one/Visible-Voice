@@ -187,7 +187,6 @@ public class FileUploadActivity extends AppCompatActivity {
         final MusicListController musicListController = new MusicListController();
         // if rootPath is not directory
         if(fileRoot.isDirectory() == false) {
-            Toast.makeText(FileUploadActivity.this, "Not Directory " + fileName , Toast.LENGTH_SHORT).show();
             Log.d("song",rootPath + " not directory");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -196,9 +195,10 @@ public class FileUploadActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int id)
                 {
-                    Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     SendAsyncTask task = new SendAsyncTask();
-                    task.execute(fileRoot);
+                    Log.d("filename", "변환 대상 파일: " + rootPath);
+                    Log.d("filename", fileRoot.exists() ? "exist" : "not exist");
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, fileRoot);
                     //Record record = new Record(fileName, fileRoot);
                     //musicListController.addMusic(record);
                     //insert
@@ -236,10 +236,7 @@ public class FileUploadActivity extends AppCompatActivity {
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
                 @Override
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
-                }
+                public void onClick(DialogInterface dialog, int id) { }
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -279,6 +276,23 @@ public class FileUploadActivity extends AppCompatActivity {
                         }
                     }
                 }
+
+                for(int i = 0; i < fileList.length; i++) {
+                    if(fileList[i].isDirectory()) {
+                        String[] children = fileList[i].list();
+                        int size = 0;
+                        for(int j = 0; j < children.length; j++) {
+                            for(int k = 0; k < permissionedFormat.length; k++){
+                                if(children[j].matches(permissionedFormat[k])) { // if file is permitted format
+                                    size++;
+                                    break;
+                                }
+                            }
+                        }
+                        fileItems.get(i).setChildren(size);
+                    }
+                }
+
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -368,6 +382,13 @@ public class FileUploadActivity extends AppCompatActivity {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            Log.d("AsyncTask", "Termination");
+
+        }
     }
 
 
@@ -375,9 +396,8 @@ public class FileUploadActivity extends AppCompatActivity {
     private final Callback callback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
-            Log.d("dong", "콜백오류:"+e.getMessage());
             Looper.prepare();
-            Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(FileUploadActivity.this, "네트워크 오류: 네트워킹이 원활하지 않습니다." , Toast.LENGTH_SHORT).show();
             Looper.loop();
         }
         @Override
@@ -389,11 +409,8 @@ public class FileUploadActivity extends AppCompatActivity {
                 String body = response.body().string();
                 Log.d("dong", "서버에서 응답한 Body:"+body);
                 Looper.prepare();
-                Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
-                //startActivity(new Intent(FileUploadActivity.this, FileListActivity.class));
+                Toast.makeText(FileUploadActivity.this, "요청 완료: 서버에 변환 요청 완료.:"+body , Toast.LENGTH_SHORT).show();
                 Looper.loop();
-                finish();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

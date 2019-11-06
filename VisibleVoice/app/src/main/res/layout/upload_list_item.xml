@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/file_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_weight="1"
         android:padding="10dp"
         android:scaleType="fitStart"
@@ -22,8 +22,8 @@
         android:layout_weight="12"
         android:gravity="center"
         android:padding="10dp"
-        android:text="filename"
-
+        android:text="filename.m4a"
+        android:textSize="15sp"
         android:textAlignment="textStart"
         android:textColor="#000" />
 

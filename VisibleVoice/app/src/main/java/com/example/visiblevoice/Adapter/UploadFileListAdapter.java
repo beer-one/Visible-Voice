@@ -63,7 +63,7 @@ public class UploadFileListAdapter extends BaseAdapter {
 
         if(fileList.get(position).getisDir()) {
             iconImageView.setImageResource(R.drawable.vv_folder);
-            capacityTextView.setText("폴더");
+            capacityTextView.setText("("+fileList.get(position).getChildren()+")");
         }
         else {
             iconImageView.setImageResource(R.drawable.vv_musicfile);
