@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -35,6 +36,8 @@ import com.example.visiblevoice.db.RecordDAO;
 import com.example.visiblevoice.models.Record;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,6 +71,8 @@ public class FileUploadActivity extends AppCompatActivity {
     private SharedPreferences userData;
     private SharedPreferences fileData;
     private RecordDAO recordDAO;
+    private String username;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -82,7 +87,8 @@ public class FileUploadActivity extends AppCompatActivity {
             // Permission has already been granted
             Log.d("song","Permission has already been granted");
         }
-
+        
+        
 
         // init
         Files=new ArrayList<String>();
@@ -92,8 +98,10 @@ public class FileUploadActivity extends AppCompatActivity {
         listAdapter = new ArrayAdapter<String>(FileUploadActivity.this, android.R.layout.simple_list_item_1, items);
         fileData= getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
         userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
-
-        // check sd card is mounted
+        
+        username = userData.getString(AppDataInfo.Login.userID, null);
+        
+    // check sd card is mounted
         if(!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
             Log.d("song","cannot use external storage");
             return;
@@ -170,12 +178,14 @@ public class FileUploadActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int id)
                 {
                     Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
-                    sendData(fileRoot);
+                    SendAsyncTask task = new SendAsyncTask();
+                    task.execute(fileRoot);
                     //Record record = new Record(fileName, fileRoot);
                     //musicListController.addMusic(record);
                     //insert
                     SharedPreferences.Editor file_data = fileData.edit();
-                    file_data.putString(AppDataInfo.File.music_path,fileRoot.getAbsolutePath());
+                    file_data.putString(AppDataInfo.File.music_path, getFilesDir().getAbsolutePath() + "/" +
+                            username + "/" + fileName);
                     file_data.commit();
 
                     // make file name string
@@ -291,31 +301,43 @@ public class FileUploadActivity extends AppCompatActivity {
         setFileList(prevPath,prevPath.substring(1,lastSlashPosition));
     }
 
+    private class SendAsyncTask extends AsyncTask<File , Void , Void> {
 
-    /** 웹 서버로 데이터 전송 */
-    private void sendData(final File file) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String username = userData.getString(AppDataInfo.Login.userID, null);
-                        //VVpath = rootPath + "/"+"VisibleVoice";
-                        SFTPClient sftpClient = new SFTPClient();
+        @Override
+        protected Void doInBackground(File... files) {
+            //VVpath = rootPath + "/"+"VisibleVoice";
+            SFTPClient sftpClient = new SFTPClient();
 
-                        sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,getFilesDir().getAbsolutePath() +"/"+ServerInfo.privatekey);
-                        //Log.d("MKDIRJOOHAN",sftpClient.)
-                        sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
-                        Log.d("MKDIRJOOHAN",ServerInfo.folderPath+"< >"+username);
-                        sftpClient.upload(username,file);
-                        httpConn.requestWebServer(username,file.getName(), callback);
-                    }
-                });
+            sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,getFilesDir().getAbsolutePath() +"/"+ServerInfo.privatekey);
+            //Log.d("MKDIRJOOHAN",sftpClient.)
+            sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
+            Log.d("MKDIRJOOHAN",ServerInfo.folderPath+"< >"+username);
+            sftpClient.upload(username,files[0]);
+            httpConn.requestWebServer(username,files[0].getName(), callback);
+
+            try {
+                byte[] buffer = new byte[1024];
+                FileOutputStream out = new FileOutputStream(new File(getFilesDir().getAbsolutePath() + "/" +
+                        username + "/" + files[0].getName()));
+                Log.d("fileCopy", getFilesDir().getAbsolutePath() + "/" +
+                        username + "/" + files[0].getName());
+                FileInputStream in = new FileInputStream(files[0]);
+                int cnt = 0;
+                while((cnt = in.read(buffer)) != -1 )
+                    out.write(buffer, 0, cnt);
+
+                out.close();
+                in.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }).start();
-
+            return null;
+        }
     }
+
+
 
     private final Callback callback = new Callback() {
         @Override
@@ -335,7 +357,7 @@ public class FileUploadActivity extends AppCompatActivity {
                 Log.d("dong", "서버에서 응답한 Body:"+body);
                 Looper.prepare();
                 Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(FileUploadActivity.this, FileListActivity.class));
+                //startActivity(new Intent(FileUploadActivity.this, FileListActivity.class));
                 Looper.loop();
                 finish();
 
