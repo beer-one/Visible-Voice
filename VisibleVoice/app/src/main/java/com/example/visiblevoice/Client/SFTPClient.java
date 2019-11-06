@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -89,6 +90,21 @@ public class SFTPClient {
         }
     }
 
+
+
+    public boolean exist(final String dir, final String filename) {
+        boolean ret = false;
+        try {
+            Log.d("sftp", channelSftp.pwd());
+            channelSftp.cd(dir);
+            Vector v = channelSftp.ls(filename);
+            ret = (v != null);
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     /**
      * 하나의 폴더를 생성한다.
      *
@@ -97,6 +113,7 @@ public class SFTPClient {
      * @param mkdirName
      *            생상할 폴더명
      */
+
     public void mkdir(final String dir, final String mkdirName) {
 
         try {
@@ -131,20 +148,32 @@ public class SFTPClient {
      * @param file
      *            저장할 파일
      */
-    public void upload(final String dir, final File file) {
+    public void upload(final String dir, final File file, final boolean temp) {
 
 
         Thread uploadThread = new Thread() {
             public void run() {
                 FileInputStream[] in = {null};
                 try{
+                    Log.d("sftp", channelSftp.pwd());
                     in[0] = new FileInputStream(file);
+                    String filename = file.getName();
+                    if(temp) {
+                        int extensionPoint = filename.lastIndexOf(".");
+                        String extension = filename.substring(extensionPoint);
+                        filename = filename.substring(0, extensionPoint);
+                        filename += "__temp" + extension;
+                    }
+
+
+
                     Log.d("dong","dir : "+dir);
                     Log.d("dong","file : "+file.getName());
 
-                    channelSftp.cd(dir);
-                    channelSftp.put(in[0], file.getName());
-                    channelSftp.chmod(0757,file.getName());
+                    if(dir != null) channelSftp.cd(dir);
+
+                    channelSftp.put(in[0], filename);
+                    channelSftp.chmod(0757,filename);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -174,8 +203,6 @@ public class SFTPClient {
      *            저장할 경로(서버)
      * @param downloadFileName
      *            다운로드할 파일
-     * @param path
-     *            저장될 공간
      */
     public ArrayList<Byte> download(final String dir, final String downloadFileName) {
         try{

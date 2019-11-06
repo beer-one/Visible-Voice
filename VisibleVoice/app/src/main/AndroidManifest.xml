@@ -27,12 +27,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.FileDownloadActivity"></activity>
-        <activity android:name=".Activities.FileUploadActivity" />
         <activity android:name=".Activities.JoinActivity"></activity>
         <activity android:name=".Activities.KeywordSearchActivity" />
         <activity android:name=".Activities.FileListActivity" />
         <activity android:name=".Activities.MainActivity"></activity>
         <activity android:name=".Activities.LoginActivity"></activity>
+        <activity android:name=".Activities.FileUploadActivity"></activity>
 
         <service
             android:name=".CustomFirebaseMessagingService"
