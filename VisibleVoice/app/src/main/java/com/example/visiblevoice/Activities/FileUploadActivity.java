@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +25,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
+import com.example.visiblevoice.Adapter.UploadFileListAdapter;
 import com.example.visiblevoice.Client.HttpConnection;
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
 //import com.example.visiblevoice.Data.Record;
+import com.example.visiblevoice.Data.FileInfo;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.Client.SFTPClient;
 import com.example.visiblevoice.Client.ServerInfo;
@@ -54,7 +57,8 @@ public class FileUploadActivity extends AppCompatActivity {
 
 
     private ArrayList<String> Files;
-    private ArrayList<String> items;
+
+    private ArrayList<FileInfo> fileItems;
 
     private String rootPath = "";
     private String nextPath = "";
@@ -63,15 +67,18 @@ public class FileUploadActivity extends AppCompatActivity {
     private String newFolderPath="";
 
     //private String VVpath = "";//Visible voice path
-    private TextView textView;
+    //private TextView textView;
+    private Button preDirBtn;
+    private TextView curDirTextView;
     private ListView listView;
 
-    private ArrayAdapter<String> listAdapter;
+    private UploadFileListAdapter listAdapter;
 
     private SharedPreferences userData;
     private SharedPreferences fileData;
     private RecordDAO recordDAO;
     private String username;
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,15 +94,12 @@ public class FileUploadActivity extends AppCompatActivity {
             // Permission has already been granted
             Log.d("song","Permission has already been granted");
         }
-        
-        
 
-        // init
-        Files=new ArrayList<String>();
-        textView = (TextView)findViewById(R.id.fileDownloadTextView);
-        listView = (ListView)findViewById(R.id.uploadFileListView);
-        items = new ArrayList<>();
-        listAdapter = new ArrayAdapter<String>(FileUploadActivity.this, android.R.layout.simple_list_item_1, items);
+        //items = new ArrayList<>();
+        fileItems = new ArrayList<>();
+
+        listAdapter = new UploadFileListAdapter(fileItems);
+
         fileData= getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
         userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
         
@@ -109,6 +113,13 @@ public class FileUploadActivity extends AppCompatActivity {
 
         // get external root directory path
         rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        currentPath = rootPath;
+
+        preDirBtn = (Button) findViewById(R.id.preDirBtn);
+        curDirTextView = (TextView) findViewById(R.id.curDirTextView);
+
+        setButtonOptions();
+
         Log.d("song","root path : "+ rootPath);
 
         // set ListView by file list from root directory
@@ -117,6 +128,8 @@ public class FileUploadActivity extends AppCompatActivity {
             return;
         }
 
+        listView = (ListView) findViewById(R.id.uploadFileListView);
+
         // set ListView Adapter by file list
         listView.setAdapter(listAdapter);
 
@@ -124,23 +137,31 @@ public class FileUploadActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("song", position + " : " + items.get(position).toString());
-                currentPath = textView.getText().toString();
-                String path = items.get(position).toString();
-                if (path.equals("..")) {
-                    prevPath(path);
+
+                //currentPath = curDirTextView.getText().toString();
+                String path = currentPath + "/" + fileItems.get(position).getFilename();
+                Log.d("file", path);
+
+                File fp = new File(path);
+                Log.d("dir?", fp.isDirectory() ? "dir" : "not dir");
+                if(fp.isDirectory()) {
+                    // if selected file is directory
+                    Log.d("song","you click directory");
+                    nextPath(fileItems.get(position).getFilename()); // move directory
                 } else {
-                    File fp = new File(path);
-                    if(fp.isDirectory()==false) {
-                        // if selected file is directory
-                        Log.d("song","you click directory");
-                        nextPath(path); // move directory
-                    } else {
-                        // if selected file is not directory
-                        Log.d("song","you click file");
-                        // TO-DO : create code that upload selected file
-                    }
+                    // if selected file is not directory
+                    Log.d("song","you click file");
+                    setFileList(path, fileItems.get(position).getFilename());
+                    // TO-DO : create code that upload selected file
                 }
+
+            }
+        });
+
+        preDirBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prevPath();
             }
         });
     }
@@ -160,7 +181,6 @@ public class FileUploadActivity extends AppCompatActivity {
         }
     }
 
-
     public boolean setFileList(final String rootPath, final String fileName)    {
         // create file object
         final File fileRoot = new File(rootPath);
@@ -168,8 +188,7 @@ public class FileUploadActivity extends AppCompatActivity {
         // if rootPath is not directory
         if(fileRoot.isDirectory() == false) {
             Toast.makeText(FileUploadActivity.this, "Not Directory " + fileName , Toast.LENGTH_SHORT).show();
-            Log.d("song","not directory");
-            textView.setText(rootPath);
+            Log.d("song",rootPath + " not directory");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("파일 변환").setMessage("선택하신 파일 "+fileName+"을 변환하시겠습니까?");
@@ -221,12 +240,12 @@ public class FileUploadActivity extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
                     // find last '/'
-                    String addr = textView.getText().toString();
+                    String addr = curDirTextView.getText().toString();
                     int lastSlashPosition = addr.lastIndexOf("/");
 
                     // get string before '/'
                     addr = addr.substring(0, lastSlashPosition);
-                    textView.setText(addr);
+                    curDirTextView.setText(addr);
                 }
             });
             AlertDialog alertDialog = builder.create();
@@ -236,14 +255,16 @@ public class FileUploadActivity extends AppCompatActivity {
         }
 
         // set root path TextView
-        textView.setText(rootPath);
+
+        setButtonOptions();
 
         // get file list from current directory
         File[] fileList = fileRoot.listFiles();
+
         // clear item(file) list
-        items.clear();
+        fileItems.clear();
         // set parents directory
-        items.add("..");
+        //items.add("..");
 
         if ( fileList == null ) { // if directory is empty
             Log.d("song","Could not find List");
@@ -252,14 +273,14 @@ public class FileUploadActivity extends AppCompatActivity {
             try {
                 for (int i = 0; i < fileList.length; i++) {
                     if(fileList[i].isDirectory()) // if file is directory
-                        items.add(fileList[i].getName()); // add file in list
+                        fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int)fileList[i].length())); // add file in list
                     else {
                         Log.d("name",fileList[i].getName()+">>");
 
                         for(int j=0;j<permissionedFormat.length;j++){
                             if(fileList[i].getName().matches(permissionedFormat[j])) { // if file is permitted format
                                 Log.d("name","add "+permissionedFormat[j]);
-                                items.add(fileList[i].getName()); // add file in list
+                                fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int)fileList[i].length())); // add file in list
                                 break;
                             }
                         }
@@ -275,30 +296,47 @@ public class FileUploadActivity extends AppCompatActivity {
         return true;
     }
 
+    public void setButtonOptions() {
+        int lastSlashPosition = currentPath.lastIndexOf("/");
+        if(currentPath.equals(this.rootPath)) {
+            curDirTextView.setText("파일");
+            preDirBtn.setText("이전파일");
+            preDirBtn.setClickable(false);
+            preDirBtn.setTextColor(0xFF555555);
+        } else {
+            curDirTextView.setText(currentPath.substring(lastSlashPosition+1));
+            if(prevPath.equals(this.rootPath))
+                preDirBtn.setText("파일");
+            else {
+                lastSlashPosition = prevPath.lastIndexOf("/");
+                preDirBtn.setText(prevPath.substring(lastSlashPosition+1));
+            }
+            preDirBtn.setClickable(true);
+            preDirBtn.setTextColor(0xFF0022AA);
+        }
+    }
+
     public void nextPath(String str)    {
         // save current path
         prevPath = currentPath;
 
         // create next directory path
-        nextPath = currentPath + "/" + str;
+        currentPath = currentPath + "/" + str;
         // set ListView by next directory's files
-        setFileList(nextPath,str);
+        setFileList(currentPath,str);
     }
 
-    public void prevPath(String str) {
-        // save current path
-        nextPath = currentPath;
-        prevPath = currentPath;
+    public void prevPath() {
 
+        int lastSlashPosition = currentPath.lastIndexOf("/");
+        String filename = currentPath.substring(lastSlashPosition+1);
+        currentPath = currentPath.substring(0, lastSlashPosition);
 
-        // find last '/'
-        int lastSlashPosition = prevPath.lastIndexOf("/");
-
-        // get string before '/'
+        lastSlashPosition = prevPath.lastIndexOf("/");
         prevPath = prevPath.substring(0, lastSlashPosition);
 
         //  set ListView by prev directory's files
-        setFileList(prevPath,prevPath.substring(1,lastSlashPosition));
+        setFileList(currentPath, filename);
     }
 
     private class SendAsyncTask extends AsyncTask<File , Void , Void> {
