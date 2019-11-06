@@ -239,13 +239,6 @@ public class FileUploadActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int id)
                 {
                     Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
-                    // find last '/'
-                    String addr = curDirTextView.getText().toString();
-                    int lastSlashPosition = addr.lastIndexOf("/");
-
-                    // get string before '/'
-                    addr = addr.substring(0, lastSlashPosition);
-                    curDirTextView.setText(addr);
                 }
             });
             AlertDialog alertDialog = builder.create();
@@ -302,6 +295,7 @@ public class FileUploadActivity extends AppCompatActivity {
             curDirTextView.setText("파일");
             preDirBtn.setText("이전파일");
             preDirBtn.setClickable(false);
+            preDirBtn.setEnabled(false);
             preDirBtn.setTextColor(0xFF555555);
         } else {
             curDirTextView.setText(currentPath.substring(lastSlashPosition+1));
@@ -312,6 +306,7 @@ public class FileUploadActivity extends AppCompatActivity {
                 preDirBtn.setText(prevPath.substring(lastSlashPosition+1));
             }
             preDirBtn.setClickable(true);
+            preDirBtn.setEnabled(true);
             preDirBtn.setTextColor(0xFF0022AA);
         }
     }
