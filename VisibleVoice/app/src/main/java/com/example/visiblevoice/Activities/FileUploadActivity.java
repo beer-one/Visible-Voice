@@ -250,7 +250,7 @@ public class FileUploadActivity extends AppCompatActivity {
 
         // get file list from current directory
         File[] fileList = fileRoot.listFiles();
-
+        ArrayList<File> filterdFileList = new ArrayList<>();
         // clear item(file) list
         fileItems.clear();
         // set parents directory
@@ -262,8 +262,10 @@ public class FileUploadActivity extends AppCompatActivity {
             // set file list
             try {
                 for (int i = 0; i < fileList.length; i++) {
-                    if(fileList[i].isDirectory()) // if file is directory
-                        fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int)fileList[i].length())); // add file in list
+                    if(fileList[i].isDirectory()) { // if file is directory
+                        fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int) fileList[i].length())); // add file in list
+                        filterdFileList.add(fileList[i]);
+                    }
                     else {
                         Log.d("name",fileList[i].getName()+">>");
 
@@ -271,15 +273,16 @@ public class FileUploadActivity extends AppCompatActivity {
                             if(fileList[i].getName().matches(permissionedFormat[j])) { // if file is permitted format
                                 Log.d("name","add "+permissionedFormat[j]);
                                 fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int)fileList[i].length())); // add file in list
+                                filterdFileList.add(fileList[i]);
                                 break;
                             }
                         }
                     }
                 }
 
-                for(int i = 0; i < fileList.length; i++) {
-                    if(fileList[i].isDirectory()) {
-                        String[] children = fileList[i].list();
+                for(int i = 0; i < filterdFileList.size(); i++) {
+                    if(filterdFileList.get(i).isDirectory()) {
+                        String[] children = filterdFileList.get(i).list();
                         int size = 0;
                         for(int j = 0; j < children.length; j++) {
                             for(int k = 0; k < permissionedFormat.length; k++){
