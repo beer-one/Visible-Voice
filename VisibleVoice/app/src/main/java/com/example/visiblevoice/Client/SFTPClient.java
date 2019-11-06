@@ -177,7 +177,7 @@ public class SFTPClient {
      * @param path
      *            저장될 공간
      */
-    public ArrayList<Byte> download(final String dir, final String downloadFileName, final String path) {
+    public ArrayList<Byte> download(final String dir, final String downloadFileName) {
         try{
             Thread downloadThread = new Thread() {
                 public void run() {

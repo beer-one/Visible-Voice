@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity
     private TextView curentTimeTextView;
     private TextView musicTimeTextView;
 
+    private String userid;
+
     private ViewPager viewPager;
     private PagerAdapter pageAdapter;
 
@@ -109,11 +111,13 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        insertSftpKey("id_rsa");
-        insertSftpKey("id_rsa.pub");
+
         currentfile= getApplicationContext().getSharedPreferences(AppDataInfo.CurrentFile.key, AppCompatActivity.MODE_PRIVATE);
 
         musicListController = MusicListController.getInstance();
+
+        Log.d("Start",  getFilesDir().canWrite() ? "can write" : "cannot write");
+
 
         recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
                 .allowMainThreadQueries()   //Allows room to do operation on main thread
@@ -169,9 +173,9 @@ public class MainActivity extends AppCompatActivity
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
 
-        String userid = auto.getString(AppDataInfo.Login.userID, null);
+        userid = auto.getString(AppDataInfo.Login.userID, null);
         Toast.makeText(getApplicationContext(),"user id : "+userid,Toast.LENGTH_SHORT).show();
-        useridView.setText(auto.getString(AppDataInfo.Login.userID,null));
+        useridView.setText(userid);
         fileMenuBtn.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         speedBtn.setOnClickListener(this);
@@ -205,6 +209,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
         updateMusicList();
+        insertSftpKey("id_rsa");
+        insertSftpKey("id_rsa.pub");
+
+        File dir = new File(getFilesDir().getAbsolutePath() + "/" + userid);
+        String[] list = dir.list();
+        for(int i = 0; i < list.length; i++)
+            Log.d("list", getFilesDir().getAbsolutePath() + "/" + userid + "/" + list[i]);
         
 		if(currentfile.getString(AppDataInfo.CurrentFile.music, null) != null) {
             try {
@@ -333,7 +344,7 @@ public class MainActivity extends AppCompatActivity
 
         useridView = (TextView) nav_header_view.findViewById((R.id.userIdTextView));
         Log.d("useridview",useridView.getText().toString());;
-        useridView.setText(auto.getString(AppDataInfo.Login.userID, null));
+        useridView.setText(userid);
         Log.d("useridview2",useridView.getText().toString());;
         drawerToggle = new ActionBarDrawerToggle(
                 this,
@@ -637,15 +648,24 @@ public class MainActivity extends AppCompatActivity
 
         try {
             is = asset.open("key/" + str);
-            File dir = new File(getFilesDir().getAbsolutePath() + "/" + AppDataInfo.Login.userID);
-            dir.mkdir();
+            File dir = new File(getFilesDir().getAbsolutePath() + "/" + userid);
+            if(dir.mkdir())
+                Log.d("mkdir", "success");
+            else {
+                Log.d("mkdir", "fail");
+                Log.d("mkdir", dir.getAbsolutePath());
+                String[] list = dir.list();
+                for(int i = 0; i < list.length; i++)
+                    Log.d("ls", list[i]);
+            }
+
             OutputStream os = new FileOutputStream(new File(getFilesDir().getAbsolutePath() + "/"+ str));
 
             byte[] buffer = new byte[1024];
             int len = 0;
             while((len = is.read(buffer)) != -1) {
                 os.write(buffer, 0, len);
-                System.out.println(new String(buffer));
+                //System.out.println(new String(buffer));
             }
             os.close();
             is.close();

@@ -44,6 +44,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
     private SharedPreferences currentfile;
     private RecordDAO recordDAO;
     public static Context mContext;
+    public String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
         fileUploadBtn = findViewById(R.id.fileUploadBtn);
         fileUploadBtn.setOnClickListener(this);
         musicListListView=findViewById(R.id.musicListListView);
+        username = getSharedPreferences(AppDataInfo.File.key,AppCompatActivity.MODE_PRIVATE).getString(AppDataInfo.Login.userID, null);
 
         mContext = this;
 
@@ -134,8 +136,8 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                         Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                         recordDAO.deleteRecord(fileName);
                         musicListController.removeRecord(position);
-                        File jsonfile = new File(AppDataInfo.Path.VisibleVoiceFolder+"/"+fileName+".json");
-                        File pngfile = new File(AppDataInfo.Path.VisibleVoiceFolder+"/"+fileName+".png");
+                        File jsonfile = new File(getFilesDir().getAbsolutePath() + "/" + username+"/"+fileName+".json");
+                        File pngfile = new File(getFilesDir().getAbsolutePath() + "/" + username+"/"+fileName+".png");
                         if(jsonfile.exists())
                             jsonfile.delete();
                         if(pngfile.exists())
@@ -316,7 +318,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
             case R.id.fileUploadBtn :
                 intent = new Intent(FileListActivity.this, FileUploadActivity.class);
                 startActivity(intent);
-                finish();
+                //finish();
                 break;
         }
     }
