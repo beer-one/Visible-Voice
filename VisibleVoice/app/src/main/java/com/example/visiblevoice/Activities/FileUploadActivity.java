@@ -248,7 +248,6 @@ public class FileUploadActivity extends AppCompatActivity {
 
         setButtonOptions();
 
-        // get file list from current directory
         File[] fileList = fileRoot.listFiles();
         ArrayList<File> filterdFileList = new ArrayList<>();
         // clear item(file) list
@@ -362,8 +361,22 @@ public class FileUploadActivity extends AppCompatActivity {
             //Log.d("MKDIRJOOHAN",sftpClient.)
             sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
             Log.d("MKDIRJOOHAN",ServerInfo.folderPath+"< >"+username);
-            sftpClient.upload(username,files[0]);
-            httpConn.requestWebServer(username,files[0].getName(), callback);
+
+            String filename = files[0].getName();
+
+            if(sftpClient.exist(username, files[0].getName())) {
+                Log.d("fileExist", "파일존재함");
+                sftpClient.upload(null, files[0], true);
+                int extensionPosition = filename.lastIndexOf(".");
+                String extension = filename.substring(extensionPosition);
+                filename = filename.substring(0, extensionPosition) + "__temp" + extension;
+            }
+            else {
+                Log.d("fileExist", "파일존재하지않");
+                sftpClient.upload(null, files[0], false);
+            }
+
+            httpConn.requestWebServer(username,filename, callback);
 
             try {
                 byte[] buffer = new byte[1024];
@@ -411,9 +424,22 @@ public class FileUploadActivity extends AppCompatActivity {
                 System.out.println("OK");
                 String body = response.body().string();
                 Log.d("dong", "서버에서 응답한 Body:"+body);
+
+
                 Looper.prepare();
-                Toast.makeText(FileUploadActivity.this, "요청 완료: 서버에 변환 요청 완료.:"+body , Toast.LENGTH_SHORT).show();
+                if(body.equals("OK"))
+                    Toast.makeText(FileUploadActivity.this, "요청 완료: 서버에 변환 요청 완료." , Toast.LENGTH_SHORT).show();
+                else if(body.equals("FAIL"))
+                    Toast.makeText(FileUploadActivity.this, "네트워크 오류: 네트워킹이 원활하지 않습니다." , Toast.LENGTH_SHORT).show();
+                else if(body.equals("EXIST"))
+                    Toast.makeText(FileUploadActivity.this, "서버에서 변환 완료된 기록 사용." , Toast.LENGTH_SHORT).show();
                 Looper.loop();
+
+                if(body.equals("EXIST")) {
+                    SFTPClient client = new SFTPClient();
+                }
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
