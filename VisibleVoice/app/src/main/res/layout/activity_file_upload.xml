@@ -12,25 +12,40 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/color_round_shape"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/dirImageView"
+        <Button
+            android:id="@+id/preDirBtn"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            app:srcCompat="@drawable/directory_icon" />
+            android:background="#00FFFFFF"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="이전파일"
+            android:textAlignment="viewStart"
+            android:textColor="#0022AA" />
+
 
         <TextView
-            android:id="@+id/fileDownloadTextView"
+            android:id="@+id/curDirTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="4"
+            android:layout_weight="2"
             android:gravity="center"
-            android:textColor="#ffffff"
-            android:text="TextView" />
+            android:text="파일"
+            android:padding="10dp"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text=""
+            android:textColor="#000000" />
 
     </LinearLayout>
 
@@ -39,6 +54,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
-        android:layout_weight="7" />
+        android:layout_weight="10" />
 
 </LinearLayout>

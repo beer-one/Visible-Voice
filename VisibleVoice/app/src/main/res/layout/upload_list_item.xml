@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/file_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:padding="10dp"
+        android:scaleType="fitStart"
+
+        android:src="@drawable/vv_folder" />
+
+
+    <TextView
+        android:id="@+id/file_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="12"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="filename.m4a"
+        android:textSize="15sp"
+        android:textAlignment="textStart"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/file_capacity"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="25.3KB"
+        android:textAlignment="textEnd"
+        android:textColor="#000"
+        android:textSize="12sp" />
+
+</LinearLayout>

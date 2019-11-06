@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +25,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
+import com.example.visiblevoice.Adapter.UploadFileListAdapter;
 import com.example.visiblevoice.Client.HttpConnection;
 import com.example.visiblevoice.Controller.MusicListController;
 import com.example.visiblevoice.Data.AppDataInfo;
 //import com.example.visiblevoice.Data.Record;
+import com.example.visiblevoice.Data.FileInfo;
 import com.example.visiblevoice.R;
 import com.example.visiblevoice.Client.SFTPClient;
 import com.example.visiblevoice.Client.ServerInfo;
@@ -54,7 +57,8 @@ public class FileUploadActivity extends AppCompatActivity {
 
 
     private ArrayList<String> Files;
-    private ArrayList<String> items;
+
+    private ArrayList<FileInfo> fileItems;
 
     private String rootPath = "";
     private String nextPath = "";
@@ -63,15 +67,18 @@ public class FileUploadActivity extends AppCompatActivity {
     private String newFolderPath="";
 
     //private String VVpath = "";//Visible voice path
-    private TextView textView;
+    //private TextView textView;
+    private Button preDirBtn;
+    private TextView curDirTextView;
     private ListView listView;
 
-    private ArrayAdapter<String> listAdapter;
+    private UploadFileListAdapter listAdapter;
 
     private SharedPreferences userData;
     private SharedPreferences fileData;
     private RecordDAO recordDAO;
     private String username;
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,15 +94,12 @@ public class FileUploadActivity extends AppCompatActivity {
             // Permission has already been granted
             Log.d("song","Permission has already been granted");
         }
-        
-        
 
-        // init
-        Files=new ArrayList<String>();
-        textView = (TextView)findViewById(R.id.fileDownloadTextView);
-        listView = (ListView)findViewById(R.id.uploadFileListView);
-        items = new ArrayList<>();
-        listAdapter = new ArrayAdapter<String>(FileUploadActivity.this, android.R.layout.simple_list_item_1, items);
+        //items = new ArrayList<>();
+        fileItems = new ArrayList<>();
+
+        listAdapter = new UploadFileListAdapter(fileItems);
+
         fileData= getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
         userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
         
@@ -109,6 +113,13 @@ public class FileUploadActivity extends AppCompatActivity {
 
         // get external root directory path
         rootPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        currentPath = rootPath;
+
+        preDirBtn = (Button) findViewById(R.id.preDirBtn);
+        curDirTextView = (TextView) findViewById(R.id.curDirTextView);
+
+        setButtonOptions();
+
         Log.d("song","root path : "+ rootPath);
 
         // set ListView by file list from root directory
@@ -117,6 +128,8 @@ public class FileUploadActivity extends AppCompatActivity {
             return;
         }
 
+        listView = (ListView) findViewById(R.id.uploadFileListView);
+
         // set ListView Adapter by file list
         listView.setAdapter(listAdapter);
 
@@ -124,23 +137,31 @@ public class FileUploadActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("song", position + " : " + items.get(position).toString());
-                currentPath = textView.getText().toString();
-                String path = items.get(position).toString();
-                if (path.equals("..")) {
-                    prevPath(path);
+
+                //currentPath = curDirTextView.getText().toString();
+                String path = currentPath + "/" + fileItems.get(position).getFilename();
+                Log.d("file", path);
+
+                File fp = new File(path);
+                Log.d("dir?", fp.isDirectory() ? "dir" : "not dir");
+                if(fp.isDirectory()) {
+                    // if selected file is directory
+                    Log.d("song","you click directory");
+                    nextPath(fileItems.get(position).getFilename()); // move directory
                 } else {
-                    File fp = new File(path);
-                    if(fp.isDirectory()==false) {
-                        // if selected file is directory
-                        Log.d("song","you click directory");
-                        nextPath(path); // move directory
-                    } else {
-                        // if selected file is not directory
-                        Log.d("song","you click file");
-                        // TO-DO : create code that upload selected file
-                    }
+                    // if selected file is not directory
+                    Log.d("song","you click file");
+                    setFileList(path, fileItems.get(position).getFilename());
+                    // TO-DO : create code that upload selected file
                 }
+
+            }
+        });
+
+        preDirBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                prevPath();
             }
         });
     }
@@ -160,16 +181,13 @@ public class FileUploadActivity extends AppCompatActivity {
         }
     }
 
-
     public boolean setFileList(final String rootPath, final String fileName)    {
         // create file object
         final File fileRoot = new File(rootPath);
         final MusicListController musicListController = new MusicListController();
         // if rootPath is not directory
         if(fileRoot.isDirectory() == false) {
-            Toast.makeText(FileUploadActivity.this, "Not Directory " + fileName , Toast.LENGTH_SHORT).show();
-            Log.d("song","not directory");
-            textView.setText(rootPath);
+            Log.d("song",rootPath + " not directory");
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("파일 변환").setMessage("선택하신 파일 "+fileName+"을 변환하시겠습니까?");
@@ -177,9 +195,10 @@ public class FileUploadActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int id)
                 {
-                    Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                     SendAsyncTask task = new SendAsyncTask();
-                    task.execute(fileRoot);
+                    Log.d("filename", "변환 대상 파일: " + rootPath);
+                    Log.d("filename", fileRoot.exists() ? "exist" : "not exist");
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, fileRoot);
                     //Record record = new Record(fileName, fileRoot);
                     //musicListController.addMusic(record);
                     //insert
@@ -217,17 +236,7 @@ public class FileUploadActivity extends AppCompatActivity {
             });
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
                 @Override
-                public void onClick(DialogInterface dialog, int id)
-                {
-                    Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
-                    // find last '/'
-                    String addr = textView.getText().toString();
-                    int lastSlashPosition = addr.lastIndexOf("/");
-
-                    // get string before '/'
-                    addr = addr.substring(0, lastSlashPosition);
-                    textView.setText(addr);
-                }
+                public void onClick(DialogInterface dialog, int id) { }
             });
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
@@ -236,14 +245,15 @@ public class FileUploadActivity extends AppCompatActivity {
         }
 
         // set root path TextView
-        textView.setText(rootPath);
 
-        // get file list from current directory
+        setButtonOptions();
+
         File[] fileList = fileRoot.listFiles();
+        ArrayList<File> filterdFileList = new ArrayList<>();
         // clear item(file) list
-        items.clear();
+        fileItems.clear();
         // set parents directory
-        items.add("..");
+        //items.add("..");
 
         if ( fileList == null ) { // if directory is empty
             Log.d("song","Could not find List");
@@ -251,20 +261,40 @@ public class FileUploadActivity extends AppCompatActivity {
             // set file list
             try {
                 for (int i = 0; i < fileList.length; i++) {
-                    if(fileList[i].isDirectory()) // if file is directory
-                        items.add(fileList[i].getName()); // add file in list
+                    if(fileList[i].isDirectory()) { // if file is directory
+                        fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int) fileList[i].length())); // add file in list
+                        filterdFileList.add(fileList[i]);
+                    }
                     else {
                         Log.d("name",fileList[i].getName()+">>");
 
                         for(int j=0;j<permissionedFormat.length;j++){
                             if(fileList[i].getName().matches(permissionedFormat[j])) { // if file is permitted format
                                 Log.d("name","add "+permissionedFormat[j]);
-                                items.add(fileList[i].getName()); // add file in list
+                                fileItems.add(new FileInfo(fileList[i].getName(), fileList[i].isDirectory(), (int)fileList[i].length())); // add file in list
+                                filterdFileList.add(fileList[i]);
                                 break;
                             }
                         }
                     }
                 }
+
+                for(int i = 0; i < filterdFileList.size(); i++) {
+                    if(filterdFileList.get(i).isDirectory()) {
+                        String[] children = filterdFileList.get(i).list();
+                        int size = 0;
+                        for(int j = 0; j < children.length; j++) {
+                            for(int k = 0; k < permissionedFormat.length; k++){
+                                if(children[j].matches(permissionedFormat[k])) { // if file is permitted format
+                                    size++;
+                                    break;
+                                }
+                            }
+                        }
+                        fileItems.get(i).setChildren(size);
+                    }
+                }
+
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -275,30 +305,49 @@ public class FileUploadActivity extends AppCompatActivity {
         return true;
     }
 
+    public void setButtonOptions() {
+        int lastSlashPosition = currentPath.lastIndexOf("/");
+        if(currentPath.equals(this.rootPath)) {
+            curDirTextView.setText("파일");
+            preDirBtn.setText("이전파일");
+            preDirBtn.setClickable(false);
+            preDirBtn.setEnabled(false);
+            preDirBtn.setTextColor(0xFF555555);
+        } else {
+            curDirTextView.setText(currentPath.substring(lastSlashPosition+1));
+            if(prevPath.equals(this.rootPath))
+                preDirBtn.setText("파일");
+            else {
+                lastSlashPosition = prevPath.lastIndexOf("/");
+                preDirBtn.setText(prevPath.substring(lastSlashPosition+1));
+            }
+            preDirBtn.setClickable(true);
+            preDirBtn.setEnabled(true);
+            preDirBtn.setTextColor(0xFF0022AA);
+        }
+    }
+
     public void nextPath(String str)    {
         // save current path
         prevPath = currentPath;
 
         // create next directory path
-        nextPath = currentPath + "/" + str;
+        currentPath = currentPath + "/" + str;
         // set ListView by next directory's files
-        setFileList(nextPath,str);
+        setFileList(currentPath,str);
     }
 
-    public void prevPath(String str) {
-        // save current path
-        nextPath = currentPath;
-        prevPath = currentPath;
+    public void prevPath() {
 
+        int lastSlashPosition = currentPath.lastIndexOf("/");
+        String filename = currentPath.substring(lastSlashPosition+1);
+        currentPath = currentPath.substring(0, lastSlashPosition);
 
-        // find last '/'
-        int lastSlashPosition = prevPath.lastIndexOf("/");
-
-        // get string before '/'
+        lastSlashPosition = prevPath.lastIndexOf("/");
         prevPath = prevPath.substring(0, lastSlashPosition);
 
         //  set ListView by prev directory's files
-        setFileList(prevPath,prevPath.substring(1,lastSlashPosition));
+        setFileList(currentPath, filename);
     }
 
     private class SendAsyncTask extends AsyncTask<File , Void , Void> {
@@ -312,8 +361,22 @@ public class FileUploadActivity extends AppCompatActivity {
             //Log.d("MKDIRJOOHAN",sftpClient.)
             sftpClient.mkdir(ServerInfo.folderPath,username); // /home/vvuser
             Log.d("MKDIRJOOHAN",ServerInfo.folderPath+"< >"+username);
-            sftpClient.upload(username,files[0]);
-            httpConn.requestWebServer(username,files[0].getName(), callback);
+
+            String filename = files[0].getName();
+
+            if(sftpClient.exist(username, files[0].getName())) {
+                Log.d("fileExist", "파일존재함");
+                sftpClient.upload(null, files[0], true);
+                int extensionPosition = filename.lastIndexOf(".");
+                String extension = filename.substring(extensionPosition);
+                filename = filename.substring(0, extensionPosition) + "__temp" + extension;
+            }
+            else {
+                Log.d("fileExist", "파일존재하지않");
+                sftpClient.upload(null, files[0], false);
+            }
+
+            httpConn.requestWebServer(username,filename, callback);
 
             try {
                 byte[] buffer = new byte[1024];
@@ -335,6 +398,13 @@ public class FileUploadActivity extends AppCompatActivity {
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            Log.d("AsyncTask", "Termination");
+
+        }
     }
 
 
@@ -342,9 +412,8 @@ public class FileUploadActivity extends AppCompatActivity {
     private final Callback callback = new Callback() {
         @Override
         public void onFailure(Call call, IOException e) {
-            Log.d("dong", "콜백오류:"+e.getMessage());
             Looper.prepare();
-            Toast.makeText(FileUploadActivity.this, "콜백오류" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(FileUploadActivity.this, "네트워크 오류: 네트워킹이 원활하지 않습니다." , Toast.LENGTH_SHORT).show();
             Looper.loop();
         }
         @Override
@@ -355,11 +424,21 @@ public class FileUploadActivity extends AppCompatActivity {
                 System.out.println("OK");
                 String body = response.body().string();
                 Log.d("dong", "서버에서 응답한 Body:"+body);
+
+
                 Looper.prepare();
-                Toast.makeText(FileUploadActivity.this, "서버에서 응답한 Body:"+body , Toast.LENGTH_SHORT).show();
-                //startActivity(new Intent(FileUploadActivity.this, FileListActivity.class));
+                if(body.equals("OK"))
+                    Toast.makeText(FileUploadActivity.this, "요청 완료: 서버에 변환 요청 완료." , Toast.LENGTH_SHORT).show();
+                else if(body.equals("FAIL"))
+                    Toast.makeText(FileUploadActivity.this, "네트워크 오류: 네트워킹이 원활하지 않습니다." , Toast.LENGTH_SHORT).show();
+                else if(body.equals("EXIST"))
+                    Toast.makeText(FileUploadActivity.this, "서버에서 변환 완료된 기록 사용." , Toast.LENGTH_SHORT).show();
                 Looper.loop();
-                finish();
+
+                if(body.equals("EXIST")) {
+                    SFTPClient client = new SFTPClient();
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
