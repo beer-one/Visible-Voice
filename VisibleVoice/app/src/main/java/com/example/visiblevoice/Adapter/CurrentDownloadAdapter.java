@@ -80,17 +80,6 @@ public class CurrentDownloadAdapter extends BaseAdapter {
         }catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        CheckBox checkBox = (CheckBox)convertView.findViewById(R.id.checkBox);
-        Log.d("checkbox","checkbox"+position+":"+checkBox.isChecked());
-        Log.d("checkbox","currentDownload cbx"+position+":"+currentDownload.ischecked());
-        if(checkBox.isChecked()){
-            currentDownload.setchecked(true);
-            Log.d("checkbox","if currentDownload cbx"+position+":"+currentDownload.ischecked());
-        }
-        else{
-            currentDownload.setchecked(false);
-            Log.d("checkbox","else currentDownload cbx"+position+":"+currentDownload.ischecked());
-        }
 
         /*if (checkBox != null) {
             checkBox.setChecked(false);

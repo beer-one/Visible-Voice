@@ -94,17 +94,17 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkBox);
+                TextView tv = (TextView) view.findViewById(R.id.item_filename);
                 Log.d("CHKBOX","clicked");
-                if(checkBox.isChecked()){
+                if(currentDownloadList.get(position).getChecked()){
                     Log.d("CHKBOX","if");
                     currentDownloadList.get(position).setchecked(false);
-                    checkBox.setChecked(false);
+                    tv.setBackgroundColor(0xFFFFFFFF);
                 }
                 else{
                     Log.d("CHKBOX","else");
                     currentDownloadList.get(position).setchecked(true);
-                    checkBox.setChecked(true);
+                    tv.setBackgroundColor(0x802196F3);
                 }
                 currentDownloadAdapter.notifyDataSetChanged();
 
@@ -128,6 +128,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                     {
                         //Toast.makeText(getApplicationContext(), "OK Click", Toast.LENGTH_SHORT).show();
                         try{
+
                             new BackgroundTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         }
                         catch (Exception e) {
@@ -156,7 +157,8 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
 
         //초기화 단계에서 사용한다. 초기화관련 코드를 작성했다.
         protected void onPreExecute() {
-
+            progressDialog.setMessage("다운로드중입니다.. 기다려 주세요...");
+            progressDialog.show();
         }
 
         //스레드의 주작업 구현
@@ -164,8 +166,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         //배열이라 여러개를 받을 수 도 있다. ex) excute(100, 10, 20, 30); 이런식으로 전달 받으면 된다.
         @Override
         protected Void doInBackground(Void... voids) {
-            progressDialog.setMessage("다운로드중입니다.. 기다려 주세요...");
-            progressDialog.show();
+
             Log.d("filedownloadtest", "doinbackground ");
             recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
                     .allowMainThreadQueries()   //Allows room to do operation on main thread
@@ -191,10 +192,12 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
 
                     Log.d("filedownloadlist",fileName+"삭제");
                     record.setFileName(fileName);
-                    record.setAudioPath(getFilesDir().getAbsolutePath() + "/" + username + "/" + musicFileName);
-                    record.setWordCloudPath(getFilesDir().getAbsolutePath() + "/" + username + "/" + pngFileName);
-                    record.setJsonPath(getFilesDir().getAbsolutePath() + "/" + username + "/"+jsonFileName);
-                    recordDAO.insert(record);
+                    record.setAudioPath(musicFileName);
+                    record.setWordCloudPath(pngFileName);
+                    record.setJsonPath(jsonFileName);
+                    if(recordDAO.findFileName(fileName) == null)
+                        recordDAO.insert(record);
+
 
                     currentDownloadDAO.deleteRecord(currentDownloadList.get(i).getFile_name());
                 }
@@ -207,8 +210,8 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
             Log.d("dong", "progressDialog 출력완료");
             //Toast.makeText(getApplicationContext(),"파일 다운로드가 완료되었습니다.",Toast.LENGTH_SHORT).show();
             Log.d("dong", "토스트 출력 완료");
-            Intent intent = new Intent(FileDownloadActivity.this, FileListActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(FileDownloadActivity.this, FileListActivity.class);
+            //startActivity(intent);
             finish();
             return null;
         }
@@ -230,9 +233,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void run() {
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
+
 
                                 boolean status = false;
                                 Log.d("dong", "receive ");
@@ -243,6 +244,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
                                 sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,getFilesDir().getAbsolutePath() + "/"+ServerInfo.privatekey);
 
                                 ArrayList<Byte> byteArray = sftpClient.download(ServerInfo.folderPath+"/"+username,filename.substring(pos+1));
+                                Log.d("Download", ServerInfo.folderPath+"/"+username + "/" + filename.substring(pos+1));
                                 byte[] bytes = new byte[byteArray.size()];
                                 for(int i = 0; i < bytes.length; i++)
                                     bytes[i] = byteArray.get(i);
@@ -287,8 +289,8 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
 
                             }
 
-                        });
-            }
+
+
         });
 
         try {

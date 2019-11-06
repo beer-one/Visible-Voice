@@ -124,7 +124,8 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
             ne.printStackTrace();
         }
 
-        currentDownloadDAO.insert(currentDownload);
+        if(currentDownloadDAO.getRecordMusicFileName(currentDownload.fileName) == null)
+            currentDownloadDAO.insert(currentDownload);
         Log.d("currentDownloadDAO",remoteMessage+"");
         Log.d("currentDownloadDAO",currentDownload.fileName+"");
         Log.d("currentDownloadDAO","넣은후 db record 수 : "+currentDownloadDAO.getNumberRecord());

@@ -38,4 +38,5 @@ public class CurrentDownload {
     public String getPng_path() {
         return png_path;
     }
+    public boolean getChecked() { return checked; }
 }

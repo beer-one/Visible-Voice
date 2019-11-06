@@ -313,6 +313,14 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mediaPlayer!=null)
+            mediaPlayer.stop();
+    }
+
     public void refreshMediaPlayer(){
         viewPager = (ViewPager) findViewById(R.id.pager); //
         pageAdapter = new PagerAdapter
@@ -415,7 +423,7 @@ public class MainActivity extends AppCompatActivity
                 playMusicAsyncTask = new PlayMusicAsyncTask();
 
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
-                playMusicAsyncTask.execute();
+                playMusicAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }catch (Exception e){
                 e.printStackTrace();
             }

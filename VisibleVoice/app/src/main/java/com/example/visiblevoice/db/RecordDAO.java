@@ -25,4 +25,6 @@ public interface RecordDAO {
     public void updateJSONPath(String fileName,String JsonPath);
     @Query("SELECT COUNT(fileName) FROM record")
     public int getNumberRecord();
+    @Query("SELECT fileName FROM record WHERE fileName=:fileName")
+    public String findFileName(String fileName);
 }

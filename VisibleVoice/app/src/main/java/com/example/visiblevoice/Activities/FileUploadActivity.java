@@ -435,11 +435,6 @@ public class FileUploadActivity extends AppCompatActivity {
                     Toast.makeText(FileUploadActivity.this, "서버에서 변환 완료된 기록 사용." , Toast.LENGTH_SHORT).show();
                 Looper.loop();
 
-                if(body.equals("EXIST")) {
-                    SFTPClient client = new SFTPClient();
-                }
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

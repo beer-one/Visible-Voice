@@ -55,7 +55,7 @@ public class LyricListViewFragment extends Fragment {
 
         //TODO 개별선택시 이벤트 처리 없애고 버튼누를시 체크한거 한번에 받도록 바꾸기기
 
-       /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -74,7 +74,7 @@ public class LyricListViewFragment extends Fragment {
                 ((MainActivity)MainActivity.mContext).move_music(lyricArrayList.get(position));
 
             }
-        });*/
+        });
 
         return v;
     }
