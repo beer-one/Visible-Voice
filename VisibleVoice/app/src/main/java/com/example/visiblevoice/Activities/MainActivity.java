@@ -118,11 +118,14 @@ public class MainActivity extends AppCompatActivity
 
         Log.d("Start",  getFilesDir().canWrite() ? "can write" : "cannot write");
 
-
-        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+        recordDAO = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "db-record")
                 .allowMainThreadQueries()   //Allows room to do operation on main thread
-                .build()
-                .getRecordDAO();
+                .fallbackToDestructiveMigration()
+                .build().getRecordDAO();
+//        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+//                .allowMainThreadQueries()   //Allows room to do operation on main thread
+//                .build()
+//                .getRecordDAO();
         Log.d("musiclist size ",recordDAO.getNumberRecord()+"");
         if(recordDAO.getNumberRecord()<=0){
             SharedPreferences.Editor current_data = currentfile.edit();
