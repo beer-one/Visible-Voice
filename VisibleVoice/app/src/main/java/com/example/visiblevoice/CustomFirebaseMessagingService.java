@@ -15,6 +15,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.room.Room;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
@@ -22,6 +23,8 @@ import com.example.visiblevoice.Activities.FileDownloadActivity;
 
 import com.example.visiblevoice.Activities.FileListActivity;
 import com.example.visiblevoice.Data.AppDataInfo;
+import com.example.visiblevoice.db.AppDatabase;
+import com.example.visiblevoice.db.CurrentDownloadDAO;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -30,6 +33,9 @@ import java.util.Map;
 
 public class CustomFirebaseMessagingService extends FirebaseMessagingService {
 
+    private String username;
+    private SharedPreferences userData;
+    private CurrentDownloadDAO currentDownloadDAO;
     private static final String TAG = "MyFirebaseMsgService";
     private SharedPreferences down;
     /**
@@ -83,14 +89,45 @@ public class CustomFirebaseMessagingService extends FirebaseMessagingService {
         catch (NullPointerException ne) {
             ne.printStackTrace();
         }
-        down = getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
+        userData = getSharedPreferences(AppDataInfo.Login.key, AppCompatActivity.MODE_PRIVATE);
+        username = userData.getString(AppDataInfo.Login.userID, null);
+        //TODO FCM 올시 json png m4a 디비에 넣기
+        currentDownloadDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+                .allowMainThreadQueries()   //Allows room to do operation on main thread
+                .build()
+                .getCurrentDownloadDAO();
+       /* down = getSharedPreferences(AppDataInfo.File.key, AppCompatActivity.MODE_PRIVATE);
         SharedPreferences.Editor download = down.edit();
         download.putString(AppDataInfo.File.json, remoteMessage.getData().get("json"));
         download.putString(AppDataInfo.File.png, remoteMessage.getData().get("png"));
-        download.commit();
-        Log.d(TAG,"filename 출력1 : "+ remoteMessage.getData().toString());
-        Log.d(TAG,"filename 출력2 : "+ remoteMessage.getData().get("json"));
-        Log.d(TAG,"filename 출력3 : "+ down.getString(AppDataInfo.File.json,"null"));
+        download.commit();*/
+
+       //TODO 수정한 내용 이후 music FCM 수정해야 제대로 돌아감.
+        Log.d("currentDownloadDAO","넣기전 db record 수 : "+currentDownloadDAO.getNumberRecord());
+        com.example.visiblevoice.models.CurrentDownload currentDownload = new com.example.visiblevoice.models.CurrentDownload();
+        String jsonFileName = remoteMessage.getData().get("json");
+        String musicFileNmae = remoteMessage.getData().get("music");//TODO 나중에 음성파일 추가하면 수정해야됨
+        String pngFileName = remoteMessage.getData().get("png");
+        String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
+
+        currentDownload.setFileName(fileName);
+        currentDownload.setAudioPath(getFilesDir().getAbsolutePath() + "/" + username + "/" + musicFileNmae);
+        currentDownload.setWordCloudPath(getFilesDir().getAbsolutePath() + "/" + username + "/" + pngFileName);
+        currentDownload.setJsonPath(getFilesDir().getAbsolutePath() + "/" + username + "/"+jsonFileName);
+        Log.d("currentDownloadDAO",currentDownload.getFileName()+"");
+        Log.d("currentDownloadDAO",currentDownload.getAudioPath()+"");
+        Log.d("currentDownloadDAO",currentDownload.getJsonPath()+"");
+        Log.d("currentDownloadDAO",currentDownload.getWordCloudPath()+"");
+        try{
+            Log.d("currentDownloadDAO",currentDownloadDAO.getRecordJsonFileName(fileName));
+        }catch (NullPointerException ne){
+            ne.printStackTrace();
+        }
+
+        currentDownloadDAO.insert(currentDownload);
+        Log.d("currentDownloadDAO",remoteMessage+"");
+        Log.d("currentDownloadDAO",currentDownload.fileName+"");
+        Log.d("currentDownloadDAO","넣은후 db record 수 : "+currentDownloadDAO.getNumberRecord());
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.

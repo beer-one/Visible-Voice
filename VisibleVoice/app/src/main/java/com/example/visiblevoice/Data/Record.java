@@ -1,20 +1,11 @@
 package com.example.visiblevoice.Data;
 
 
-import android.graphics.Bitmap;
-
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import com.google.firebase.database.annotations.NotNull;
-
 import java.io.File;
 
-@Entity(tableName = "record")
+
 public class Record {
-    @PrimaryKey
-    @NotNull
-    public int id;
+
     public File music_file;
     public File json_file;
     public File png_file;
