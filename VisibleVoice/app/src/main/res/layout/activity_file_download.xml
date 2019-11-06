@@ -20,27 +20,12 @@
         android:src="@drawable/file_trans"
         />
 
-    <TextView
-        android:id="@+id/filenameTextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:gravity="center"
-        android:textSize="30dp"
-        android:textStyle="bold"
-        />
-
-    <Space
+    <ListView
+        android:id="@+id/musicListListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_weight="16"
 
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
         />
 
     <LinearLayout

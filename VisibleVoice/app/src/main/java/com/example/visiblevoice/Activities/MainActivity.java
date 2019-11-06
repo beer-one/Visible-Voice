@@ -118,11 +118,14 @@ public class MainActivity extends AppCompatActivity
 
         Log.d("Start",  getFilesDir().canWrite() ? "can write" : "cannot write");
 
-
-        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+        recordDAO = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "db-record")
                 .allowMainThreadQueries()   //Allows room to do operation on main thread
-                .build()
-                .getRecordDAO();
+                .fallbackToDestructiveMigration()
+                .build().getRecordDAO();
+//        recordDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
+//                .allowMainThreadQueries()   //Allows room to do operation on main thread
+//                .build()
+//                .getRecordDAO();
         Log.d("musiclist size ",recordDAO.getNumberRecord()+"");
         if(recordDAO.getNumberRecord()<=0){
             SharedPreferences.Editor current_data = currentfile.edit();
@@ -310,6 +313,14 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mediaPlayer!=null)
+            mediaPlayer.stop();
+    }
+
     public void refreshMediaPlayer(){
         viewPager = (ViewPager) findViewById(R.id.pager); //
         pageAdapter = new PagerAdapter
@@ -412,7 +423,7 @@ public class MainActivity extends AppCompatActivity
                 playMusicAsyncTask = new PlayMusicAsyncTask();
 
                 musicTimeTextView.setText(timeToString(mediaPlayer.getDuration()/1000));
-                playMusicAsyncTask.execute();
+                playMusicAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }catch (Exception e){
                 e.printStackTrace();
             }

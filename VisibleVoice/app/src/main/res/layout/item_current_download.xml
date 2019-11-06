@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:gravity="center"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:src="@drawable/vv_logo"/>
+
+    <TextView
+
+        android:id="@+id/item_filename"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_weight="8"
+
+        android:background="#FFFFFFFF"
+        android:gravity="center"
+        android:text="file.m4a"
+        android:textAlignment="textStart" />
+
+</LinearLayout>
