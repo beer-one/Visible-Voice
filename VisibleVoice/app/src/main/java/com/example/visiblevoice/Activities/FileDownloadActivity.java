@@ -52,6 +52,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
     private final int BUFSIZE = 4096;
     private byte[] buffer = new byte[BUFSIZE];
     private RecordDAO recordDAO;
+    private String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +66,7 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
         filenameTextview.setText(fileName+".m4a",null);
         fileDownloadBtn.setOnClickListener(this);
+        username = userData.getString(AppDataInfo.Login.userID, null);
     }
 
     @Override
@@ -145,15 +147,15 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
             String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
             record.setFileName(fileName);
             record.setAudioPath(fileData.getString(AppDataInfo.File.music_path,null));
-            record.setWordCloudPath(AppDataInfo.Path.VisibleVoiceFolder + "/"+pngFileName);
-            record.setJsonPath(AppDataInfo.Path.VisibleVoiceFolder + "/"+jsonFileName);
+            record.setWordCloudPath(getFilesDir().getAbsolutePath() + "/" + username + "/" + pngFileName);
+            record.setJsonPath(getFilesDir().getAbsolutePath() + "/" + username + "/"+jsonFileName);
             recordDAO.insert(record);
 
             Log.d("dong",fileName);
             //record.setAudioPath();
-            Log.d("file저장","png 넣을때 : "+AppDataInfo.Path.VisibleVoiceFolder + "/"+pngFileName);
-            recordDAO.updateWCPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+pngFileName);
-            recordDAO.updateJSONPath(fileName,AppDataInfo.Path.VisibleVoiceFolder + "/"+jsonFileName);
+            Log.d("file저장","png 넣을때 : "+getFilesDir().getAbsolutePath() + "/" + username + "/"+pngFileName);
+            recordDAO.updateWCPath(fileName,getFilesDir().getAbsolutePath() + "/" + username + "/"+pngFileName);
+            recordDAO.updateJSONPath(fileName,getFilesDir().getAbsolutePath() + "/" + username + "/"+jsonFileName);
 
             progressDialog.dismiss();
             Log.d("dong", "progressDialog 출력완료");
@@ -186,23 +188,22 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
 
                                 boolean status = false;
                                 Log.d("dong", "receive ");
-                                String username = userData.getString(AppDataInfo.Login.userID, null);
                                 //VVpath = rootPath + "/"+"VisibleVoice";
                                 SFTPClient sftpClient = new SFTPClient();
 
 
-                                sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,AppDataInfo.Path.VisibleVoiceFolder+"/"+ServerInfo.privatekey);
+                                sftpClient.init(ServerInfo.host,ServerInfo.username,ServerInfo.port,getFilesDir().getAbsolutePath() + "/"+ServerInfo.privatekey);
 
-                                ArrayList<Byte> byteArray = sftpClient.download(ServerInfo.folderPath+"/"+username,filename,AppDataInfo.Path.VisibleVoiceFolder);
+                                ArrayList<Byte> byteArray = sftpClient.download(ServerInfo.folderPath+"/"+username,filename);
                                 byte[] bytes = new byte[byteArray.size()];
                                 for(int i = 0; i < bytes.length; i++)
                                     bytes[i] = byteArray.get(i);
                                 ByteArrayInputStream in = new ByteArrayInputStream(bytes);
                                 Log.d("download log","inputstream : "+in);
                                 //httpConn.requestWebServer(username,file.getName(), callback);
-                                File newFile = new File(AppDataInfo.Path.VisibleVoiceFolder + "/" + filename);
+                                File newFile = new File(getFilesDir().getAbsolutePath() + "/" + username + "/" + filename);
 
-
+                                Log.d("download", newFile.getAbsolutePath());
                                 if (!newFile.exists()){
                                     try {
                                         newFile.createNewFile();

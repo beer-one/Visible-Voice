@@ -118,6 +118,7 @@ public class LyricListViewFragment extends Fragment {
     }
 
     private String readJsonFromFile(String filename) throws NullPointerException {
+        Log.d("filename", filename);
         try {
             if(filename==null)
                 return null;
