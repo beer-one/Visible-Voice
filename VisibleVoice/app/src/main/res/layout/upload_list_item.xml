@@ -21,9 +21,9 @@
         android:layout_height="match_parent"
         android:layout_weight="12"
         android:gravity="center"
-        android:padding="10dp"
+        android:padding="5dp"
         android:text="filename.m4a"
-        android:textSize="15sp"
+        android:textSize="12sp"
         android:textAlignment="textStart"
         android:textColor="#000" />
 
@@ -33,10 +33,10 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:padding="10dp"
+        android:padding="5dp"
         android:text="25.3KB"
         android:textAlignment="textEnd"
         android:textColor="#000"
-        android:textSize="12sp" />
+        android:textSize="11sp" />
 
 </LinearLayout>

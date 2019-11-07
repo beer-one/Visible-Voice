@@ -22,8 +22,9 @@
             android:layout_weight="1"
             android:background="#00FFFFFF"
             android:gravity="center"
-            android:padding="10dp"
-            android:text="이전파일"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:text="kakaotalkfile"
             android:textAlignment="viewStart"
             android:textColor="#0022AA" />
 
@@ -34,10 +35,10 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="파일"
-            android:padding="10dp"
+            android:text="KakaoTalkDownloadFile"
+            android:padding="5dp"
             android:textColor="#000000"
-            android:textSize="18sp"
+            android:textSize="12sp"
             android:textStyle="bold" />
         <TextView
             android:layout_width="0dp"
