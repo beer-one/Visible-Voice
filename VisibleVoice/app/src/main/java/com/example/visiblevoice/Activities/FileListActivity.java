@@ -198,6 +198,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences.Editor setCurrentmusic = currentfile.edit();
         Log.d("삭제후 파일변경","db record 개수 : "+recordDAO.getNumberRecord());
         Log.d("삭제후 파일변경","music list 개수 : "+musicListController.getMusicListSize());
+        String currentFile = musicListController.getCurrentFilename();
         if(recordDAO.getNumberRecord()>0){
             musicListController.setCurrent(0);
 
@@ -224,7 +225,11 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
             setCurrentmusic.putString(AppDataInfo.CurrentFile.music, null);
             setCurrentmusic.commit();
         }
-        ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
+
+        if(currentfile.getString(AppDataInfo.CurrentFile.filename, null).equals(currentFile)) {
+            ((MainActivity) MainActivity.mContext).refreshMediaPlayer();
+            ((MainActivity) MainActivity.mContext).pause_music();
+        }
     }
     public void updateMusicList(){
 

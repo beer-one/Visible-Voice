@@ -440,7 +440,7 @@ public class MainActivity extends AppCompatActivity
         playBtn.setImageResource(R.drawable.pause);
 //        Log.d("song","state is 1");
     }
-    private void pause_music(){
+    public void pause_music(){
         if(mediaPlayer==null) return;
         mediaPlayer.pause();
         state=2;
