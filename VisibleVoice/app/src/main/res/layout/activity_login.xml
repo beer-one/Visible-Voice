@@ -98,17 +98,8 @@
         android:layout_weight="1"
         />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/btn_googleSignIn"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginLeft="33dp"
-        android:layout_marginRight="33dp"
-        android:layout_gravity="center"
-        >
 
-    </com.google.android.gms.common.SignInButton>
+
     <com.nhn.android.naverlogin.ui.view.OAuthLoginButton
         android:id="@+id/buttonOAuthLoginImg"
         android:layout_width="match_parent"
