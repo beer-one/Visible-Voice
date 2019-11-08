@@ -2,11 +2,14 @@ package com.example.visiblevoice.Activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.os.Environment;
@@ -19,6 +22,8 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import com.example.visiblevoice.Controller.MusicListController;
@@ -34,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileListActivity extends AppCompatActivity implements View.OnClickListener{
+    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1001;
     private Intent intent;
     private ImageButton fileUploadBtn;
     private ListView musicListListView;
@@ -198,6 +204,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences.Editor setCurrentmusic = currentfile.edit();
         Log.d("삭제후 파일변경","db record 개수 : "+recordDAO.getNumberRecord());
         Log.d("삭제후 파일변경","music list 개수 : "+musicListController.getMusicListSize());
+        String currentFile = musicListController.getCurrentFilename();
         if(recordDAO.getNumberRecord()>0){
             musicListController.setCurrent(0);
 
@@ -224,7 +231,11 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
             setCurrentmusic.putString(AppDataInfo.CurrentFile.music, null);
             setCurrentmusic.commit();
         }
-        ((MainActivity)MainActivity.mContext).refreshMediaPlayer();
+
+        if(currentfile.getString(AppDataInfo.CurrentFile.filename, null).equals(currentFile)) {
+            ((MainActivity) MainActivity.mContext).refreshMediaPlayer();
+            ((MainActivity) MainActivity.mContext).pause_music();
+        }
     }
     public void updateMusicList(){
 
@@ -235,7 +246,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 .allowMainThreadQueries()   //Allows room to do operation on main thread
                 .build()
                 .getRecordDAO();
-        //recordDAO.clearRecordTable();
+        
         List<com.example.visiblevoice.models.Record> recordList= recordDAO.getRecords();
         musicListController = new MusicListController();
 
@@ -316,9 +327,20 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
 
         switch (v.getId()) {
             case R.id.fileUploadBtn :
-                intent = new Intent(FileListActivity.this, FileUploadActivity.class);
-                startActivity(intent);
-                //finish();
+                // get read external storage permission
+                if (ContextCompat.checkSelfPermission(FileListActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("song","Permission is not granted");
+                    ActivityCompat.requestPermissions(FileListActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                } else {
+                    // Permission has already been granted
+                    Log.d("song","Permission has already been granted");
+                }
+
+                if (ContextCompat.checkSelfPermission(FileListActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    intent = new Intent(FileListActivity.this, FileUploadActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
                 break;
         }
     }
