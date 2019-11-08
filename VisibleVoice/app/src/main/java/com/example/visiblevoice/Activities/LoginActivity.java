@@ -123,8 +123,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         deviceToken = FirebaseInstanceId.getInstance().getToken();
 //        logout();
 
-        googleLoginInit();
-        naverLoginInit();
+        //googleLoginInit();
+        //naverLoginInit();
         boolean checkState = auto.getBoolean(AppDataInfo.Login.checkbox,false);
         checkBoxAutoLogin.setChecked(checkState);
         if(checkBoxAutoLogin.isChecked()) {
@@ -272,26 +272,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             }
         };
-    }
-
-    private void googleLoginInit() {
-        googleBtn = (SignInButton) findViewById(R.id.btn_googleSignIn);
-
-        // Configure Google Sign In
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).requestEmail().build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
-        googleBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-                finish();
-            }
-        });
-
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
