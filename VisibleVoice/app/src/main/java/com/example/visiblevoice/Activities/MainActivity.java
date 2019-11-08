@@ -551,11 +551,11 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.closeDrawer(GravityCompat.START);
         switch(menuItem.getItemId()) {
             case R.id.navigation_item_attachment:
-                Toast.makeText(this, "logout clicked..", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "logout clicked..", Toast.LENGTH_SHORT).show();
                 logout();
                 break;
             case R.id.FileDownloadActivitybtn:
-                Toast.makeText(this, "최근파일다운로드 clicked..", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "최근파일다운로드 clicked..", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(MainActivity.this, FileDownloadActivity.class));
                 break;
         }
