@@ -6,8 +6,7 @@
 
 ## 소개 영상
 
- [![Video Label](https://user-images.githubusercontent.com/36303777/68453691-b4ec5500-0239-11ea-8dcc-2fedfa2b58e3.png)](https://youtu.be/dTMh03qzab4)
-
+<iframe width="640" height="360" src="https://youtu.be/dTMh03qzab4" frameborder="0" gesture="media" allowfullscreen=""></iframe>
 
 
 ## 대표 기능 소개
