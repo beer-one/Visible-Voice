@@ -246,7 +246,7 @@ public class FileListActivity extends AppCompatActivity implements View.OnClickL
                 .allowMainThreadQueries()   //Allows room to do operation on main thread
                 .build()
                 .getRecordDAO();
-        //recordDAO.clearRecordTable();
+        
         List<com.example.visiblevoice.models.Record> recordList= recordDAO.getRecords();
         musicListController = new MusicListController();
 
