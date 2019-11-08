@@ -75,7 +75,6 @@ public class FileDownloadActivity extends AppCompatActivity implements View.OnCl
         progressDialog = new ProgressDialog(this);
         fileListView = (ListView)findViewById(R.id.musicListListView);
         String jsonFileName = fileData.getString(AppDataInfo.File.json,null);
-        String fileName = jsonFileName.substring(0,jsonFileName.length()-5);
         fileDownloadBtn.setOnClickListener(this);
         username = userData.getString(AppDataInfo.Login.userID, null);
         currentDownloadDAO = Room.databaseBuilder(getApplicationContext(), AppDatabase.class,"db-record" )
