@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "airy-berm-248414",
+  "private_key_id": "c07cef6ff75a7f5f86b6d6c74f5c33a16ac685b6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDXdIJY8eGe2jDG\nl7zBRJKR+acn5f673zCHbVLjOGmrtRcFxQVWL7hMExxfzqqe6ZzFX711b6N9A1q9\nBSjw8as1PouPXSVIL/kdc/pUZg7A7AfZ6J7lukOU5hbPdW36QlSWtzjciejzypc0\ndNcHg/eWymJcIq0fBo/hXvg5uCF6/tHwLRUqUJCJi7K3/z43+k/Mc46+DVHz5zY1\nlG9BBcca6SNf56kISX/9ARjY6QoOYIavIp/SAXYXEa3EwGS1gNQQXJAKsnAku1ia\nGUGdwekoomMG9w8If7THuIMMjA1wAAen9Y50w1Sk1fa2srJNWMP+qcxm5Qg4ShP2\nohGH2Y+JAgMBAAECggEAaZWGlTkABL1PXtsYXKwSmee601IiOgY/vXZFQuWv3z4w\n6JprKZfcHKfW5VqdgZ/hPFZVPbo2Z7qfmnbvX9hGuyKJ+PlAHnaoAZeG6xpSi5d/\np3mYeOMFYHA7aHJXMWeVFYD3pBgPaX10CPhjMiMpT6OhfR5fMY+hLeRBB+QkwCU+\n6OjHF7NJKYmARnrhaX9XgZji1R4ICKlQJ/SWXpV+sdVij7w/oIdMEH/lDuIsQkXv\nvvrhz/d9CJ/oqBB2PYnSgHvaRtYclNScmUvdPx9Sms1qEtzlqzCSxY9Bdp3cOsd0\nirOUnqsI5oJNW9+yEA9UPpD5B0Ak7g3QTCE3vIkI8wKBgQD1ojLAmTOLR/l4+DGr\nvkDKLP8yLfCw4PWJzDSLn7YevjuH6sjBLfoNFu7b37iKJDV+xVKpSpFrkX2KZ4uZ\nhQEjm/lmYHAqrhdhGRgqfUvaAUyQ4YoLZl5YQYhj+a0fIwZ3MdABGmyYEy/BeI4w\n1KHyuqL62w38RWgi+xJVfImhSwKBgQDgjEP9euYyfScpLoPEBy8EpyOxG2v3luio\n5fR/X63fV931xpXt8L3FO4tdX4sARJLJ/MlH7xPzzbhxl2ziEO/rnOGPfSXjKGVT\n0hDAwua3Gel12yDpN4AmDayr+EPdWGVTTpDY0vp2x1cUw3oL/TyNWIjDwzypzO1D\n6sxiAIFh+wKBgQCx2csdoM+tXWPIrwxn6c1HleUBFDpeF8QxDeZN4kofYGYCN4E8\nPmn66Evyb75SZ31EWONNKGy6khFwESEG+0Kj4d9mvRT6EitjZqQUv7wYETC7BlLJ\nhklxZaG3oaQ0E0wvKaYN5nASfHHrh7qMqKjJ81DmiY1Kx4ZrLZdMxmtwmQKBgGCc\nWOBlkUdly4SPa8fao2MoGlYoCzLybdXFYoWu/9sZLfmB4J4IN031yYd6BQ8vccyQ\nA3X8qiP6fgH5ebJmQSOpUu7ulG+AwN/ogKa+9I8RCf5YMnfFFlDJD2LKJUDFuIq4\nQd/YHkUejRv04rznzratweIgTShtcCQJkLgVqZUjAoGAPzICOxLxtaVpn1G5peTn\nHpTbVImYJKtwEUvH2dwz82VcWgyz97Qse0srtbqQlsREKPfmYwPidJnRBGgQTemT\nCwETUMiHXA5BpxMc1kHqfenm7R5h0996Jdu0Vv0sL0BDdMt8FipO7cdgCLr0QaFB\n1SgEV0+x4GChzT/6i0YJsIw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sw-challenge@airy-berm-248414.iam.gserviceaccount.com",
+  "client_id": "115731646400188574198",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sw-challenge%40airy-berm-248414.iam.gserviceaccount.com"
+}
+
