@@ -1,8 +1,8 @@
 # 소리가 보인다(Visible Voice)
 
-> 2019 SW challenge 공모전 참가작
->
-> 자연어 처리(Google Speech-to-Text)를 통한 음성파일 가이드 생성 어플리 케이션
+> 경북대학교 제1회 코드페어 대상, 2019 SW Challenge 은상 수상, 소리가 보인다.
+
+> 자연어 처리(Google Speech-to-Text)를 통한 음성파일 가이드 생성 어플리케이션
 
 ## 소개 영상
 

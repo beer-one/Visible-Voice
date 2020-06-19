@@ -2,3 +2,4 @@ q*.m4a
 *.wav
 SpeechToText-09ef9c3df95e.json
 VisibleVoice/app/src/main/asset/*
+*.json

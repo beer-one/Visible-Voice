@@ -36,6 +36,7 @@ import com.google.firebase.cloud.FirestoreClient;
 public class SpeechToTextThread extends Thread {
 	private String username;
 	private String filename;
+	private boolean flag;
 
     private static final String ffmpegPath = "/usr/bin/ffmpeg";
 	private static final String ffprobePath = "/usr/bin/ffprobe";
@@ -43,24 +44,27 @@ public class SpeechToTextThread extends Thread {
 	private static final String storagePath = "/home/vvuser/";
 
 
-	public SpeechToTextThread(String username, String filename) {
+	public SpeechToTextThread(String username, String filename, boolean flag) {
 		this.username = username;
 		this.filename = filename;
+		this.flag = flag;
 	}
 
 	public void run() {
-		String convertedFileName = convertFile(username, filename);
-		System.out.println("LOG_STT_THREAD: " + "convert to flac");
+		if(flag) {
+			String convertedFileName = convertFile(username, filename);
+			System.out.println("LOG_STT_THREAD: " + "convert to flac");
 
-		runCommand(new String[] { "python", "src/main/java/com/visiblesound/gcp/upload_from_server_to_GCP.py", storagePath + username + "/" + convertedFileName, username + "/" + convertedFileName });
+			runCommand(new String[] { "python", "src/main/java/com/visiblesound/gcp/upload_from_server_to_GCP.py", storagePath + username + "/" + convertedFileName, username + "/" + convertedFileName });
 	
-		System.out.println("LOG_STT_THREAD: " + "upload to gc");
+			System.out.println("LOG_STT_THREAD: " + "upload to gc");
 
-        // Request Speech 2 Text
-        runCommand(new String[] { "python", "src/main/java/com/visiblesound/gcp/transcribe_async.py", "gs://visible_voice/", username, convertedFileName });
-		System.out.println("LOG_STT_THREAD: " + "stt success!!");
+        	// Request Speech 2 Text
+        	runCommand(new String[] { "python", "src/main/java/com/visiblesound/gcp/transcribe_async.py", "gs://visible_voice/", username, convertedFileName });
+			System.out.println("LOG_STT_THREAD: " + "stt success!!");
 
-		runCommand(new String[] { "python", "src/main/java/com/visiblesound/wordcloud/generate_word_cloud_with_args.py", storagePath + username + "/" + filename.split("\\.")[0] + ".json", storagePath + username + "/" + filename.split("\\.")[0] + ".png"});
+			runCommand(new String[] { "python", "src/main/java/com/visiblesound/wordcloud/generate_word_cloud_with_args.py", storagePath + username + "/" + filename.split("\\.")[0] + ".json", storagePath + username + "/" + filename.split("\\.")[0] + ".png"});
+		}
 
         sendNotification();
         System.out.println("LOG_STT_THREAD: " + "sent notification!!!");
@@ -90,7 +94,8 @@ public class SpeechToTextThread extends Thread {
 			Message message = Message.builder()
                 .putData("json", filename.split("\\.")[0] + ".json")
                 .putData("png", filename.split("\\.")[0] + ".png")
-                .setToken(token)
+                .putData("music", filename)
+				.setToken(token)
                 .build();
 
 			System.out.println("Json: "+ filename.split("\\.")[0] + ".json");
